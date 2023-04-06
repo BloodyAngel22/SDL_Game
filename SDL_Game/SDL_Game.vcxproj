@@ -21,12 +21,14 @@
   <ItemGroup>
     <ClCompile Include="Ability.cpp" />
     <ClCompile Include="Battle.cpp" />
+    <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Leveling.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ability.h" />
     <ClInclude Include="Battle.h" />
+    <ClInclude Include="Items.h" />
     <ClInclude Include="Leveling.h" />
     <ClInclude Include="Models.h" />
   </ItemGroup>

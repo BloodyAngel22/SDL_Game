@@ -142,6 +142,7 @@ bool checkCollision(SDL_Rect a, SDL_FRect b)
 
 int main(int argc, char* argv[]) {
 	init();
+	srand(time(NULL));
 	bool winner = false;
 	bool isRunning = true;
 	bool switcher = true;

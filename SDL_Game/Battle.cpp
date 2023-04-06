@@ -8,7 +8,7 @@ int ratio;
 Character hero;
 Enemy opponent;
 
-void MenuBattle(); void StartBattle(); void Battle();
+void MenuBattle(); void StartBattle(); void Battle(); int escape();
 
 void MenuBattle() {
 	int choiche;
@@ -20,6 +20,7 @@ void MenuBattle() {
 		if (choiche == 1) {
 			system("cls");
 			Battle();
+			if (posionEffect == true) Posion();
 			printf("%d\n", opponent.Health);
 		}
 		if (choiche == 2) {
@@ -30,20 +31,44 @@ void MenuBattle() {
 			if (choiceSpell == 1){
 				Fireball();
 				printf("%d\n", opponent.Health);
+				hero.Health -= opponent.Attack;
+				if (hero.Health <= 0)
+					exit(1);
 			}
 			else if (choiceSpell == 2){
 				Lightning();
 				printf("%d\n", opponent.Health);
+				hero.Health -= opponent.Attack;
+				if (hero.Health <= 0)
+					exit(1);
 			}
 			else if (choiceSpell == 3){
 				Posion();
 				printf("%d\n", opponent.Health);
+				hero.Health -= opponent.Attack;
+				if (hero.Health <= 0)
+					exit(1);
 			}
 			if (opponent.Health <= 0) {
 				printf("%d\n", opponent.Health);
 				hero.experience += opponent.experienceEnemy;
 				if (hero.experience >= hero.levelUp)
 					level_up();
+			}
+		}
+		if (choiche == 3);
+		if (choiche == 4) {
+			int storageEscape = escape();
+			if (65 >= storageEscape) {
+				printf("You managed to escape\n");
+				opponent.Health = 0;
+			}
+			else { 
+				printf("You failed to escape\n"); 
+				hero.Health -= opponent.Attack;
+				printf("the enemy has damaged you %d\n", opponent.Attack);
+				if (hero.Health <= 0)
+					exit(1);
 			}
 		}
 	}
@@ -95,6 +120,10 @@ void recovery_character() {
 
 void recovery_enemy() {
 	opponent.Health = opponent.maxHealth;
+}
+
+int escape() {
+	return rand() % 100;
 }
 
 //int main() {
