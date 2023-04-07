@@ -23,6 +23,7 @@
     <ClCompile Include="Battle.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Leveling.cpp" />
+    <ClCompile Include="Shop.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>

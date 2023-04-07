@@ -7,7 +7,7 @@ weapons StWeapon;
 armors StArmors;
 bool lockItemsWeapon = false;
 bool lockItemsArmor = false;
-bool purchasedItem = true;
+bool purchasedItem = false;
 int selectAnItem;
 int choiceItem;
 int removeItem;
@@ -109,6 +109,6 @@ void Inventory_Battle() {
 
 }
 
-int main() {
-	Invenory();
-}
+//int main() {
+//	Invenory();
+//}
