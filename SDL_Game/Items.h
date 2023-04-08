@@ -17,3 +17,11 @@ struct armors {
 	int armor4Health = 120, amountArmor4 = 40, costArmor4 = 200; bool boughtArmor4 = false;
 };
 extern armors StArmors;
+
+struct inventoryForBattle {
+	//health potion
+	int healthPotion1 = 50, healthPotion2 = 100, healthPotion3 = 150, healthPotion4 = 200;
+	//mana potion
+	int manaPotion1 = 40, manaPotion2 = 80, manaPotion3 = 120, manaPotion4 = 160;
+};
+extern inventoryForBattle battleInventory;
