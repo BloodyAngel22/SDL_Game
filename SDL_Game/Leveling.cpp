@@ -70,7 +70,6 @@ void character_leveling() {
 
 void skill_tree() {
 	if (hero.pointsTree > 0) {
-
 		hero.pointsTree--;
 	}
 	else printf("you don't have skill tree points\n");
