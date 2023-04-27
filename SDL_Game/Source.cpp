@@ -14,8 +14,6 @@
 float win_width = 1000, win_height = 600;
 SDL_Window* win = 0;
 SDL_Renderer* ren = 0;
-float Ox = win_width / 2, Oy = win_height / 2;
-
 void init(); void de_init(int error);
 
 void init() {
@@ -253,20 +251,3 @@ int main(int argc, char* argv[]) {
 	de_init(0);
 	return 0;
 }
-
-
-/*case SDL_KEYDOWN:
-				switch (ev.key.keysym.scancode) {
-				case SDL_SCANCODE_UP: Ycoordinate -= 10; break;
-				case SDL_SCANCODE_W: Ycoordinate -= 10; break;
-				case SDL_SCANCODE_DOWN: Ycoordinate += 10; break;
-				case SDL_SCANCODE_S: Ycoordinate += 10; break;
-				case SDL_SCANCODE_RIGHT: Xcoordinate += 10; break;
-				case SDL_SCANCODE_D: Xcoordinate += 10; break;
-				case SDL_SCANCODE_LEFT: Xcoordinate -= 10; break;
-				case SDL_SCANCODE_A: Xcoordinate -= 10; break;
-				case SDL_SCANCODE_ESCAPE: isRunning = false; break;
-				case SDL_SCANCODE_TAB: character_leveling();
-				}
-				break;
-			}*/
