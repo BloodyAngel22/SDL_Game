@@ -1,5 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <SDL.h>
+#include <SDL_image.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -11,10 +12,12 @@
 #define  EnemyDown 3
 #define  EnemyLeft 4
 
+
+void init(); void de_init(int error);
+
 float win_width = 1000, win_height = 600;
 SDL_Window* win = 0;
 SDL_Renderer* ren = 0;
-void init(); void de_init(int error);
 
 void init() {
 
@@ -23,6 +26,14 @@ void init() {
 		system("pause");
 		de_init(1);
 	}
+
+	int res;
+	if ((res = IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG)) == 0) {
+		printf("Couldn't init img");
+		de_init(1);
+	}
+	if (res & IMG_INIT_PNG) printf("png init\n"); else printf("couldn't init png\n");
+	if (res & IMG_INIT_JPG) printf("jpg init\n"); else printf("couldn't init jpg\n");
 
 	win = SDL_CreateWindow("Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 		win_width, win_height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
@@ -138,6 +149,102 @@ bool checkCollision(SDL_Rect a, SDL_FRect b)
 	return true;
 }
 
+void main_menu() {
+	#pragma region Texture
+	//Main menu
+	SDL_Surface* surfMainMenu = IMG_Load("sprites\\menu\\mainMenu.png");
+	if (surfMainMenu == NULL) {
+		printf("couldn't load main menu\n");
+		de_init(1);
+	}
+	else printf("main menu load\n");
+	SDL_Texture* textMainMenu = SDL_CreateTextureFromSurface(ren, surfMainMenu);
+	SDL_FreeSurface(surfMainMenu);
+	//Arrow
+	SDL_Surface* surfArrow = IMG_Load("sprites\\menu\\arrow.png");
+	if (surfArrow == NULL) {
+		printf("couldn't load arrow\n");
+		de_init(1);
+	}
+	else printf("arrow load\n");
+	SDL_Texture* textArrow = SDL_CreateTextureFromSurface(ren, surfArrow);
+	SDL_FreeSurface(surfArrow);
+#pragma endregion
+	int mainMenu = 0;
+	SDL_Event ev;
+	SDL_PollEvent(&ev);
+
+	int xArrow = 250, yArrow = 135;
+	int pointer = 1;
+	const Uint8* arrowState = SDL_GetKeyboardState(NULL);
+	SDL_Rect srcrectArrow = { 0, 0, 100, 140 };
+	SDL_Rect dstrectArrow;
+	int flag = 0;
+	while (mainMenu == 0) {
+		dstrectArrow = { xArrow, yArrow, 75, 75 };
+		while (SDL_PollEvent(&ev) != NULL) {
+			switch (ev.type) {
+			case SDL_KEYDOWN:
+				switch (ev.key.keysym.scancode) {
+				case SDL_SCANCODE_ESCAPE:
+					de_init(1);
+					break;
+				case SDL_SCANCODE_UP:
+					if (pointer != 1) {
+						yArrow -= 87;
+						pointer--;
+					}
+					break;
+				case SDL_SCANCODE_W:
+					if (pointer != 1) {
+						yArrow -= 87;
+						pointer--;
+					}
+					break;
+				case SDL_SCANCODE_DOWN:
+					if (pointer != 4) {
+						yArrow += 87;
+						pointer++;
+						break;
+					}
+				case SDL_SCANCODE_S:
+					if (pointer != 4) {
+						yArrow += 87;
+						pointer++;
+						break;
+					}
+				}
+			}
+			SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+			SDL_RenderClear(ren);
+			SDL_RenderCopy(ren, textMainMenu, NULL, NULL);
+			SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
+			SDL_RenderPresent(ren);
+			SDL_Delay(8);
+
+		}
+		if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+			SDL_DestroyTexture(textMainMenu);
+			SDL_DestroyTexture(textArrow);
+			return;
+		}
+		if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN]);
+		if (pointer == 3 and arrowState[SDL_SCANCODE_RETURN]) {
+			if (flag == 0) {
+				printf("creator: Zhigalkin Maxim\n");
+				flag = 1;
+			}
+		}
+		if (pointer == 4 and arrowState[SDL_SCANCODE_RETURN]) {
+			SDL_DestroyTexture(textMainMenu);
+			SDL_DestroyTexture(textArrow);
+			de_init(1);
+		}
+	}
+
+
+}
+
 int main(int argc, char* argv[]) {
 	init();
 	srand(time(NULL));
@@ -162,6 +269,37 @@ int main(int argc, char* argv[]) {
 	UP = DOWN = RIGHT = LEFT = 0;
 	Xcoordinate = shiftX - Xsize / 2, Ycoordinate = shiftY - Ysize / 2;
 	SDL_PollEvent(&ev);
+
+	#pragma region Texture
+		//room
+		SDL_Surface* surfRoom = IMG_Load("sprites\\background\\mainMap.png");
+		if (surfRoom == NULL) {
+			printf("couldn't load room\n");
+			de_init(1);
+		}else printf("room load\n");
+		SDL_Texture* textRoom = SDL_CreateTextureFromSurface(ren, surfRoom);
+		SDL_FreeSurface(surfRoom);
+		// character 
+		SDL_Surface* surfCharacter = IMG_Load("sprites\\character\\character.png");
+		if (surfCharacter == NULL) {
+			printf("couldn't load character\n");
+			de_init(1);
+		}
+		else printf("character load\n");
+		SDL_Texture* textCharacter = SDL_CreateTextureFromSurface(ren, surfCharacter);
+		SDL_FreeSurface(surfCharacter);
+		//Bat
+		SDL_Surface* surfBat = IMG_Load("sprites\\enemy\\bat.png");
+		if (surfBat == NULL) {
+			printf("couldn't load bat\n");
+			de_init(1);
+		}
+		else printf("bat load\n");
+		SDL_Texture* textBat = SDL_CreateTextureFromSurface(ren, surfBat);
+		SDL_FreeSurface(surfBat);
+	#pragma endregion
+
+		main_menu();
 	while (isRunning) {
 		r = { Xcoordinate, Ycoordinate, Xsize, Ysize };
 		enemy = { EnemyX, EnemyY, XsizeEnemy, YsizeEnemy };
@@ -209,26 +347,18 @@ int main(int argc, char* argv[]) {
 
 
 		}
-		if ((state[SDL_SCANCODE_UP] or state[SDL_SCANCODE_W]) and (!state[SDL_SCANCODE_DOWN] or !state[SDL_SCANCODE_S])) Ycoordinate -= 4;
-		if ((state[SDL_SCANCODE_DOWN] or state[SDL_SCANCODE_S]) and (!state[SDL_SCANCODE_UP] or !state[SDL_SCANCODE_W])) Ycoordinate	+=	4;
+		if ((state[SDL_SCANCODE_UP] or state[SDL_SCANCODE_W]) and (!state[SDL_SCANCODE_DOWN] or !state[SDL_SCANCODE_S]))	Ycoordinate	-= 4;
+		if ((state[SDL_SCANCODE_DOWN] or state[SDL_SCANCODE_S]) and (!state[SDL_SCANCODE_UP] or !state[SDL_SCANCODE_W]))	Ycoordinate	+=	4;
 		if ((state[SDL_SCANCODE_RIGHT] or state[SDL_SCANCODE_D]) and (!state[SDL_SCANCODE_LEFT] or !state[SDL_SCANCODE_A])) Xcoordinate += 4;
 		if ((state[SDL_SCANCODE_LEFT] or state[SDL_SCANCODE_A]) and (!state[SDL_SCANCODE_RIGHT] or !state[SDL_SCANCODE_D])) Xcoordinate -= 4;
 
-		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
-		SDL_RenderClear(ren);
-
-		SDL_SetRenderDrawColor(ren, 200, 100, 0, 0);
-		SDL_RenderFillRectF(ren, &enemy);
-		//SDL_SetRenderDrawColor(ren, 200, 100, 0, 0);
-		//SDL_RenderFillRectF(ren, &enemy1);
-		SDL_SetRenderDrawColor(ren, 200, 0, 0, 0);
-		SDL_RenderFillRect(ren, &r);
 
 		streing(EnemyX, EnemyY, i, flagEnemy1);
 
-
-		SDL_RenderPresent(ren);
-		SDL_Delay(16);
+		SDL_Rect srcrectCharacter = { 10, 10, 100, 140 };
+		SDL_Rect dstrectCharacter = { Xcoordinate - 7, Ycoordinate - 5, Xsize + 20, Ysize + 20};
+		SDL_Rect srcrectBat = { 10, 10, 100, 140 };
+		SDL_Rect dstrectBat = { EnemyX - 19, EnemyY, XsizeEnemy + 25, YsizeEnemy + 25};
 
 		if (hitbox == true) {
 			battle(EnemyX, EnemyY, switcher);
@@ -247,7 +377,25 @@ int main(int argc, char* argv[]) {
 			recovery_enemy();
 			printf("Respawned\n");
 		}
+
+		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+		SDL_RenderClear(ren);
+
+		SDL_SetRenderDrawColor(ren, 200, 100, 0, 0);
+		SDL_RenderFillRectF(ren, &enemy);
+		SDL_SetRenderDrawColor(ren, 200, 0, 0, 0);
+		SDL_RenderFillRect(ren, &r);
+
+		SDL_RenderCopy(ren, textRoom, NULL, NULL);
+		SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
+		SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
+		SDL_RenderPresent(ren);
+		SDL_Delay(16);
+
 	}
+	SDL_DestroyTexture(textRoom);
+	SDL_DestroyTexture(textCharacter);
+	SDL_DestroyTexture(textBat);
 	de_init(0);
 	return 0;
 }
