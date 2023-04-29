@@ -245,6 +245,32 @@ void main_menu() {
 
 }
 
+void drawLevelUp() {
+	#pragma region Texture
+	//Level up
+	SDL_Surface* surfLevelUp = IMG_Load("sprites\\menu\\levelup.png");
+	if (surfLevelUp == NULL) {
+		printf("couldn't load level up\n");
+		de_init(1);
+	}
+	else printf("level up load\n");
+	SDL_Texture* textLevelUp = SDL_CreateTextureFromSurface(ren, surfLevelUp);
+	SDL_FreeSurface(surfLevelUp);
+	//Arrow
+	SDL_Surface* surfArrow = IMG_Load("sprites\\menu\\arrow.png");
+	if (surfArrow == NULL) {
+		printf("couldn't load arrow\n");
+		de_init(1);
+	}
+	else printf("arrow load\n");
+	SDL_Texture* textArrow = SDL_CreateTextureFromSurface(ren, surfArrow);
+	SDL_FreeSurface(surfArrow);
+#pragma endregion
+
+	SDL_DestroyTexture(textLevelUp);
+	SDL_DestroyTexture(textArrow);
+}
+
 int main(int argc, char* argv[]) {
 	init();
 	srand(time(NULL));
@@ -315,9 +341,8 @@ int main(int argc, char* argv[]) {
 			case SDL_KEYDOWN:
 				switch (ev.key.keysym.scancode) {
 				case SDL_SCANCODE_ESCAPE: isRunning = false; break;
-				case SDL_SCANCODE_TAB: character_leveling();
+				case SDL_SCANCODE_TAB: character_leveling(); break;
 				}
-				break;
 
 			case SDL_KEYUP:
 				switch (ev.key.keysym.scancode) {
