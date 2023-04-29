@@ -7,6 +7,7 @@
 #include "Leveling.h"
 #include "Battle.h"
 #include "Models.h"
+#include "SDL_general.h"
 #define  EnemyUp 1
 #define  EnemyRight 2
 #define  EnemyDown 3
@@ -104,7 +105,7 @@ void battle(float& EnemyX, float& EnemyY, bool& switcher) {
 	int counter = 0;
 	switcher = true;
 	while (switcher == true) {
-		MenuBattle();
+		MenuBattle(ren);
 		if (opponent.Health <= 0) {
 			EnemyX = -300; EnemyY = -300;
 			switcher = false;
@@ -205,8 +206,8 @@ void main_menu() {
 					if (pointer != 4) {
 						yArrow += 87;
 						pointer++;
-						break;
 					}
+						break;
 				case SDL_SCANCODE_S:
 					if (pointer != 4) {
 						yArrow += 87;
@@ -245,31 +246,6 @@ void main_menu() {
 
 }
 
-void drawLevelUp() {
-	#pragma region Texture
-	//Level up
-	SDL_Surface* surfLevelUp = IMG_Load("sprites\\menu\\levelup.png");
-	if (surfLevelUp == NULL) {
-		printf("couldn't load level up\n");
-		de_init(1);
-	}
-	else printf("level up load\n");
-	SDL_Texture* textLevelUp = SDL_CreateTextureFromSurface(ren, surfLevelUp);
-	SDL_FreeSurface(surfLevelUp);
-	//Arrow
-	SDL_Surface* surfArrow = IMG_Load("sprites\\menu\\arrow.png");
-	if (surfArrow == NULL) {
-		printf("couldn't load arrow\n");
-		de_init(1);
-	}
-	else printf("arrow load\n");
-	SDL_Texture* textArrow = SDL_CreateTextureFromSurface(ren, surfArrow);
-	SDL_FreeSurface(surfArrow);
-#pragma endregion
-
-	SDL_DestroyTexture(textLevelUp);
-	SDL_DestroyTexture(textArrow);
-}
 
 int main(int argc, char* argv[]) {
 	init();
@@ -341,7 +317,7 @@ int main(int argc, char* argv[]) {
 			case SDL_KEYDOWN:
 				switch (ev.key.keysym.scancode) {
 				case SDL_SCANCODE_ESCAPE: isRunning = false; break;
-				case SDL_SCANCODE_TAB: character_leveling(); break;
+				case SDL_SCANCODE_TAB: character_leveling(ren); break;
 				}
 
 			case SDL_KEYUP:

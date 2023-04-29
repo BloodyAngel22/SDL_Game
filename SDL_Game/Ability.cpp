@@ -28,7 +28,7 @@ void Lightning() {
 	if (steps == 0) lightingEffect == false;
 }
 
-void Posion() {
+void Poison() {
 	abilityDamagePosion;
 	if (hero.Mana >= 18 and posionEffect == false) {
 		posionEffect = true;

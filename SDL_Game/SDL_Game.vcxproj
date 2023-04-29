@@ -32,6 +32,7 @@
     <ClInclude Include="Items.h" />
     <ClInclude Include="Leveling.h" />
     <ClInclude Include="Models.h" />
+    <ClInclude Include="SDL_general.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

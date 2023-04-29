@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL.h>
+#include <SDL_image.h>
 
 
 void level_up() {
@@ -30,7 +31,30 @@ void level_up() {
 	}
 }
 
-void character_leveling() {
+void character_leveling(SDL_Renderer* ren) {
+	#pragma region Texture
+	//Level up
+	SDL_Surface* surfLevelUp = IMG_Load("sprites\\menu\\levelup.png");
+	if (surfLevelUp == NULL) {
+		printf("couldn't load level up\n");
+	}
+	else printf("level up load\n");
+	SDL_Texture* textLevelUp = SDL_CreateTextureFromSurface(ren, surfLevelUp);
+	SDL_FreeSurface(surfLevelUp);
+	//Arrow
+	SDL_Surface* surfArrow = IMG_Load("sprites\\menu\\arrow.png");
+	if (surfArrow == NULL) {
+		printf("couldn't load arrow\n");
+	}
+	else printf("arrow load\n");
+	SDL_Texture* textArrow = SDL_CreateTextureFromSurface(ren, surfArrow);
+	SDL_FreeSurface(surfArrow);
+#pragma endregion
+	int xArrow = 280, yArrow = 142;
+	int pointer = 1;
+	const Uint8* arrowState = SDL_GetKeyboardState(NULL);
+	SDL_Rect srcrectArrow = { 0, 0, 100, 140 };
+	SDL_Rect dstrectArrow;
 	int choicheParameter = 0;
 	SDL_Event ev;
 	SDL_PollEvent(&ev);
@@ -38,29 +62,61 @@ void character_leveling() {
 	printf("Points %d\n", hero.pointsLevel);
 	printf("1 - Attack\n2 - Health\n3 - Protection\n4 - AbilityAtack\nESC - EXIT\n");
 	while (choicheParameter == 0) {
+		dstrectArrow = { xArrow, yArrow, 75, 75 };
 		while (SDL_PollEvent(&ev) != NULL) {
 			switch (ev.type) {
 			case SDL_KEYDOWN:
 				switch (ev.key.keysym.scancode) {
-				case SDL_SCANCODE_1:
-					choicheParameter = ATTACK;
-					break;
-				case SDL_SCANCODE_2:
-					choicheParameter = HEALTH;
-					break;
-				case SDL_SCANCODE_3:
-					choicheParameter = PROTECTION;
-					break;
-				case SDL_SCANCODE_4:
-					choicheParameter = ABILITYATTACK;
-					break;
 				case SDL_SCANCODE_ESCAPE:
 					choicheParameter = EXIT;
 					break;
+				case SDL_SCANCODE_UP:
+					if (pointer != 1) {
+						yArrow -= 95;
+						pointer--;
+					}
+					break;
+				case SDL_SCANCODE_W:
+					if (pointer != 1) {
+						yArrow -= 95;
+						pointer--;
+					}
+					break;
+				case SDL_SCANCODE_DOWN:
+					if (pointer != 5) {
+						yArrow += 95;
+						pointer++;
+					}
+					break;
+				case SDL_SCANCODE_S:
+					if (pointer != 5) {
+						yArrow += 95;
+						pointer++;
+					}
+					break;
 				}
 			}
+
+			SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+			SDL_RenderClear(ren);
+			SDL_RenderCopy(ren, textLevelUp, NULL, NULL);
+			SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
+			SDL_RenderPresent(ren);
+			SDL_Delay(3);
+
 		}
+
+		if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) choicheParameter = ATTACK;
+		if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN]) choicheParameter = HEALTH;
+		if (pointer == 3 and arrowState[SDL_SCANCODE_RETURN]) choicheParameter = PROTECTION;
+		if (pointer == 4 and arrowState[SDL_SCANCODE_RETURN]) choicheParameter = ABILITYATTACK;
+		if (pointer == 5 and arrowState[SDL_SCANCODE_RETURN]) choicheParameter = EXIT;
+
 	}
+
+	SDL_DestroyTexture(textLevelUp);
+	SDL_DestroyTexture(textArrow);
+
 	if (choicheParameter == EXIT) {
 		system("cls");
 		return;
