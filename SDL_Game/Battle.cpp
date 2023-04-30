@@ -8,13 +8,13 @@
 #define BATTLE 1
 #define ABILITY 2
 #define ESCAPE 3
-#define ChanceEscape 30
+#define ChanceEscape 40
 #define FIREBOLT 1
 #define LIGHTING 2
 #define POISON 3
 	
 int ratio;
-Character hero;
+warrior hero;
 Enemy opponent;
 
 void MenuBattle(SDL_Renderer* ren); void StartBattle(); void Battle(); int escape();
@@ -56,22 +56,25 @@ void MenuBattle(SDL_Renderer* ren) {
 				switch (ev.type) {
 				case SDL_KEYDOWN:
 					switch (ev.key.keysym.scancode) {
-					case SDL_SCANCODE_1:
-						choiche = 1;
-						break;
-					case SDL_SCANCODE_2:
-						choiche = 2;
-						break;
-					case SDL_SCANCODE_3:
-						choiche = 3;
-						break;
 					case SDL_SCANCODE_UP:
 						if (pointer != 1) {
 							yArrow -= 105;
 							pointer--;
 						}
 						break;
+					case SDL_SCANCODE_W:
+						if (pointer != 1) {
+							yArrow -= 105;
+							pointer--;
+						}
+						break;
 					case SDL_SCANCODE_DOWN:
+						if (pointer != 3) {
+							yArrow += 105;
+							pointer++;
+						}
+						break;
+					case SDL_SCANCODE_S:
 						if (pointer != 3) {
 							yArrow += 105;
 							pointer++;
@@ -114,22 +117,25 @@ void MenuBattle(SDL_Renderer* ren) {
 						switch (ev.type) {
 						case SDL_KEYDOWN:
 							switch (ev.key.keysym.scancode) {
-							case SDL_SCANCODE_1:
-								choiceSpell = 1;
-								break;
-							case SDL_SCANCODE_2:
-								choiceSpell = 2;
-								break;
-							case SDL_SCANCODE_3:
-								choiceSpell = 3;
-								break;
 							case SDL_SCANCODE_UP:
 								if (pointer != 1) {
 									yArrow -= 105;
 									pointer--;
 								}
 								break;
+							case SDL_SCANCODE_W:
+								if (pointer != 1) {
+									yArrow -= 105;
+									pointer--;
+								}
+								break;
 							case SDL_SCANCODE_DOWN:
+								if (pointer != 3) {
+									yArrow += 105;
+									pointer++;
+								}
+								break;
+							case SDL_SCANCODE_S:
 								if (pointer != 3) {
 									yArrow += 105;
 									pointer++;
@@ -153,6 +159,7 @@ void MenuBattle(SDL_Renderer* ren) {
 				}
 				if (choiceSpell == FIREBOLT) {
 					Fireball();
+					SDL_Delay(165);
 					printf("%d\n", opponent.Health);
 					hero.Health -= opponent.Attack;
 					if (hero.Health <= 0)
@@ -160,6 +167,7 @@ void MenuBattle(SDL_Renderer* ren) {
 				}
 				else if (choiceSpell == LIGHTING) {
 					Lightning();
+					SDL_Delay(165);
 					printf("%d\n", opponent.Health);
 					hero.Health -= opponent.Attack;
 					if (hero.Health <= 0)
@@ -167,6 +175,7 @@ void MenuBattle(SDL_Renderer* ren) {
 				}
 				else if (choiceSpell == POISON) {
 					Poison();
+					SDL_Delay(165);
 					printf("%d\n", opponent.Health);
 					hero.Health -= opponent.Attack;
 					if (hero.Health <= 0)
