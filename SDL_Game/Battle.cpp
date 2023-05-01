@@ -43,8 +43,14 @@ void MenuBattle(SDL_Renderer* ren) {
 		printf("Health %d, Attack %d, Mana %d\n", hero.Health, hero.Attack, hero.Mana);
 		printf("1 - Battle\n2 - Ability\n3 - Escape\n");
 		while (choiche == 0) {
-			while (SDL_PollEvent(&ev) != NULL) {
 			dstrectArrow = { xArrow, yArrow, 75, 75 };
+
+			SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+			SDL_RenderClear(ren);
+			SDL_RenderCopy(ren, textBattle, NULL, NULL);
+			SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
+			SDL_RenderPresent(ren);
+			while (SDL_PollEvent(&ev) != NULL) {
 				switch (ev.type) {
 				case SDL_KEYDOWN:
 					switch (ev.key.keysym.scancode) {
@@ -75,15 +81,12 @@ void MenuBattle(SDL_Renderer* ren) {
 					}
 
 				}
-
-				SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
 				SDL_RenderClear(ren);
 				SDL_RenderCopy(ren, textBattle, NULL, NULL);
 				SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 				SDL_RenderPresent(ren);
-				SDL_Delay(120);
-
 			}
+
 
 			if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) choiche = BATTLE;
 			if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN]) choiche = ABILITY;
@@ -91,7 +94,7 @@ void MenuBattle(SDL_Renderer* ren) {
 
 		}
 			if (choiche == BATTLE) {
-				SDL_Delay(165);
+				SDL_Delay(250);
 				system("cls");
 				Battle();
 				if (posionEffect == true) Poison();
@@ -99,13 +102,19 @@ void MenuBattle(SDL_Renderer* ren) {
 			}
 			if (choiche == ABILITY) {
 				system("cls");
+				SDL_Delay(250);
 				int choiceSpell = 0;
 				printf("1 - Firebolt\n2 - Lightning\n3 - Posion\n");
 				pointer = 1;
 				xArrow = 230, yArrow = 250;
 				while (choiceSpell == 0) {
-					while (SDL_PollEvent(&ev) != NULL) {
 					dstrectArrow = { xArrow, yArrow, 75, 75 };
+					SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+					SDL_RenderClear(ren);
+					SDL_RenderCopy(ren, textBattle, NULL, NULL);
+					SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
+					SDL_RenderPresent(ren);
+					while (SDL_PollEvent(&ev) != NULL) {
 						switch (ev.type) {
 						case SDL_KEYDOWN:
 							switch (ev.key.keysym.scancode) {
@@ -136,13 +145,10 @@ void MenuBattle(SDL_Renderer* ren) {
 							}
 						}
 
-						SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
 						SDL_RenderClear(ren);
 						SDL_RenderCopy(ren, textBattle, NULL, NULL);
 						SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 						SDL_RenderPresent(ren);
-						SDL_Delay(120);
-
 					}
 					if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) choiceSpell = FIREBOLT;
 					if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN]) choiceSpell = LIGHTING;
@@ -181,6 +187,7 @@ void MenuBattle(SDL_Renderer* ren) {
 				}
 			}
 			if (choiche == ESCAPE) {
+				SDL_Delay(250);
 				int storageEscape = escape();
 				if (ChanceEscape >= storageEscape) {
 					printf("You managed to escape\n");
