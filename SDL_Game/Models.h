@@ -4,7 +4,7 @@ struct warrior {
 	/*ITEMS*/ int weapon /*damage*/ = 10; int armorHealth = 20, armorDefense = 5; int necklace /*mana*/ = 20;
 
 	int Health = 500 + armorHealth, Attack = 20 + weapon, Defense = 5 + armorDefense, Mana = 100 + necklace, 
-		Gold = 0, level = 1,
+		Gold = 1000, level = 1,
 		maxLevel = 100, levelUp = 100, experience = 0, pointsLevel = 0, pointsTree = 0,
 		maxAttack = Attack, maxHealth = Health, maxMana = Mana;
 	float AtSpeed = 1.0;

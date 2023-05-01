@@ -35,18 +35,10 @@ void character_leveling(SDL_Renderer* ren) {
 	#pragma region Texture
 	//Level up
 	SDL_Surface* surfLevelUp = IMG_Load("sprites\\menu\\levelup.png");
-	if (surfLevelUp == NULL) {
-		printf("couldn't load level up\n");
-	}
-	else printf("level up load\n");
 	SDL_Texture* textLevelUp = SDL_CreateTextureFromSurface(ren, surfLevelUp);
 	SDL_FreeSurface(surfLevelUp);
 	//Arrow
 	SDL_Surface* surfArrow = IMG_Load("sprites\\menu\\arrow.png");
-	if (surfArrow == NULL) {
-		printf("couldn't load arrow\n");
-	}
-	else printf("arrow load\n");
 	SDL_Texture* textArrow = SDL_CreateTextureFromSurface(ren, surfArrow);
 	SDL_FreeSurface(surfArrow);
 #pragma endregion
@@ -57,12 +49,18 @@ void character_leveling(SDL_Renderer* ren) {
 	SDL_Rect dstrectArrow;
 	int choicheParameter = 0;
 	SDL_Event ev;
-	printf("Select devepmoment option\n");
 	printf("Points %d\n", hero.pointsLevel);
-	printf("1 - Attack\n2 - Health\n3 - Protection\n4 - AbilityAtack\nESC - EXIT\n");
 	while (choicheParameter == 0) {
 		SDL_PollEvent(&ev);
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
+
+		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+		SDL_RenderClear(ren);
+		SDL_RenderCopy(ren, textLevelUp, NULL, NULL);
+		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
+		SDL_RenderPresent(ren);
+		SDL_Delay(7);
+
 		while (SDL_PollEvent(&ev) != NULL) {
 			switch (ev.type) {
 			case SDL_KEYDOWN:
@@ -96,13 +94,6 @@ void character_leveling(SDL_Renderer* ren) {
 					break;
 				}
 			}
-
-			SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
-			SDL_RenderClear(ren);
-			SDL_RenderCopy(ren, textLevelUp, NULL, NULL);
-			SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
-			SDL_RenderPresent(ren);
-			SDL_Delay(7);
 
 		}
 

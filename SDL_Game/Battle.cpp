@@ -23,18 +23,10 @@ void MenuBattle(SDL_Renderer* ren) {
 	#pragma region Texture
 		//Battle menu
 		SDL_Surface* surfBattle = IMG_Load("sprites\\menu\\battle.png");
-		if (surfBattle == NULL) {
-			printf("couldn't load battle menu\n");
-		}
-		else printf("battle menu load\n");
 		SDL_Texture* textBattle = SDL_CreateTextureFromSurface(ren, surfBattle);
 		SDL_FreeSurface(surfBattle);
 		//Arrow
 		SDL_Surface* surfArrow = IMG_Load("sprites\\menu\\arrow.png");
-		if (surfArrow == NULL) {
-			printf("couldn't load arrow\n");
-		}
-		else printf("arrow load\n");
 		SDL_Texture* textArrow = SDL_CreateTextureFromSurface(ren, surfArrow);
 		SDL_FreeSurface(surfArrow);
 	#pragma endregion

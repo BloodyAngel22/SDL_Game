@@ -8,6 +8,7 @@
 #include "Battle.h"
 #include "Models.h"
 #include "SDL_general.h"
+#include "Upgrade Items.h"
 #define  EnemyUp 1
 #define  EnemyRight 2
 #define  EnemyDown 3
@@ -155,20 +156,10 @@ void main_menu() {
 	#pragma region Texture
 	//Main menu
 	SDL_Surface* surfMainMenu = IMG_Load("sprites\\menu\\mainMenu.png");
-	if (surfMainMenu == NULL) {
-		printf("couldn't load main menu\n");
-		de_init(1);
-	}
-	else printf("main menu load\n");
 	SDL_Texture* textMainMenu = SDL_CreateTextureFromSurface(ren, surfMainMenu);
 	SDL_FreeSurface(surfMainMenu);
 	//Arrow
 	SDL_Surface* surfArrow = IMG_Load("sprites\\menu\\arrow.png");
-	if (surfArrow == NULL) {
-		printf("couldn't load arrow\n");
-		de_init(1);
-	}
-	else printf("arrow load\n");
 	SDL_Texture* textArrow = SDL_CreateTextureFromSurface(ren, surfArrow);
 	SDL_FreeSurface(surfArrow);
 #pragma endregion
@@ -184,6 +175,12 @@ void main_menu() {
 	int flag = 0;
 	while (mainMenu == 0) {
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
+		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+		SDL_RenderClear(ren);
+		SDL_RenderCopy(ren, textMainMenu, NULL, NULL);
+		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
+		SDL_RenderPresent(ren);
+		SDL_Delay(8);
 		while (SDL_PollEvent(&ev) != NULL) {
 			switch (ev.type) {
 			case SDL_KEYDOWN:
@@ -217,12 +214,6 @@ void main_menu() {
 					}
 				}
 			}
-			SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
-			SDL_RenderClear(ren);
-			SDL_RenderCopy(ren, textMainMenu, NULL, NULL);
-			SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
-			SDL_RenderPresent(ren);
-			SDL_Delay(8);
 
 		}
 		if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) {
@@ -251,20 +242,10 @@ void menu() {
 #pragma region Texture
 	//Main menu
 	SDL_Surface* surfMenu = IMG_Load("sprites\\menu\\menu.png");
-	if (surfMenu == NULL) {
-		printf("couldn't load menu\n");
-		de_init(1);
-	}
-	else printf("main menu load\n");
 	SDL_Texture* textMenu = SDL_CreateTextureFromSurface(ren, surfMenu);
 	SDL_FreeSurface(surfMenu);
 	//Arrow
 	SDL_Surface* surfArrow = IMG_Load("sprites\\menu\\arrow.png");
-	if (surfArrow == NULL) {
-		printf("couldn't load arrow\n");
-		de_init(1);
-	}
-	else printf("arrow load\n");
 	SDL_Texture* textArrow = SDL_CreateTextureFromSurface(ren, surfArrow);
 	SDL_FreeSurface(surfArrow);
 #pragma endregion
@@ -278,6 +259,12 @@ void menu() {
 	SDL_Rect dstrectArrow;
 	while (menu == 0) {
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
+		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+		SDL_RenderClear(ren);
+		SDL_RenderCopy(ren, textMenu, NULL, NULL);
+		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
+		SDL_RenderPresent(ren);
+		SDL_Delay(8);
 		while (SDL_PollEvent(&ev) != NULL) {
 			switch (ev.type) {
 			case SDL_KEYDOWN:
@@ -311,12 +298,6 @@ void menu() {
 					}
 				}
 			}
-			SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
-			SDL_RenderClear(ren);
-			SDL_RenderCopy(ren, textMenu, NULL, NULL);
-			SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
-			SDL_RenderPresent(ren);
-			SDL_Delay(8);
 
 		}
 
@@ -367,28 +348,15 @@ int main(int argc, char* argv[]) {
 	#pragma region Texture
 		//room
 		SDL_Surface* surfRoom = IMG_Load("sprites\\background\\mainMap.png");
-		if (surfRoom == NULL) {
-			printf("couldn't load room\n");
-			de_init(1);
-		}else printf("room load\n");
 		SDL_Texture* textRoom = SDL_CreateTextureFromSurface(ren, surfRoom);
 		SDL_FreeSurface(surfRoom);
 		// character 
 		SDL_Surface* surfCharacter = IMG_Load("sprites\\character\\character.png");
-		if (surfCharacter == NULL) {
-			printf("couldn't load character\n");
-			de_init(1);
-		}
-		else printf("character load\n");
+
 		SDL_Texture* textCharacter = SDL_CreateTextureFromSurface(ren, surfCharacter);
 		SDL_FreeSurface(surfCharacter);
 		//Bat
 		SDL_Surface* surfBat = IMG_Load("sprites\\enemy\\bat.png");
-		if (surfBat == NULL) {
-			printf("couldn't load bat\n");
-			de_init(1);
-		}
-		else printf("bat load\n");
 		SDL_Texture* textBat = SDL_CreateTextureFromSurface(ren, surfBat);
 		SDL_FreeSurface(surfBat);
 	#pragma endregion
@@ -410,6 +378,7 @@ int main(int argc, char* argv[]) {
 				switch (ev.key.keysym.scancode) {
 				case SDL_SCANCODE_ESCAPE: menu(); break;
 				case SDL_SCANCODE_TAB: character_leveling(ren); break;
+				case SDL_SCANCODE_I: upgradeItems(ren); break;
 				}
 
 			case SDL_KEYUP:
