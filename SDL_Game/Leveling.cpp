@@ -57,11 +57,11 @@ void character_leveling(SDL_Renderer* ren) {
 	SDL_Rect dstrectArrow;
 	int choicheParameter = 0;
 	SDL_Event ev;
-	SDL_PollEvent(&ev);
 	printf("Select devepmoment option\n");
 	printf("Points %d\n", hero.pointsLevel);
 	printf("1 - Attack\n2 - Health\n3 - Protection\n4 - AbilityAtack\nESC - EXIT\n");
 	while (choicheParameter == 0) {
+		SDL_PollEvent(&ev);
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
 		while (SDL_PollEvent(&ev) != NULL) {
 			switch (ev.type) {
@@ -102,7 +102,7 @@ void character_leveling(SDL_Renderer* ren) {
 			SDL_RenderCopy(ren, textLevelUp, NULL, NULL);
 			SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 			SDL_RenderPresent(ren);
-			SDL_Delay(3);
+			SDL_Delay(7);
 
 		}
 

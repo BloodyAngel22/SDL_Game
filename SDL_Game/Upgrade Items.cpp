@@ -285,7 +285,7 @@ void upgradeNecklace() {
 	if (upgrade == 0) return;
 }
 
-int main() {
-	system("chcp 1251");
-	upgradeItems();
-}
+//int main() {
+//	system("chcp 1251");
+//	upgradeItems();
+//}
