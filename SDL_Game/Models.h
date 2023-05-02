@@ -24,3 +24,8 @@ struct upgradeLVL {
 	int LVL1 = 100, LVL2 = 200, LVL3 = 300, LVL4 = 400, LVL5 = 500;
 };
 extern upgradeLVL itemUpgrade;
+
+struct genEnemy {
+	int atk, health, gold, level;
+};
+extern genEnemy enemy1, enemy2, enemy3, enemy4;

@@ -3,6 +3,7 @@
 #include "Models.h"
 #include "Leveling.h"
 #include "Ability.h"
+#include "Battle.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #define BATTLE 1
@@ -12,7 +13,8 @@
 #define FIREBOLT 1
 #define LIGHTING 2
 #define POISON 3
-	
+
+int amountEnemy;
 int ratio;
 warrior hero;
 Enemy opponent;
@@ -220,7 +222,7 @@ void Battle() {
 }
 
 void StartBattle() {
-	printf("Fast attack\n");
+	/*printf("Fast attack\n");
 	ratio = hero.AtSpeed / opponent.AtSpeed;
 	if (hero.AtSpeed > opponent.AtSpeed) {
 		if (ratio >= 2)
@@ -240,7 +242,7 @@ void StartBattle() {
 			hero.Health -= opponent.Attack * ratio;
 		else if (ratio == 1)
 			hero.Health -= opponent.Attack;
-	}
+	}*/
 
 }
 
@@ -257,6 +259,119 @@ int escape() {
 	return rand() % 100;
 }
 
-//int main() {
-//	MenuBattle();
-//}
+int randomAmountEnemy() {
+	return rand() % (4 - 2) + 2;
+}
+
+void generateEnemy() {
+	enemy1.atk = opponent.Attack; enemy1.health = opponent.Health; enemy1.gold = opponent.Gold, enemy1.level = opponent.level;
+	enemy2.atk = opponent.Attack; enemy2.health = opponent.Health; enemy2.gold = opponent.Gold, enemy2.level = opponent.level;
+	enemy3.atk = opponent.Attack; enemy3.health = opponent.Health; enemy3.gold = opponent.Gold, enemy3.level = opponent.level;
+	enemy4.atk = opponent.Attack; enemy4.health = opponent.Health; enemy4.gold = opponent.Gold, enemy4.level = opponent.level;
+
+}
+
+void Battler() {
+	generateEnemy();
+	amountEnemy = randomAmountEnemy();
+	int livedEnemies = amountEnemy;
+	if (amountEnemy == 2 and livedEnemies >= 1 and hero.Health > 0) {
+		int hitEnemy = 0;
+		if (hitEnemy == 1) {
+			enemy1.health = enemy1.health - hero.Attack;
+			if (enemy1.health <= 0) {
+				livedEnemies -= 1;
+				hero.Gold += enemy1.gold;
+				hero.level += enemy1.level;
+			}
+		}
+		if (hitEnemy == 2) {
+			enemy2.health = enemy2.health - hero.Attack;
+			if (enemy2.health <= 0) {
+				livedEnemies -= 1;
+				hero.Gold += enemy2.gold;
+				hero.level += enemy2.level;
+			}
+		}
+		hero.Health = hero.Health - enemy1.atk;
+		if (hero.Health <= 0) de_init(1);
+		hero.Health = hero.Health - enemy2.atk;
+		if (hero.Health <= 0) de_init(1);
+	}
+	if (amountEnemy == 3 and livedEnemies >= 1 and hero.Health > 0) {
+		int hitEnemy = 0;
+		if (hitEnemy == 1) {
+			enemy1.health = enemy1.health - hero.Attack;
+			if (enemy1.health <= 0) {
+				livedEnemies -= 1;
+				hero.Gold += enemy1.gold;
+				hero.level += enemy1.level;
+			}
+		}
+		if (hitEnemy == 2) {
+			enemy2.health = enemy2.health - hero.Attack;
+			if (enemy2.health <= 0) {
+				livedEnemies -= 1;
+				hero.Gold += enemy2.gold;
+				hero.level += enemy2.level;
+			}
+		}
+		if (hitEnemy == 3) {
+			enemy3.health = enemy3.health - hero.Attack;
+			if (enemy3.health <= 0) {
+				livedEnemies -= 1;
+				hero.Gold += enemy3.gold;
+				hero.level += enemy3.level;
+			}
+		}
+		hero.Health = hero.Health - enemy1.atk;
+		if (hero.Health <= 0) de_init(1);
+		hero.Health = hero.Health - enemy2.atk;
+		if (hero.Health <= 0) de_init(1);
+		hero.Health = hero.Health - enemy3.atk;
+		if (hero.Health <= 0) de_init(1);
+	}
+	if (amountEnemy == 4 and livedEnemies >= 1 and hero.Health > 0) {
+		int hitEnemy = 0;
+		if (hitEnemy == 1) {
+			enemy1.health = enemy1.health - hero.Attack;
+			if (enemy1.health <= 0) {
+				livedEnemies -= 1;
+				hero.Gold += enemy1.gold;
+				hero.level += enemy1.level;
+			}
+		}
+		if (hitEnemy == 2) {
+			enemy2.health = enemy2.health - hero.Attack;
+			if (enemy2.health <= 0) {
+				livedEnemies -= 1;
+				hero.Gold += enemy2.gold;
+				hero.level += enemy2.level;
+			}
+		}
+		if (hitEnemy == 3) {
+			enemy3.health = enemy3.health - hero.Attack;
+			if (enemy3.health <= 0) {
+				livedEnemies -= 1;
+				hero.Gold += enemy3.gold;
+				hero.level += enemy3.level;
+			}
+		}
+		if (hitEnemy == 4) {
+			enemy4.health = enemy4.health - hero.Attack;
+			if (enemy4.health <= 0) {
+				livedEnemies -= 1;
+				hero.Gold += enemy4.gold;
+				hero.level += enemy4.level;
+			}
+		}
+		hero.Health = hero.Health - enemy1.atk;
+		if (hero.Health <= 0) de_init(1);
+		hero.Health = hero.Health - enemy2.atk;
+		if (hero.Health <= 0) de_init(1);
+		hero.Health = hero.Health - enemy3.atk;
+		if (hero.Health <= 0) de_init(1);
+		hero.Health = hero.Health - enemy4.atk;
+		if (hero.Health <= 0) de_init(1);
+	}
+}
