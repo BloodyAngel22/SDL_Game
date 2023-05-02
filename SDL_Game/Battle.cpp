@@ -35,7 +35,7 @@ void MenuBattle(SDL_Renderer* ren) {
 	StartBattle();
 	while ((hero.Health > 0) and (opponent.Health > 0)) {
 		int choiche = 0;
-		int xArrow = 10, yArrow = 250;
+		int xArrow = 10, yArrow = 310;
 		const Uint8* arrowState = SDL_GetKeyboardState(NULL);
 		SDL_Rect srcrectArrow = { 0, 0, 100, 140 };
 		SDL_Rect dstrectArrow;
@@ -56,25 +56,25 @@ void MenuBattle(SDL_Renderer* ren) {
 					switch (ev.key.keysym.scancode) {
 					case SDL_SCANCODE_UP:
 						if (pointer != 1) {
-							yArrow -= 105;
+							yArrow -= 125;
 							pointer--;
 						}
 						break;
 					case SDL_SCANCODE_W:
 						if (pointer != 1) {
-							yArrow -= 105;
+							yArrow -= 125;
 							pointer--;
 						}
 						break;
 					case SDL_SCANCODE_DOWN:
 						if (pointer != 3) {
-							yArrow += 105;
+							yArrow += 125;
 							pointer++;
 						}
 						break;
 					case SDL_SCANCODE_S:
 						if (pointer != 3) {
-							yArrow += 105;
+							yArrow += 125;
 							pointer++;
 						}
 						break;
@@ -106,7 +106,7 @@ void MenuBattle(SDL_Renderer* ren) {
 				int choiceSpell = 0;
 				printf("1 - Firebolt\n2 - Lightning\n3 - Posion\n");
 				pointer = 1;
-				xArrow = 230, yArrow = 250;
+				xArrow = 310, yArrow = 310;
 				while (choiceSpell == 0) {
 					dstrectArrow = { xArrow, yArrow, 75, 75 };
 					SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
@@ -120,25 +120,25 @@ void MenuBattle(SDL_Renderer* ren) {
 							switch (ev.key.keysym.scancode) {
 							case SDL_SCANCODE_UP:
 								if (pointer != 1) {
-									yArrow -= 105;
+									yArrow -= 125;
 									pointer--;
 								}
 								break;
 							case SDL_SCANCODE_W:
 								if (pointer != 1) {
-									yArrow -= 105;
+									yArrow -= 125;
 									pointer--;
 								}
 								break;
 							case SDL_SCANCODE_DOWN:
 								if (pointer != 3) {
-									yArrow += 105;
+									yArrow += 125;
 									pointer++;
 								}
 								break;
 							case SDL_SCANCODE_S:
 								if (pointer != 3) {
-									yArrow += 105;
+									yArrow += 125;
 									pointer++;
 								}
 								break;

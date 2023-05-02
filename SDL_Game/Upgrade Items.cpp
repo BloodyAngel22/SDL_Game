@@ -20,7 +20,7 @@ void upgradeItems(SDL_Renderer* ren) {
 	SDL_FreeSurface(surfArrow);
 #pragma endregion
 	int choiche = 0;
-	int xArrow = 40, yArrow = 245;
+	int xArrow = 50, yArrow = 290;
 	int pointer = 1;
 	const Uint8* arrowState = SDL_GetKeyboardState(NULL);
 	SDL_Rect srcrectArrow = { 0, 0, 100, 140 };
@@ -43,25 +43,25 @@ void upgradeItems(SDL_Renderer* ren) {
 				switch (ev.key.keysym.scancode) {
 				case SDL_SCANCODE_LEFT:
 					if (pointer != 1) {
-						xArrow -= 300;
+						xArrow -= 380;
 						pointer--;
 					}
 					break;
 				case SDL_SCANCODE_A:
 					if (pointer != 1) {
-						xArrow -= 300;
+						xArrow -= 380;
 						pointer--;
 					}
 					break;
 				case SDL_SCANCODE_RIGHT:
 					if (pointer != 3) {
-						xArrow += 300;
+						xArrow += 380;
 						pointer++;
 					}
 					break;
 				case SDL_SCANCODE_D:
 					if (pointer != 3) {
-						xArrow += 300;
+						xArrow += 380;
 						pointer++;
 					}
 					break;
@@ -102,7 +102,7 @@ void upgradeWeapon(SDL_Renderer* ren) {
 	SDL_FreeSurface(surfArrow);
 #pragma endregion
 	int upgrade = 1;
-	int xArrow = 40, yArrow = 245;
+	int xArrow = 40, yArrow = 350;
 	int pointer = 1;
 	const Uint8* arrowState = SDL_GetKeyboardState(NULL);
 	SDL_Rect srcrectArrow = { 0, 0, 100, 140 };
@@ -112,27 +112,27 @@ void upgradeWeapon(SDL_Renderer* ren) {
 	dstrectArrow = { xArrow, yArrow, 75, 75 };
 #pragma region Arrow
 		if (levelWeapon == 0) {
-			xArrow = 10, yArrow = 200;
+			xArrow = 10, yArrow = 240;
 			dstrectArrow = { xArrow, yArrow, 75, 75 };
 		}
 		if (levelWeapon == 1) {
-			xArrow = 230, yArrow = 200;
+			xArrow = 290, yArrow = 240;
 			dstrectArrow = { xArrow, yArrow, 75, 75 };
 		}
 		if (levelWeapon == 2) {
-			xArrow = 450, yArrow = 200;
+			xArrow = 570, yArrow = 240;
 			dstrectArrow = { xArrow, yArrow, 75, 75 };
 		}
 		if (levelWeapon == 3) {
-			xArrow = 670, yArrow = 200;
+			xArrow = 850, yArrow = 240;
 			dstrectArrow = { xArrow, yArrow, 75, 75 };
 		}
 		if (levelWeapon == 4) {
-			xArrow = 320, yArrow = 340;
+			xArrow = 440, yArrow = 405;
 			dstrectArrow = { xArrow, yArrow, 75, 75 };
 		}
 		if (levelWeapon == 5) {
-			xArrow = 320, yArrow = 340;
+			xArrow = 440, yArrow = 405;
 			dstrectArrow = { xArrow, yArrow, 75, 75 };
 		}
 #pragma endregion
@@ -244,27 +244,27 @@ void upgradeArmor(SDL_Renderer* ren) {
 	dstrectArrow = { xArrow, yArrow, 75, 75 };
 #pragma region Arrow
 	if (levelArmor == 0) {
-		xArrow = 10, yArrow = 200;
+		xArrow = 10, yArrow = 240;
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
 	}
 	if (levelArmor == 1) {
-		xArrow = 230, yArrow = 200;
+		xArrow = 290, yArrow = 240;
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
 	}
 	if (levelArmor == 2) {
-		xArrow = 450, yArrow = 200;
+		xArrow = 570, yArrow = 240;
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
 	}
 	if (levelArmor == 3) {
-		xArrow = 670, yArrow = 200;
+		xArrow = 850, yArrow = 240;
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
 	}
 	if (levelArmor == 4) {
-		xArrow = 320, yArrow = 340;
+		xArrow = 440, yArrow = 405;
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
 	}
 	if (levelArmor == 5) {
-		xArrow = 320, yArrow = 340;
+		xArrow = 440, yArrow = 405;
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
 	}
 #pragma endregion
@@ -379,27 +379,27 @@ void upgradeNecklace(SDL_Renderer* ren) {
 	dstrectArrow = { xArrow, yArrow, 75, 75 };
 #pragma region Arrow
 	if (levelNecklace == 0) {
-		xArrow = 10, yArrow = 200;
+		xArrow = 10, yArrow = 240;
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
 	}
 	if (levelNecklace == 1) {
-		xArrow = 230, yArrow = 200;
+		xArrow = 290, yArrow = 240;
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
 	}
 	if (levelNecklace == 2) {
-		xArrow = 450, yArrow = 200;
+		xArrow = 570, yArrow = 240;
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
 	}
 	if (levelNecklace == 3) {
-		xArrow = 670, yArrow = 200;
+		xArrow = 850, yArrow = 240;
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
 	}
 	if (levelNecklace == 4) {
-		xArrow = 320, yArrow = 340;
+		xArrow = 440, yArrow = 405;
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
 	}
 	if (levelNecklace == 5) {
-		xArrow = 320, yArrow = 340;
+		xArrow = 440, yArrow = 405;
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
 	}
 #pragma endregion

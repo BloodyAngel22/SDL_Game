@@ -42,7 +42,7 @@ void character_leveling(SDL_Renderer* ren) {
 	SDL_Texture* textArrow = SDL_CreateTextureFromSurface(ren, surfArrow);
 	SDL_FreeSurface(surfArrow);
 #pragma endregion
-	int xArrow = 280, yArrow = 142;
+	int xArrow = 370, yArrow = 175;
 	int pointer = 1;
 	const Uint8* arrowState = SDL_GetKeyboardState(NULL);
 	SDL_Rect srcrectArrow = { 0, 0, 100, 140 };
@@ -70,25 +70,25 @@ void character_leveling(SDL_Renderer* ren) {
 					break;
 				case SDL_SCANCODE_UP:
 					if (pointer != 1) {
-						yArrow -= 95;
+						yArrow -= 112;
 						pointer--;
 					}
 					break;
 				case SDL_SCANCODE_W:
 					if (pointer != 1) {
-						yArrow -= 95;
+						yArrow -= 112;
 						pointer--;
 					}
 					break;
 				case SDL_SCANCODE_DOWN:
 					if (pointer != 5) {
-						yArrow += 95;
+						yArrow += 112;
 						pointer++;
 					}
 					break;
 				case SDL_SCANCODE_S:
 					if (pointer != 5) {
-						yArrow += 95;
+						yArrow += 112;
 						pointer++;
 					}
 					break;

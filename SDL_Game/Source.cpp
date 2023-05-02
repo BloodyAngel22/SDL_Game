@@ -17,7 +17,7 @@
 
 void init(); void de_init(int error);
 
-float win_width = 1000, win_height = 600;
+float win_width = 1280, win_height = 720;
 SDL_Window* win = 0;
 SDL_Renderer* ren = 0;
 
@@ -38,7 +38,7 @@ void init() {
 	if (res & IMG_INIT_JPG) printf("jpg init\n"); else printf("couldn't init jpg\n");
 
 	win = SDL_CreateWindow("Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		win_width, win_height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+		win_width, win_height, SDL_WINDOW_SHOWN  /*SDL_WINDOW_FULLSCREEN*/);
 	if (win == NULL) {
 		printf("window couldn't init %s", SDL_GetError());
 		system("pause");
@@ -167,7 +167,7 @@ void main_menu() {
 	SDL_Event ev;
 	SDL_PollEvent(&ev);
 
-	int xArrow = 250, yArrow = 135;
+	int xArrow = 320, yArrow = 160;
 	int pointer = 1;
 	const Uint8* arrowState = SDL_GetKeyboardState(NULL);
 	SDL_Rect srcrectArrow = { 0, 0, 100, 140 };
@@ -190,25 +190,25 @@ void main_menu() {
 					break;
 				case SDL_SCANCODE_UP:
 					if (pointer != 1) {
-						yArrow -= 87;
+						yArrow -= 110;
 						pointer--;
 					}
 					break;
 				case SDL_SCANCODE_W:
 					if (pointer != 1) {
-						yArrow -= 87;
+						yArrow -= 110;
 						pointer--;
 					}
 					break;
 				case SDL_SCANCODE_DOWN:
 					if (pointer != 4) {
-						yArrow += 87;
+						yArrow += 110;
 						pointer++;
 					}
 						break;
 				case SDL_SCANCODE_S:
 					if (pointer != 4) {
-						yArrow += 87;
+						yArrow += 110;
 						pointer++;
 						break;
 					}
@@ -252,7 +252,7 @@ void menu() {
 	int menu = 0;
 	SDL_Event ev;
 	SDL_PollEvent(&ev);
-	int xArrow = 300, yArrow = 140;
+	int xArrow = 370, yArrow = 180;
 	int pointer = 1;
 	const Uint8* arrowState = SDL_GetKeyboardState(NULL);
 	SDL_Rect srcrectArrow = { 0, 0, 100, 140 };
@@ -274,25 +274,25 @@ void menu() {
 					break;
 				case SDL_SCANCODE_UP:
 					if (pointer != 1) {
-						yArrow -= 125;
+						yArrow -= 145;
 						pointer--;
 					}
 					break;
 				case SDL_SCANCODE_W:
 					if (pointer != 1) {
-						yArrow -= 125;
+						yArrow -= 145;
 						pointer--;
 					}
 					break;
 				case SDL_SCANCODE_DOWN:
 					if (pointer != 3) {
-						yArrow += 125;
+						yArrow += 145;
 						pointer++;
 					}
 					break;
 				case SDL_SCANCODE_S:
 					if (pointer != 3) {
-						yArrow += 125;
+						yArrow += 145;
 						pointer++;
 						break;
 					}
@@ -347,7 +347,7 @@ int main(int argc, char* argv[]) {
 
 	#pragma region Texture
 		//room
-		SDL_Surface* surfRoom = IMG_Load("sprites\\background\\mainMap.png");
+		SDL_Surface* surfRoom = IMG_Load("sprites\\background\\part1.png");
 		SDL_Texture* textRoom = SDL_CreateTextureFromSurface(ren, surfRoom);
 		SDL_FreeSurface(surfRoom);
 		// character 
