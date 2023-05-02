@@ -108,7 +108,7 @@ void battle(float& EnemyX, float& EnemyY, bool& switcher) {
 	switcher = true;
 	while (switcher == true) {
 		MenuBattle(ren);
-		if (opponent.Health <= 0) {
+		if (livedEnemies < 1) {
 			EnemyX = -300; EnemyY = -300;
 			switcher = false;
 		}
@@ -436,8 +436,8 @@ int main(int argc, char* argv[]) {
 			startRespawn = 0;
 			winner = false;
 			recovery_character();
-			recovery_enemy();
 			printf("Respawned\n");
+			flag = 0;
 		}
 
 		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
