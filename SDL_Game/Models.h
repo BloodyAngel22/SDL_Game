@@ -27,5 +27,6 @@ extern upgradeLVL itemUpgrade;
 
 struct genEnemy {
 	int atk, health, gold, level;
+	bool isPoison;
 };
 extern genEnemy enemy1, enemy2, enemy3, enemy4;
