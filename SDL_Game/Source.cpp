@@ -383,14 +383,14 @@ void choiceClass() {
 
 		}
 		if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) {
-			hero.Attack = warrior.Attack, hero.Health = warrior.Health, hero.Defense = warrior.Defense, hero.Gold = warrior.Gold;
+			hero.Attack = warrior.Attack, hero.Health = warrior.Health, hero.Defense = warrior.Defense, hero.Gold = warrior.Gold, hero.Mana = warrior.Mana;
 			hero.maxAttack = warrior.maxAttack, hero.maxHealth = warrior.maxHealth, hero.maxMana = warrior.maxMana;
 			SDL_DestroyTexture(textArrow);
 			SDL_DestroyTexture(textClass);
 			return;
 		}
 		if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN]) {
-			hero.Attack = mage.Attack, hero.Health = mage.Health, hero.Defense = mage.Defense, hero.Gold = mage.Gold;
+			hero.Attack = mage.Attack, hero.Health = mage.Health, hero.Defense = mage.Defense, hero.Gold = mage.Gold, hero.Mana = mage.Mana;
 			hero.maxAttack = mage.maxAttack, hero.maxHealth = mage.maxHealth, hero.maxMana = mage.maxMana;
 			SDL_DestroyTexture(textArrow);
 			SDL_DestroyTexture(textClass);

@@ -3,7 +3,7 @@
 struct Character {
 	/*ITEMS*/ int weapon /*damage*/ = 10; int armorHealth = 20, armorDefense = 5; int necklace /*mana*/ = 20;
 
-	int Health, Attack, Defense = 5, Mana = 100, 
+	int Health, Attack, Defense, Mana, 
 		Gold, level = 1,
 		maxLevel = 100, levelUp = 100, experience = 0, pointsLevel = 0, pointsTree = 0,
 		maxAttack = Attack, maxHealth = Health, maxMana = Mana;
