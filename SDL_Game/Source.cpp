@@ -320,6 +320,85 @@ void menu() {
 	}
 }
 
+void choiceClass() {
+#pragma region Texture
+	//Main menu
+	SDL_Surface* surfClass = IMG_Load("sprites\\menu\\class.png");
+	SDL_Texture* textClass = SDL_CreateTextureFromSurface(ren, surfClass);
+	SDL_FreeSurface(surfClass);
+	//Arrow
+	SDL_Surface* surfArrow = IMG_Load("sprites\\menu\\arrow.png");
+	SDL_Texture* textArrow = SDL_CreateTextureFromSurface(ren, surfArrow);
+	SDL_FreeSurface(surfArrow);
+#pragma endregion
+	int choice = 0;
+	SDL_Event ev;
+	SDL_PollEvent(&ev);
+	int xArrow = 185, yArrow = 250;
+	int pointer = 1;
+	const Uint8* arrowState = SDL_GetKeyboardState(NULL);
+	SDL_Rect srcrectArrow = { 0, 0, 100, 140 };
+	SDL_Rect dstrectArrow;
+	while (choice == 0) {
+		dstrectArrow = { xArrow, yArrow, 75, 75 };
+		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+		SDL_RenderClear(ren);
+		SDL_RenderCopy(ren, textClass, NULL, NULL);
+		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
+		SDL_RenderPresent(ren);
+		SDL_Delay(8);
+		while (SDL_PollEvent(&ev) != NULL) {
+			switch (ev.type) {
+			case SDL_KEYDOWN:
+				switch (ev.key.keysym.scancode) {
+				case SDL_SCANCODE_ESCAPE:
+					de_init(1);
+					break;
+				case SDL_SCANCODE_LEFT:
+					if (pointer != 1) {
+						xArrow -= 500;
+						pointer--;
+					}
+					break;
+				case SDL_SCANCODE_A:
+					if (pointer != 1) {
+						xArrow -= 500;
+						pointer--;
+					}
+					break;
+				case SDL_SCANCODE_RIGHT:
+					if (pointer != 2) {
+						xArrow += 500;
+						pointer++;
+					}
+					break;
+				case SDL_SCANCODE_D:
+					if (pointer != 2) {
+						xArrow += 500;
+						pointer++;
+						break;
+					}
+				}
+			}
+
+		}
+		if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+			hero.Attack = warrior.Attack, hero.Health = warrior.Health, hero.Defense = warrior.Defense, hero.Gold = warrior.Gold;
+			hero.maxAttack = warrior.maxAttack, hero.maxHealth = warrior.maxHealth, hero.maxMana = warrior.maxMana;
+			SDL_DestroyTexture(textArrow);
+			SDL_DestroyTexture(textClass);
+			return;
+		}
+		if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN]) {
+			hero.Attack = mage.Attack, hero.Health = mage.Health, hero.Defense = mage.Defense, hero.Gold = mage.Gold;
+			hero.maxAttack = mage.maxAttack, hero.maxHealth = mage.maxHealth, hero.maxMana = mage.maxMana;
+			SDL_DestroyTexture(textArrow);
+			SDL_DestroyTexture(textClass);
+			return;
+		}
+	}
+}
+
 int main(int argc, char* argv[]) {
 	init();
 	srand(time(NULL));
@@ -362,6 +441,8 @@ int main(int argc, char* argv[]) {
 	#pragma endregion
 
 		main_menu();
+		SDL_Delay(300);
+		choiceClass();
 	while (isRunning) {
 		r = { Xcoordinate, Ycoordinate, Xsize, Ysize };
 		enemy = { EnemyX, EnemyY, XsizeEnemy, YsizeEnemy };

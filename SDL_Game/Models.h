@@ -1,16 +1,38 @@
 #pragma once
 
-struct warrior {
+struct Character {
 	/*ITEMS*/ int weapon /*damage*/ = 10; int armorHealth = 20, armorDefense = 5; int necklace /*mana*/ = 20;
 
-	int Health = 500 + armorHealth, Attack = 20 + weapon, Defense = 5 + armorDefense, Mana = 100 + necklace, 
-		Gold = 1000, level = 1,
+	int Health, Attack, Defense = 5, Mana = 100, 
+		Gold, level = 1,
 		maxLevel = 100, levelUp = 100, experience = 0, pointsLevel = 0, pointsTree = 0,
 		maxAttack = Attack, maxHealth = Health, maxMana = Mana;
 	float AtSpeed = 1.0;
 	int coordinationCharacterX, coordinationCharacterY;
 };
-extern warrior hero;
+extern Character hero;
+
+struct ClassWarrior {
+	/*ITEMS*/ int weapon /*damage*/ = 10; int armorHealth = 20, armorDefense = 5; int necklace /*mana*/ = 20;
+	int Health = 500 + armorHealth, Attack = 20 + weapon, Defense = 5 + armorDefense, Mana = 100 + necklace,
+		Gold = 500, level = 1,
+		maxLevel = 100, levelUp = 100, experience = 0, pointsLevel = 0, pointsTree = 0,
+		maxAttack = Attack, maxHealth = Health, maxMana = Mana;
+	float AtSpeed = 1.0;
+	int coordinationCharacterX, coordinationCharacterY;
+};
+extern ClassWarrior warrior;
+
+struct ClassMage {
+	/*ITEMS*/ int weapon /*damage*/ = 10; int armorHealth = 20, armorDefense = 5; int necklace /*mana*/ = 20;
+	int Health = 250 + armorHealth, Attack = 50 + weapon, Defense = 2 + armorDefense, Mana = 200 + necklace,
+		Gold = 800, level = 1,
+		maxLevel = 100, levelUp = 100, experience = 0, pointsLevel = 0, pointsTree = 0,
+		maxAttack = Attack, maxHealth = Health, maxMana = Mana;
+	float AtSpeed = 1.0;
+	int coordinationCharacterX, coordinationCharacterY;
+};
+extern ClassMage mage;
 
 struct Enemy {
 	int Health = 100, Attack = 20, Gold = 50, level = 1, experienceEnemy = 150,

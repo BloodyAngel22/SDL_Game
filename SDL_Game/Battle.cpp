@@ -23,8 +23,10 @@ extern int choiceEnemy = 0;
 int amountEnemy;
 int livedEnemies = 1;
 int ratio;
-warrior hero;
+Character hero;
 Enemy opponent;
+ClassMage mage;
+ClassWarrior warrior;
 genEnemy enemy1, enemy2, enemy3, enemy4;
 SDL_Rect srcrectDeadEnemy = { 0, 0, 100, 140 };
 SDL_Rect srcrectBat = { 0, 0, 100, 140 };
@@ -685,12 +687,11 @@ void Battler(SDL_Renderer* ren) {
 					dstrectDeadEnemy1 = { xDeadEnemy1, yDeadEnemy1, 75, 75 };
 					SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy1);
 				}
-				if (enemy2.health <= 0) {
+				else if (enemy2.health <= 0) {
 					dstrectDeadEnemy2 = { xDeadEnemy2, yDeadEnemy2, 75, 75 };
 					SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy2);
 				}
 				SDL_RenderPresent(ren);
-
 
 				while (SDL_PollEvent(&ev) != NULL) {
 					switch (ev.type) {
@@ -723,6 +724,7 @@ void Battler(SDL_Renderer* ren) {
 						}
 
 					}
+
 				}
 
 				if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) hitEnemy = 1;
@@ -773,12 +775,12 @@ void Battler(SDL_Renderer* ren) {
 					SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy1);
 					
 				}
-				if (enemy2.health <= 0) {
+				else if (enemy2.health <= 0) {
 					dstrectDeadEnemy2 = { xDeadEnemy2, yDeadEnemy2, 75, 75 };
 					SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy2);
 					
 				}
-				if (enemy3.health <= 0) {
+				else if (enemy3.health <= 0) {
 					dstrectDeadEnemy3 = { xDeadEnemy3, yDeadEnemy3, 75, 75 };
 					SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy3);
 					
@@ -868,20 +870,6 @@ void Battler(SDL_Renderer* ren) {
 	flag = 1;
 }
 
-void Fireball1() {
-	abilityDamageFireball;
-	if (hero.Mana >= 15) {
-		hero.Mana -= 15;
-		if (choiceEnemy == 1)
-			enemy1.health -= abilityDamageFireball;
-		else if (choiceEnemy == 2)
-			enemy2.health -= abilityDamageFireball;
-		else if (choiceEnemy == 3)
-			enemy3.health -= abilityDamageFireball;
-	}
-	else printf("not enough mana\n");
-}
-
 void Fireball() {
 	abilityDamageFireball;
 	if (hero.Mana >= 15) {
@@ -899,13 +887,12 @@ void Fireball() {
 void Lightning() {
 	abilityDamageLighting;
 	if (hero.Mana >= 25 and lightingEffect == false) {
-		lightingEffect = true;
 		hero.Mana -= 25;
 		if (choiceEnemy == 1)
 			enemy1.health -= abilityDamageLighting;
-		if (choiceEnemy == 2)
+		else if (choiceEnemy == 2)
 			enemy2.health -= abilityDamageLighting;
-		if (choiceEnemy == 3)
+		else if (choiceEnemy == 3)
 			enemy3.health -= abilityDamageLighting;
 	}
 }
@@ -916,9 +903,9 @@ void Poison() {
 		hero.Mana -= 18;
 		if (choiceEnemy == 1)
 			enemy1.isPoison = true;
-		if (choiceEnemy == 2)
+		else if (choiceEnemy == 2)
 			enemy2.isPoison = true;
-		if (choiceEnemy == 3)
+		else if (choiceEnemy == 3)
 			enemy3.isPoison = true;
 	}
 	else if (hero.Mana < 18) printf("not enough mana\n");
@@ -934,11 +921,11 @@ void Poison() {
 		enemy1.health -= abilityDamagePosion;
 		abilityDamagePosion--;
 	}
-	if (enemy2.isPoison == true) {
+	else if (enemy2.isPoison == true) {
 		enemy2.health -= abilityDamagePosion;
 		abilityDamagePosion--;
 	}
-	if (enemy3.isPoison == true) {
+	else if (enemy3.isPoison == true) {
 		enemy3.health -= abilityDamagePosion;
 		abilityDamagePosion--;
 	}
