@@ -32,13 +32,13 @@ SDL_Rect srcrectDeadEnemy = { 0, 0, 100, 140 };
 SDL_Rect srcrectBat = { 0, 0, 100, 140 };
 SDL_Rect dstrectDeadEnemy1; SDL_Rect dstrectDeadEnemy2; SDL_Rect dstrectDeadEnemy3; SDL_Rect dstrectDeadEnemy4;
 SDL_Rect dstrectBat; SDL_Rect dstrectBat2; SDL_Rect dstrectBat3; SDL_Rect dstrectBat4;
-int xEnemy1 = 600, yEnemy1 = 100;
+int xEnemy1 = 500, yEnemy1 = 100;
 int xEnemy2 = 700, yEnemy2 = 100;
-int xEnemy3 = 800, yEnemy3 = 100;
+int xEnemy3 = 900, yEnemy3 = 100;
 int xEnemy4 = 900, yEnemy4 = 100;
-int xDeadEnemy1 = 600, yDeadEnemy1 = 100;
+int xDeadEnemy1 = 500, yDeadEnemy1 = 100;
 int xDeadEnemy2 = 700, yDeadEnemy2 = 100;
-int xDeadEnemy3 = 700, yDeadEnemy3 = 100;
+int xDeadEnemy3 = 900, yDeadEnemy3 = 100;
 int xDeadEnemy4 = 700, yDeadEnemy4 = 100;
 int flag = 0;
 
@@ -71,25 +71,25 @@ void MenuBattle(SDL_Renderer* ren) {
 		amountEnemy = randomAmountEnemy();
 		livedEnemies = amountEnemy;
 	}
+	if (livedEnemies < 1) {
+		SDL_DestroyTexture(textBat);
+		SDL_DestroyTexture(textArrow);
+		SDL_DestroyTexture(textBattle);
+		SDL_DestroyTexture(textdeadEenemy);
+		flag = 1;
+		return;
+	}
 		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
 		SDL_RenderClear(ren);
 		SDL_RenderCopy(ren, textBattle, NULL, NULL);
 	while ((hero.Health > 0) and (livedEnemies >= 1)) {
-		if (livedEnemies < 1) {
-			SDL_DestroyTexture(textBat);
-			SDL_DestroyTexture(textArrow);
-			SDL_DestroyTexture(textBattle);
-			SDL_DestroyTexture(textdeadEenemy);
-			flag = 1;
-			return;
-		}
 		int choiche = 0;
 		int xArrow = 10, yArrow = 310;
 		const Uint8* arrowState = SDL_GetKeyboardState(NULL);
 		SDL_Rect srcrectArrow = { 0, 0, 100, 140 };
 		SDL_Rect dstrectArrow;
 		int pointer = 1;
-		printf("Health %d, Attack %d, Mana %d\n", hero.Health, hero.Attack, hero.Mana);
+		printf("Health %d, Attack %d, Mana %d, Defense %.2f\n", hero.Health, hero.Attack, hero.Mana, hero.Defense);
 		printf("1 - Battle\n2 - Ability\n3 - Escape\n");
 		while (choiche == 0) {
 			dstrectArrow = { xArrow, yArrow, 75, 75 };
@@ -260,7 +260,7 @@ void MenuBattle(SDL_Renderer* ren) {
 				}
 				SDL_Delay(300);
 				choiceEnemy = 0;
-				xArrow = 550, yArrow = 100;
+				xArrow = 450, yArrow = 100;
 				pointer = 1;
 				if (amountEnemy == 2) {
 					while (choiceEnemy == 0) {
@@ -291,25 +291,25 @@ void MenuBattle(SDL_Renderer* ren) {
 								switch (ev.key.keysym.scancode) {
 								case SDL_SCANCODE_LEFT:
 									if (pointer != 1) {
-										xArrow -= 125;
+										xArrow -= 200;
 										pointer--;
 									}
 									break;
 								case SDL_SCANCODE_A:
 									if (pointer != 1) {
-										xArrow -= 125;
+										xArrow -= 200;
 										pointer--;
 									}
 									break;
 								case SDL_SCANCODE_RIGHT:
 									if (pointer != 2) {
-										xArrow += 125;
+										xArrow += 200;
 										pointer++;
 									}
 									break;
 								case SDL_SCANCODE_D:
 									if (pointer != 2) {
-										xArrow += 125;
+										xArrow += 200;
 										pointer++;
 									}
 									break;
@@ -325,7 +325,7 @@ void MenuBattle(SDL_Renderer* ren) {
 						if (choiceSpell == FIREBOLT) {
 							Fireball();
 							if (enemy1.health > 0) 
-								hero.Health = hero.Health - (enemy1.atk - (enemy1.atk / hero.Defense));
+								hero.Health = hero.Health - (enemy1.atk - (enemy1.atk * hero.Defense));
 							else {
 								enemy1.atk = 0;
 								livedEnemies--;
@@ -334,7 +334,7 @@ void MenuBattle(SDL_Renderer* ren) {
 						else if (choiceSpell == LIGHTING) {
 							Lightning();
 							if (enemy1.health > 0)
-								hero.Health = hero.Health - (enemy1.atk - (enemy1.atk / hero.Defense));
+								hero.Health = hero.Health - (enemy1.atk - (enemy1.atk * hero.Defense));
 							else {
 								enemy1.atk = 0;
 								livedEnemies--;
@@ -343,7 +343,7 @@ void MenuBattle(SDL_Renderer* ren) {
 						else if (choiceSpell == POISON) {
 							Poison();
 							if (enemy1.health > 0)
-								hero.Health = hero.Health - (enemy1.atk - (enemy1.atk / hero.Defense));
+								hero.Health = hero.Health - (enemy1.atk - (enemy1.atk * hero.Defense));
 							else {
 								enemy1.atk = 0;
 								livedEnemies--;
@@ -355,7 +355,7 @@ void MenuBattle(SDL_Renderer* ren) {
 						if (choiceSpell == FIREBOLT) {
 							Fireball();
 							if (enemy2.health > 0)
-								hero.Health = hero.Health - (enemy2.atk - (enemy2.atk / hero.Defense));
+								hero.Health = hero.Health - (enemy2.atk - (enemy2.atk * hero.Defense));
 							else {
 								enemy2.atk = 0;
 								livedEnemies--;
@@ -364,7 +364,7 @@ void MenuBattle(SDL_Renderer* ren) {
 						if (choiceSpell == LIGHTING) {
 							Lightning();
 							if (enemy2.health > 0)
-								hero.Health = hero.Health - (enemy2.atk - (enemy2.atk / hero.Defense));
+								hero.Health = hero.Health - (enemy2.atk - (enemy2.atk * hero.Defense));
 							else {
 								enemy2.atk = 0;
 								livedEnemies--;
@@ -373,7 +373,7 @@ void MenuBattle(SDL_Renderer* ren) {
 						if (choiceSpell == POISON) {
 							Poison();
 							if (enemy2.health > 0)
-								hero.Health = hero.Health - (enemy2.atk - (enemy2.atk / hero.Defense));
+								hero.Health = hero.Health - (enemy2.atk - (enemy2.atk * hero.Defense));
 							else {
 								enemy2.atk = 0;
 								livedEnemies--;
@@ -416,25 +416,25 @@ void MenuBattle(SDL_Renderer* ren) {
 								switch (ev.key.keysym.scancode) {
 								case SDL_SCANCODE_LEFT:
 									if (pointer != 1) {
-										xArrow -= 125;
+										xArrow -= 200;
 										pointer--;
 									}
 									break;
 								case SDL_SCANCODE_A:
 									if (pointer != 1) {
-										xArrow -= 125;
+										xArrow -= 200;
 										pointer--;
 									}
 									break;
 								case SDL_SCANCODE_RIGHT:
 									if (pointer != 3) {
-										xArrow += 125;
+										xArrow += 200;
 										pointer++;
 									}
 									break;
 								case SDL_SCANCODE_D:
 									if (pointer != 3) {
-										xArrow += 125;
+										xArrow += 200;
 										pointer++;
 									}
 									break;
@@ -451,7 +451,7 @@ void MenuBattle(SDL_Renderer* ren) {
 						if (choiceSpell == FIREBOLT) {
 							Fireball();
 							if (enemy1.health > 0)
-								hero.Health = hero.Health - (enemy1.atk - (enemy1.atk / hero.Defense));
+								hero.Health = hero.Health - (enemy1.atk - (enemy1.atk * hero.Defense));
 							else {
 								enemy1.atk = 0;
 								livedEnemies--;
@@ -460,7 +460,7 @@ void MenuBattle(SDL_Renderer* ren) {
 						if (choiceSpell == LIGHTING) {
 							Lightning();
 							if (enemy1.health > 0)
-								hero.Health = hero.Health - (enemy1.atk - (enemy1.atk / hero.Defense));
+								hero.Health = hero.Health - (enemy1.atk - (enemy1.atk * hero.Defense));
 							else {
 								enemy1.atk = 0;
 								livedEnemies--;
@@ -469,7 +469,7 @@ void MenuBattle(SDL_Renderer* ren) {
 						if (choiceSpell == POISON) {
 							Poison();
 							if (enemy1.health > 0)
-								hero.Health = hero.Health - (enemy1.atk - (enemy1.atk / hero.Defense));
+								hero.Health = hero.Health - (enemy1.atk - (enemy1.atk * hero.Defense));
 							else {
 								enemy1.atk = 0;
 								livedEnemies--;
@@ -481,7 +481,7 @@ void MenuBattle(SDL_Renderer* ren) {
 						if (choiceSpell == FIREBOLT) {
 							Fireball();
 							if (enemy2.health > 0)
-								hero.Health = hero.Health - (enemy2.atk - (enemy2.atk / hero.Defense));
+								hero.Health = hero.Health - (enemy2.atk - (enemy2.atk * hero.Defense));
 							else {
 								enemy1.atk = 0;
 								livedEnemies--;
@@ -490,7 +490,7 @@ void MenuBattle(SDL_Renderer* ren) {
 						if (choiceSpell == LIGHTING) {
 							Lightning();
 							if (enemy2.health > 0)
-								hero.Health = hero.Health - (enemy2.atk - (enemy2.atk / hero.Defense));
+								hero.Health = hero.Health - (enemy2.atk - (enemy2.atk * hero.Defense));
 							else {
 								enemy1.atk = 0;
 								livedEnemies--;
@@ -499,7 +499,7 @@ void MenuBattle(SDL_Renderer* ren) {
 						if (choiceSpell == POISON) {
 							Poison();
 							if (enemy2.health > 0)
-								hero.Health = hero.Health - (enemy2.atk - (enemy2.atk / hero.Defense));
+								hero.Health = hero.Health - (enemy2.atk - (enemy2.atk * hero.Defense));
 							else {
 								enemy1.atk = 0;
 								livedEnemies--;
@@ -511,7 +511,7 @@ void MenuBattle(SDL_Renderer* ren) {
 						if (choiceSpell == FIREBOLT) {
 							Fireball();
 							if (enemy3.health > 0)
-								hero.Health = hero.Health - (enemy3.atk - (enemy3.atk / hero.Defense));
+								hero.Health = hero.Health - (enemy3.atk - (enemy3.atk * hero.Defense));
 
 							else {
 								enemy1.atk = 0;
@@ -521,7 +521,7 @@ void MenuBattle(SDL_Renderer* ren) {
 						if (choiceSpell == LIGHTING) {
 							Lightning();
 							if (enemy3.health > 0)
-								hero.Health = hero.Health - (enemy3.atk - (enemy3.atk / hero.Defense));
+								hero.Health = hero.Health - (enemy3.atk - (enemy3.atk * hero.Defense));
 							else {
 								enemy1.atk = 0;
 								livedEnemies--;
@@ -530,7 +530,7 @@ void MenuBattle(SDL_Renderer* ren) {
 						if (choiceSpell == POISON) {
 							Poison();
 							if (enemy3.health > 0)
-								hero.Health = hero.Health - (enemy3.atk - (enemy3.atk / hero.Defense));
+								hero.Health = hero.Health - (enemy3.atk - (enemy3.atk * hero.Defense));
 							else {
 								enemy1.atk = 0;
 								livedEnemies--;
@@ -572,19 +572,23 @@ void MenuBattle(SDL_Renderer* ren) {
 	SDL_DestroyTexture(textArrow);
 	SDL_DestroyTexture(textBattle);
 	SDL_DestroyTexture(textBat);
+	if (livedEnemies < 1) {
+		hero.experience += (enemy1.level * amountEnemy);
+		recovery_character();
+		if (hero.experience >= hero.levelUp)
+			level_up();
+	}
 }
 
 void Battle() {
 	if (hero.Health > 0)
 		opponent.Health -= hero.Attack;
-	if (opponent.Health <= 0) {
+	if (livedEnemies < 1) {
 		printf("%d\n", opponent.Health);
-		hero.experience += opponent.experienceEnemy;
+		hero.experience += enemy1.level * amountEnemy;
 		if (hero.experience >= hero.levelUp)
 			level_up();
 	}
-	if (opponent.Health > 0)
-		hero.Health -= opponent.Attack;
 	if (hero.Health <= 0)
 		exit(1);
 }
@@ -628,10 +632,10 @@ int randomAmountEnemy() {
 }
 
 void generateEnemy() {
-	enemy1.atk = opponent.Attack; enemy1.health = opponent.Health; enemy1.gold = opponent.Gold, enemy1.level = opponent.level, enemy1.isPoison = 0;
-	enemy2.atk = opponent.Attack; enemy2.health = opponent.Health; enemy2.gold = opponent.Gold, enemy2.level = opponent.level, enemy2.isPoison = 0;
-	enemy3.atk = opponent.Attack; enemy3.health = opponent.Health; enemy3.gold = opponent.Gold, enemy3.level = opponent.level, enemy3.isPoison = 0;
-	enemy4.atk = opponent.Attack; enemy4.health = opponent.Health; enemy4.gold = opponent.Gold, enemy4.level = opponent.level, enemy4.isPoison = 0;
+	enemy1.atk = opponent.Attack; enemy1.health = opponent.Health; enemy1.gold = opponent.Gold, enemy1.level = opponent.experienceEnemy, enemy1.isPoison = 0;
+	enemy2.atk = opponent.Attack; enemy2.health = opponent.Health; enemy2.gold = opponent.Gold, enemy2.level = opponent.experienceEnemy, enemy2.isPoison = 0;
+	enemy3.atk = opponent.Attack; enemy3.health = opponent.Health; enemy3.gold = opponent.Gold, enemy3.level = opponent.experienceEnemy, enemy3.isPoison = 0;
+	enemy4.atk = opponent.Attack; enemy4.health = opponent.Health; enemy4.gold = opponent.Gold, enemy4.level = opponent.experienceEnemy, enemy4.isPoison = 0;
 
 }
 
@@ -656,7 +660,7 @@ void Battler(SDL_Renderer* ren) {
 #pragma endregion
 	SDL_Event ev;
 	SDL_PollEvent(&ev);
-	int xArrow = 550, yArrow = 100;
+	int xArrow = 450, yArrow = 100;
 	int pointer = 1;
 	const Uint8* arrowState = SDL_GetKeyboardState(NULL);
 	SDL_Rect srcrectArrow = { 0, 0, 100, 140 };
@@ -669,6 +673,9 @@ void Battler(SDL_Renderer* ren) {
 		SDL_DestroyTexture(textArrow);
 		SDL_DestroyTexture(textBattle);
 		SDL_DestroyTexture(textdeadEenemy);
+		hero.experience += enemy1.level * amountEnemy;
+		if (hero.experience >= hero.levelUp)
+			level_up();
 		flag = 1;
 		return;
 	}
@@ -700,25 +707,25 @@ void Battler(SDL_Renderer* ren) {
 						switch (ev.key.keysym.scancode) {
 						case SDL_SCANCODE_LEFT:
 							if (pointer != 1) {
-								xArrow -= 125;
+								xArrow -= 200;
 								pointer--;
 							}
 							break;
 						case SDL_SCANCODE_A:
 							if (pointer != 1) {
-								xArrow -= 125;
+								xArrow -= 200;
 								pointer--;
 							}
 							break;
 						case SDL_SCANCODE_RIGHT:
 							if (pointer != 2) {
-								xArrow += 125;
+								xArrow += 200;
 								pointer++;
 							}
 							break;
 						case SDL_SCANCODE_D:
 							if (pointer != 2) {
-								xArrow += 125;
+								xArrow += 200;
 								pointer++;
 							}
 							break;
@@ -752,9 +759,9 @@ void Battler(SDL_Renderer* ren) {
 					hero.experience += enemy2.level;
 				}
 			}
-			hero.Health = hero.Health - (enemy1.atk - (enemy1.atk / hero.Defense));
+			hero.Health = hero.Health - (enemy1.atk - (enemy1.atk * hero.Defense));
 			if (hero.Health <= 0) de_init(1);
-			hero.Health = hero.Health - (enemy2.atk - (enemy2.atk / hero.Defense));
+			hero.Health = hero.Health - (enemy2.atk - (enemy2.atk * hero.Defense));
 			if (hero.Health <= 0) de_init(1);
 		}
 	if (amountEnemy == 3 and livedEnemies >= 1 and hero.Health > 0) {
@@ -795,25 +802,25 @@ void Battler(SDL_Renderer* ren) {
 						switch (ev.key.keysym.scancode) {
 						case SDL_SCANCODE_LEFT:
 							if (pointer != 1) {
-								xArrow -= 125;
+								xArrow -= 200;
 								pointer--;
 							}
 							break;
 						case SDL_SCANCODE_A:
 							if (pointer != 1) {
-								xArrow -= 125;
+								xArrow -= 200;
 								pointer--;
 							}
 							break;
 						case SDL_SCANCODE_RIGHT:
 							if (pointer != 3) {
-								xArrow += 125;
+								xArrow += 200;
 								pointer++;
 							}
 							break;
 						case SDL_SCANCODE_D:
 							if (pointer != 3) {
-								xArrow += 125;
+								xArrow += 200;
 								pointer++;
 							}
 							break;
@@ -857,11 +864,11 @@ void Battler(SDL_Renderer* ren) {
 					hero.experience += enemy3.level;
 				}
 			}
-			hero.Health = hero.Health - (enemy1.atk - (enemy1.atk / hero.Defense));
+			hero.Health = hero.Health - (enemy1.atk - (enemy1.atk * hero.Defense));
 			if (hero.Health <= 0) de_init(1);
-			hero.Health = hero.Health - (enemy2.atk - (enemy2.atk / hero.Defense));
+			hero.Health = hero.Health - (enemy2.atk - (enemy2.atk * hero.Defense));
 			if (hero.Health <= 0) de_init(1);
-			hero.Health = hero.Health - (enemy3.atk - (enemy3.atk / hero.Defense));
+			hero.Health = hero.Health - (enemy3.atk - (enemy3.atk * hero.Defense));
 			if (hero.Health <= 0) de_init(1);
 		}
 	SDL_DestroyTexture(textBat);

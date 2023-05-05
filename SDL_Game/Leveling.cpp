@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 
 
 void level_up() {
@@ -41,8 +42,16 @@ void character_leveling(SDL_Renderer* ren) {
 	SDL_Surface* surfArrow = IMG_Load("sprites\\menu\\arrow.png");
 	SDL_Texture* textArrow = SDL_CreateTextureFromSurface(ren, surfArrow);
 	SDL_FreeSurface(surfArrow);
+	//
+	TTF_Font* heroPointTTF = TTF_OpenFont("fonts\\BAUHS93.TTF", 75);
+	char heroPoints[100] = "Points";
+	SDL_Surface* surftHeroPointTTF = TTF_RenderText_Blended(heroPointTTF, heroPoints, {255, 255, 255, 255});
+	SDL_Texture* textHeroPointTTF = SDL_CreateTextureFromSurface(ren, surftHeroPointTTF);
+	SDL_Rect size = {0, 0, surftHeroPointTTF->w, surftHeroPointTTF->h};
 #pragma endregion
 	int xArrow = 370, yArrow = 175;
+	int xPoint = 1100, yPoint = 20;
+	SDL_Rect pointsTTF = { xPoint, yPoint, 55, 60 };
 	int pointer = 1;
 	const Uint8* arrowState = SDL_GetKeyboardState(NULL);
 	SDL_Rect srcrectArrow = { 0, 0, 100, 140 };
@@ -54,12 +63,19 @@ void character_leveling(SDL_Renderer* ren) {
 		SDL_PollEvent(&ev);
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
 
+		sprintf_s(heroPoints, "%d", hero.pointsLevel);
+		surftHeroPointTTF = TTF_RenderText_Blended(heroPointTTF, heroPoints, { 255, 255, 255, 255 });
+		size = { 0, 0, surftHeroPointTTF->w, surftHeroPointTTF->h };
+		textHeroPointTTF = SDL_CreateTextureFromSurface(ren, surftHeroPointTTF);
+
 		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
 		SDL_RenderClear(ren);
 		SDL_RenderCopy(ren, textLevelUp, NULL, NULL);
+		SDL_RenderCopy(ren, textHeroPointTTF, &size, &pointsTTF);
 		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 		SDL_RenderPresent(ren);
 		SDL_Delay(7);
+		SDL_FreeSurface(surftHeroPointTTF);
 
 		while (SDL_PollEvent(&ev) != NULL) {
 			switch (ev.type) {
@@ -103,10 +119,13 @@ void character_leveling(SDL_Renderer* ren) {
 		if (pointer == 4 and arrowState[SDL_SCANCODE_RETURN]) choicheParameter = ABILITYATTACK;
 		if (pointer == 5 and arrowState[SDL_SCANCODE_RETURN]) choicheParameter = EXIT;
 
+		SDL_DestroyTexture(textHeroPointTTF);
 	}
 
 	SDL_DestroyTexture(textLevelUp);
 	SDL_DestroyTexture(textArrow);
+	TTF_CloseFont(heroPointTTF);
+	SDL_DestroyTexture(textHeroPointTTF);
 
 	if (choicheParameter == EXIT) {
 		system("cls");
@@ -116,39 +135,62 @@ void character_leveling(SDL_Renderer* ren) {
 		system("cls");
 		printf("You don't have points\n");
 	}
+
+
+	int xAtk = 700, yAtk = 165;
+	TTF_Font* heroAtk = TTF_OpenFont("fonts\\BAUHS93.TTF", 75);
+	char strheroAtk[100] = "Atk";
+	SDL_Surface* surftHeroAtk = TTF_RenderText_Blended(heroAtk, strheroAtk, { 255, 255, 255, 255 });
+	SDL_Texture* textHeroAtk = SDL_CreateTextureFromSurface(ren, surftHeroAtk);
+	SDL_Rect statsTTF = { xAtk, yAtk, 280, 105 };
+
 	if (choicheParameter == ATTACK and hero.pointsLevel != 0) {
-		hero.Attack = hero.Attack * 1.4;
-		hero.maxAttack = hero.Attack * 1.4;
+		hero.Attack = hero.Attack * 1.1;
+		hero.maxAttack = hero.Attack * 1.1;
 		system("cls");
 		printf("Attack %d\n", hero.Attack);
+		sprintf_s(strheroAtk, "Attack %d", hero.Attack);
+		surftHeroAtk = TTF_RenderText_Blended(heroAtk, strheroAtk, { 255, 255, 255, 255 });
+		size = { 0, 0, surftHeroAtk->w, surftHeroAtk->h };
+		textHeroAtk = SDL_CreateTextureFromSurface(ren, surftHeroAtk);
+		SDL_RenderCopy(ren, textHeroAtk, &size, &statsTTF);
+		SDL_RenderPresent(ren);
+		SDL_Delay(450);
 		hero.pointsLevel--;
 	}
 	if (choicheParameter == HEALTH and hero.pointsLevel != 0) {
 		hero.Health = hero.Health * 1.15;
 		hero.maxHealth = hero.Health * 1.15;
 		system("cls");
-		printf("Health %d\n", hero.Health);
+		printf("Health %d\n", hero.maxHealth);
 		hero.pointsLevel--;
 	}
 	if (choicheParameter == PROTECTION and hero.pointsLevel != 0) {
-		hero.Defense = hero.Defense * 2;
+		if (hero.Defense >= 0.85) {
+			printf("Defense max\n");
+			return;
+		}
+		hero.Defense = hero.Defense + 0.05;
 		system("cls");
-		printf("Defense %d\n", hero.Defense);
+		printf("Defense %.2f\n", hero.Defense);
 		hero.pointsLevel--;
 	}
 	if (choicheParameter == ABILITYATTACK and hero.pointsLevel != 0) {
-		hero.Mana = hero.Mana * 1.3;
+		hero.Mana = hero.Mana * 1.2;
 		hero.maxMana = hero.Mana * 1.3;
 		abilityDamageFireball *= 1.3;
-		abilityDamageLighting *= 1.2;
-		abilityDamagePosion *= 1.2;
+		abilityDamageLighting *= 1.15;
+		abilityDamagePosion *= 1.15;
 		system("cls");
-		printf("Mana %d\n", hero.Mana);
+		printf("Mana %d\n", hero.maxMana);
 		printf("abilityDamageFireball %d\n", abilityDamageFireball);
 		printf("abilityDamageLighting %d\n", abilityDamageLighting);
 		printf("abilityDamagePosion %d\n", abilityDamagePosion);
 		hero.pointsLevel--;
 	}
+	SDL_DestroyTexture(textHeroAtk);
+	TTF_CloseFont(heroAtk);
+	SDL_FreeSurface(surftHeroAtk);
 }
 
 void skill_tree() {

@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -37,6 +38,11 @@ void init() {
 	if (res & IMG_INIT_PNG) printf("png init\n"); else printf("couldn't init png\n");
 	if (res & IMG_INIT_JPG) printf("jpg init\n"); else printf("couldn't init jpg\n");
 
+	if (TTF_Init()) {
+		printf("Couldn't init img");
+		de_init(1);
+	}
+
 	win = SDL_CreateWindow("Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 		win_width, win_height, SDL_WINDOW_SHOWN  /*SDL_WINDOW_FULLSCREEN*/);
 	if (win == NULL) {
@@ -58,6 +64,7 @@ void init() {
 void de_init(int error) {
 	if (ren != 0) SDL_DestroyRenderer(ren);
 	if (win != 0) SDL_DestroyWindow(win);
+	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
 	exit(error);
@@ -392,8 +399,10 @@ void choiceClass() {
 		if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN]) {
 			hero.Attack = mage.Attack, hero.Health = mage.Health, hero.Defense = mage.Defense, hero.Gold = mage.Gold, hero.Mana = mage.Mana;
 			hero.maxAttack = mage.maxAttack, hero.maxHealth = mage.maxHealth, hero.maxMana = mage.maxMana;
+			hero.pointsLevel = mage.pointsLevel;
 			SDL_DestroyTexture(textArrow);
 			SDL_DestroyTexture(textClass);
+			printf("defense %.2f\n", hero.Defense);
 			return;
 		}
 	}
