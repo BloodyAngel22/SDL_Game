@@ -16,7 +16,7 @@
 
 
 
-int abilityDamageLighting = 48, abilityDamageFireball = 30, abilityDamagePosion = 6;
+int abilityDamageLighting = 48, abilityDamageFireball = 30, abilityDamagePoison = 6;
 extern bool posionEffect = false;
 extern bool lightingEffect = false;
 extern int choiceEnemy = 0;
@@ -906,7 +906,7 @@ void Lightning() {
 }
 
 void Poison() {
-	abilityDamagePosion;
+	abilityDamagePoison;
 	if (hero.Mana >= 18 and posionEffect == false) {
 		hero.Mana -= 18;
 		if (choiceEnemy == 1)
@@ -926,18 +926,18 @@ void Poison() {
 		enemy3.isPoison = false;
 
 	if (enemy1.isPoison == true) {
-		enemy1.health -= abilityDamagePosion;
-		abilityDamagePosion--;
+		enemy1.health -= abilityDamagePoison;
+		abilityDamagePoison--;
 	}
 	else if (enemy2.isPoison == true) {
-		enemy2.health -= abilityDamagePosion;
-		abilityDamagePosion--;
+		enemy2.health -= abilityDamagePoison;
+		abilityDamagePoison--;
 	}
 	else if (enemy3.isPoison == true) {
-		enemy3.health -= abilityDamagePosion;
-		abilityDamagePosion--;
+		enemy3.health -= abilityDamagePoison;
+		abilityDamagePoison--;
 	}
 
-	if (abilityDamagePosion == 0)
+	if (abilityDamagePoison == 0)
 		enemy1.isPoison, enemy2.isPoison, enemy3.isPoison = false;
 }
