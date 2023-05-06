@@ -6,10 +6,11 @@
 #include "Battle.h"
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #define BATTLE 1
 #define ABILITY 2
 #define ESCAPE 3
-#define ChanceEscape 40
+#define ChanceEscape 65
 #define FIREBOLT 1
 #define LIGHTING 2
 #define POISON 3
@@ -62,7 +63,17 @@ void MenuBattle(SDL_Renderer* ren) {
 		SDL_Surface* surfBat = IMG_Load("sprites\\enemy\\bat.png");
 		SDL_Texture* textBat = SDL_CreateTextureFromSurface(ren, surfBat);
 		SDL_FreeSurface(surfBat);
-	#pragma endregion
+		//
+		TTF_Font* enemyTTF = TTF_OpenFont("fonts\\BAUHS93.TTF", 75);
+		char enemyHealth[100] = "Points";
+		SDL_Surface* surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+		SDL_Texture* textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+		SDL_Rect size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+		int xPoint = 500, yPoint = 50;
+		SDL_Rect pointsTTF = { xPoint, yPoint, 55, 60 };
+		SDL_FreeSurface(surfEnemyHealthTTF);
+
+		#pragma endregion
 	SDL_Event ev;
 	SDL_PollEvent(&ev);
 	StartBattle();
@@ -82,6 +93,7 @@ void MenuBattle(SDL_Renderer* ren) {
 		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
 		SDL_RenderClear(ren);
 		SDL_RenderCopy(ren, textBattle, NULL, NULL);
+
 	while ((hero.Health > 0) and (livedEnemies >= 1)) {
 		int choiche = 0;
 		int xArrow = 10, yArrow = 310;
@@ -110,19 +122,17 @@ void MenuBattle(SDL_Renderer* ren) {
 			if (enemy1.health <= 0) {
 				dstrectDeadEnemy1 = { xDeadEnemy1, yDeadEnemy1, 75, 75 };
 				SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy1);
-				SDL_RenderPresent(ren);
 			}
 			if (enemy2.health <= 0) {
 				dstrectDeadEnemy2 = { xDeadEnemy2, yDeadEnemy2, 75, 75 };
 				SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy2);
-				SDL_RenderPresent(ren);
 			}
 			if (enemy3.health <= 0) {
 				dstrectDeadEnemy3 = { xDeadEnemy3, yDeadEnemy3, 75, 75 };
 				SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy3);
-				SDL_RenderPresent(ren);
 			}
 			
+
 			SDL_RenderPresent(ren);
 			while (SDL_PollEvent(&ev) != NULL) {
 				switch (ev.type) {
@@ -153,18 +163,81 @@ void MenuBattle(SDL_Renderer* ren) {
 						}
 						break;
 					}
-
 				}
+
 				SDL_RenderClear(ren);
 				SDL_RenderCopy(ren, textBattle, NULL, NULL);
+				if (amountEnemy == 2) {
+					if (enemy1.health <= 0) enemy1.health = 0;
+					if (enemy2.health <= 0) enemy2.health = 0;
+					xPoint = 500, yPoint = 50;
+					pointsTTF = { xPoint, yPoint, 55, 60 };
+					sprintf_s(enemyHealth, "%d", enemy1.health);
+					surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+					size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+					textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+					SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+					SDL_FreeSurface(surfEnemyHealthTTF);
+					SDL_DestroyTexture(textEnemyHealthTTF);
+
+					xPoint = 700, yPoint = 50;
+					pointsTTF = { xPoint, yPoint, 55, 60 };
+					sprintf_s(enemyHealth, "%d", enemy2.health);
+					surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+					size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+					textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+					SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+					SDL_FreeSurface(surfEnemyHealthTTF);
+					SDL_DestroyTexture(textEnemyHealthTTF);
+
+
+				}
+				if (amountEnemy == 3) {
+					if (enemy1.health <= 0) enemy1.health = 0;
+					if (enemy2.health <= 0) enemy2.health = 0;
+					if (enemy3.health <= 0) enemy3.health = 0;
+					xPoint = 500, yPoint = 50;
+					pointsTTF = { xPoint, yPoint, 55, 60 };
+					sprintf_s(enemyHealth, "%d", enemy1.health);
+					surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+					size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+					textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+					SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+					SDL_FreeSurface(surfEnemyHealthTTF);
+					SDL_DestroyTexture(textEnemyHealthTTF);
+
+
+					xPoint = 700, yPoint = 50;
+					pointsTTF = { xPoint, yPoint, 55, 60 };
+					sprintf_s(enemyHealth, "%d", enemy2.health);
+					surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+					size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+					textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+					SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+					SDL_FreeSurface(surfEnemyHealthTTF);
+					SDL_DestroyTexture(textEnemyHealthTTF);
+
+
+					xPoint = 900, yPoint = 50;
+					pointsTTF = { xPoint, yPoint, 55, 60 };
+					sprintf_s(enemyHealth, "%d", enemy3.health);
+					surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+					size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+					textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+					SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+					SDL_FreeSurface(surfEnemyHealthTTF);
+					SDL_DestroyTexture(textEnemyHealthTTF);
+
+				}
+
 				SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 				SDL_RenderPresent(ren);
+				SDL_DestroyTexture(textEnemyHealthTTF);
 			}
 
 			if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) choiche = BATTLE;
 			if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN]) choiche = ABILITY;
 			if (pointer == 3 and arrowState[SDL_SCANCODE_RETURN]) choiche = ESCAPE;
-
 		}
 			if (choiche == BATTLE) {
 				SDL_Delay(250);
@@ -203,18 +276,16 @@ void MenuBattle(SDL_Renderer* ren) {
 					if (enemy1.health <= 0) {
 						dstrectDeadEnemy1 = { xDeadEnemy1, yDeadEnemy1, 75, 75 };
 						SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy1);
-						SDL_RenderPresent(ren);
 					}
 					if (enemy2.health <= 0) {
 						dstrectDeadEnemy2 = { xDeadEnemy2, yDeadEnemy2, 75, 75 };
 						SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy2);
-						SDL_RenderPresent(ren);
 					}
 					if (enemy3.health <= 0) {
 						dstrectDeadEnemy3 = { xDeadEnemy3, yDeadEnemy3, 75, 75 };
 						SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy3);
-						SDL_RenderPresent(ren);
 					}
+						SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 					SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 					SDL_RenderPresent(ren);
 					while (SDL_PollEvent(&ev) != NULL) {
@@ -248,10 +319,6 @@ void MenuBattle(SDL_Renderer* ren) {
 							}
 						}
 
-						SDL_RenderClear(ren);
-						SDL_RenderCopy(ren, textBattle, NULL, NULL);
-						SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
-						SDL_RenderPresent(ren);
 					}
 					if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) choiceSpell = FIREBOLT;
 					if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN]) choiceSpell = LIGHTING;
@@ -269,6 +336,30 @@ void MenuBattle(SDL_Renderer* ren) {
 						SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
 						SDL_RenderClear(ren);
 						SDL_RenderCopy(ren, textBattle, NULL, NULL);
+						if (amountEnemy == 2) {
+							if (enemy1.health <= 0) enemy1.health = 0;
+							if (enemy2.health <= 0) enemy2.health = 0;
+							xPoint = 500, yPoint = 50;
+							pointsTTF = { xPoint, yPoint, 55, 60 };
+							sprintf_s(enemyHealth, "%d", enemy1.health);
+							surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+							size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+							textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+							SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+							SDL_FreeSurface(surfEnemyHealthTTF);
+							SDL_DestroyTexture(textEnemyHealthTTF);
+
+							xPoint = 700, yPoint = 50;
+							pointsTTF = { xPoint, yPoint, 55, 60 };
+							sprintf_s(enemyHealth, "%d", enemy2.health);
+							surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+							size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+							textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+							SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+							SDL_FreeSurface(surfEnemyHealthTTF);
+							SDL_DestroyTexture(textEnemyHealthTTF);
+
+						}
 						dstrectBat = { xEnemy1, yEnemy1, 75, 75 };
 						dstrectBat2 = { xEnemy2, yEnemy2, 75, 75 };
 						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
@@ -276,12 +367,12 @@ void MenuBattle(SDL_Renderer* ren) {
 						if (enemy1.health <= 0) {
 							dstrectDeadEnemy1 = { xDeadEnemy1, yDeadEnemy1, 75, 75 };
 							SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy1);
-							SDL_RenderPresent(ren);
+							
 						}
 						if (enemy2.health <= 0) {
 							dstrectDeadEnemy2 = { xDeadEnemy2, yDeadEnemy2, 75, 75 };
 							SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy2);
-							SDL_RenderPresent(ren);
+							
 						}
 						SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 						SDL_RenderPresent(ren);
@@ -381,13 +472,51 @@ void MenuBattle(SDL_Renderer* ren) {
 						}
 					}
 				}
-				else if (amountEnemy == 3) {
+				if (amountEnemy == 3) {
 					while (choiceEnemy == 0) {
 						SDL_Delay(150);
 						dstrectArrow = { xArrow, yArrow, 75, 75 };
 						SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
 						SDL_RenderClear(ren);
 						SDL_RenderCopy(ren, textBattle, NULL, NULL);
+						if (amountEnemy == 3) {
+							if (enemy1.health <= 0) enemy1.health = 0;
+							if (enemy2.health <= 0) enemy2.health = 0;
+							if (enemy3.health <= 0) enemy3.health = 0;
+							xPoint = 500, yPoint = 50;
+							pointsTTF = { xPoint, yPoint, 55, 60 };
+							sprintf_s(enemyHealth, "%d", enemy1.health);
+							surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+							size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+							textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+							SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+							SDL_FreeSurface(surfEnemyHealthTTF);
+							SDL_DestroyTexture(textEnemyHealthTTF);
+
+
+							xPoint = 700, yPoint = 50;
+							pointsTTF = { xPoint, yPoint, 55, 60 };
+							sprintf_s(enemyHealth, "%d", enemy2.health);
+							surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+							size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+							textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+							SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+							SDL_FreeSurface(surfEnemyHealthTTF);
+							SDL_DestroyTexture(textEnemyHealthTTF);
+
+
+							xPoint = 900, yPoint = 50;
+							pointsTTF = { xPoint, yPoint, 55, 60 };
+							sprintf_s(enemyHealth, "%d", enemy3.health);
+							surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+							size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+							textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+							SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+							SDL_FreeSurface(surfEnemyHealthTTF);
+							SDL_DestroyTexture(textEnemyHealthTTF);
+
+						}
+
 						dstrectBat = { xEnemy1, yEnemy1, 75, 75 };
 						dstrectBat2 = { xEnemy2, yEnemy2, 75, 75 };
 						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
@@ -396,17 +525,17 @@ void MenuBattle(SDL_Renderer* ren) {
 						if (enemy1.health <= 0) {
 							dstrectDeadEnemy1 = { xDeadEnemy1, yDeadEnemy1, 75, 75 };
 							SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy1);
-							SDL_RenderPresent(ren);
+							
 						}
 						if (enemy2.health <= 0) {
 							dstrectDeadEnemy2 = { xDeadEnemy2, yDeadEnemy2, 75, 75 };
 							SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy2);
-							SDL_RenderPresent(ren);
+							
 						}
 						if (enemy3.health <= 0) {
 							dstrectDeadEnemy3 = { xDeadEnemy3, yDeadEnemy3, 75, 75 };
 							SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy3);
-							SDL_RenderPresent(ren);
+							
 						}
 						SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 						SDL_RenderPresent(ren);
@@ -572,6 +701,8 @@ void MenuBattle(SDL_Renderer* ren) {
 	SDL_DestroyTexture(textArrow);
 	SDL_DestroyTexture(textBattle);
 	SDL_DestroyTexture(textBat);
+	SDL_DestroyTexture(textEnemyHealthTTF);
+	TTF_CloseFont(enemyTTF);
 	if (livedEnemies < 1) {
 		hero.experience += (enemy1.level * amountEnemy);
 		recovery_character();
@@ -632,10 +763,14 @@ int randomAmountEnemy() {
 }
 
 void generateEnemy() {
-	enemy1.atk = opponent.Attack; enemy1.health = opponent.Health; enemy1.gold = opponent.Gold, enemy1.level = opponent.experienceEnemy, enemy1.isPoison = 0;
-	enemy2.atk = opponent.Attack; enemy2.health = opponent.Health; enemy2.gold = opponent.Gold, enemy2.level = opponent.experienceEnemy, enemy2.isPoison = 0;
-	enemy3.atk = opponent.Attack; enemy3.health = opponent.Health; enemy3.gold = opponent.Gold, enemy3.level = opponent.experienceEnemy, enemy3.isPoison = 0;
-	enemy4.atk = opponent.Attack; enemy4.health = opponent.Health; enemy4.gold = opponent.Gold, enemy4.level = opponent.experienceEnemy, enemy4.isPoison = 0;
+	enemy1.atk = opponent.Attack; enemy1.health = opponent.Health; enemy1.gold = opponent.Gold,
+		enemy1.level = opponent.experienceEnemy, enemy1.isPoison = 0, enemy1.maxHealth = opponent.Health;
+	enemy2.atk = opponent.Attack; enemy2.health = opponent.Health; enemy2.gold = opponent.Gold,
+		enemy2.level = opponent.experienceEnemy, enemy2.isPoison = 0, enemy2.maxHealth = opponent.Health;
+	enemy3.atk = opponent.Attack; enemy3.health = opponent.Health; enemy3.gold = opponent.Gold,
+		enemy3.level = opponent.experienceEnemy, enemy3.isPoison = 0, enemy3.maxHealth = opponent.Health;
+	enemy4.atk = opponent.Attack; enemy4.health = opponent.Health; enemy4.gold = opponent.Gold,
+		enemy4.level = opponent.experienceEnemy, enemy4.isPoison = 0, enemy4.maxHealth = opponent.Health;
 
 }
 
