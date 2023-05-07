@@ -24,6 +24,7 @@ extern int choiceEnemy = 0;
 int amountEnemy;
 int livedEnemies = 1;
 int ratio;
+bool isEnterPressed = 0, wasEnterPressed = 0, isPressed = 0;
 Character hero;
 Enemy opponent;
 ClassMage mage;
@@ -42,6 +43,18 @@ int xDeadEnemy2 = 700, yDeadEnemy2 = 100;
 int xDeadEnemy3 = 900, yDeadEnemy3 = 100;
 int xDeadEnemy4 = 700, yDeadEnemy4 = 100;
 int flag = 0;
+
+int pressedEnter() {
+	const Uint8* enterState = SDL_GetKeyboardState(NULL);
+	wasEnterPressed = 0;
+	if (!enterState[SDL_SCANCODE_RETURN]) isEnterPressed = 0;
+
+	if (enterState[SDL_SCANCODE_RETURN] and wasEnterPressed == 0 and isEnterPressed == 0) {
+		isEnterPressed = 1;
+		return 1;
+	}
+	else return 0;
+}
 
 void MenuBattle(SDL_Renderer* ren); void StartBattle(); void Battle(); int escape();
 
@@ -164,6 +177,7 @@ void MenuBattle(SDL_Renderer* ren) {
 						break;
 					}
 				}
+				isPressed = pressedEnter();
 
 				SDL_RenderClear(ren);
 				SDL_RenderCopy(ren, textBattle, NULL, NULL);
@@ -233,14 +247,16 @@ void MenuBattle(SDL_Renderer* ren) {
 				SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 				SDL_RenderPresent(ren);
 				SDL_DestroyTexture(textEnemyHealthTTF);
+
 			}
 
-			if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) choiche = BATTLE;
-			if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN]) choiche = ABILITY;
-			if (pointer == 3 and arrowState[SDL_SCANCODE_RETURN]) choiche = ESCAPE;
+			if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed == 1) choiche = BATTLE;
+			if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN] and isPressed == 1) choiche = ABILITY;
+			if (pointer == 3 and arrowState[SDL_SCANCODE_RETURN] and isPressed == 1) choiche = ESCAPE;
+			isPressed = 0;
 		}
 			if (choiche == BATTLE) {
-				SDL_Delay(250);
+				//SDL_Delay(250);
 				system("cls");
 				Battler(ren);
 				/*if (posionEffect == true) Poison();*/
@@ -249,7 +265,7 @@ void MenuBattle(SDL_Renderer* ren) {
 			else if (choiche == ABILITY) {
 				flag = 1;
 				system("cls");
-				SDL_Delay(250);
+				//SDL_Delay(250);
 				int choiceSpell = 0;
 				printf("1 - Firebolt\n2 - Lightning\n3 - Posion\n");
 				pointer = 1;
@@ -285,8 +301,70 @@ void MenuBattle(SDL_Renderer* ren) {
 						dstrectDeadEnemy3 = { xDeadEnemy3, yDeadEnemy3, 75, 75 };
 						SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy3);
 					}
-						SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 					SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
+					if (amountEnemy == 2) {
+						if (enemy1.health <= 0) enemy1.health = 0;
+						if (enemy2.health <= 0) enemy2.health = 0;
+						xPoint = 500, yPoint = 50;
+						pointsTTF = { xPoint, yPoint, 55, 60 };
+						sprintf_s(enemyHealth, "%d", enemy1.health);
+						surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+						size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+						textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+						SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+						SDL_FreeSurface(surfEnemyHealthTTF);
+						SDL_DestroyTexture(textEnemyHealthTTF);
+
+						xPoint = 700, yPoint = 50;
+						pointsTTF = { xPoint, yPoint, 55, 60 };
+						sprintf_s(enemyHealth, "%d", enemy2.health);
+						surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+						size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+						textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+						SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+						SDL_FreeSurface(surfEnemyHealthTTF);
+						SDL_DestroyTexture(textEnemyHealthTTF);
+
+
+					}
+					if (amountEnemy == 3) {
+						if (enemy1.health <= 0) enemy1.health = 0;
+						if (enemy2.health <= 0) enemy2.health = 0;
+						if (enemy3.health <= 0) enemy3.health = 0;
+						xPoint = 500, yPoint = 50;
+						pointsTTF = { xPoint, yPoint, 55, 60 };
+						sprintf_s(enemyHealth, "%d", enemy1.health);
+						surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+						size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+						textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+						SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+						SDL_FreeSurface(surfEnemyHealthTTF);
+						SDL_DestroyTexture(textEnemyHealthTTF);
+
+
+						xPoint = 700, yPoint = 50;
+						pointsTTF = { xPoint, yPoint, 55, 60 };
+						sprintf_s(enemyHealth, "%d", enemy2.health);
+						surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+						size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+						textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+						SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+						SDL_FreeSurface(surfEnemyHealthTTF);
+						SDL_DestroyTexture(textEnemyHealthTTF);
+
+
+						xPoint = 900, yPoint = 50;
+						pointsTTF = { xPoint, yPoint, 55, 60 };
+						sprintf_s(enemyHealth, "%d", enemy3.health);
+						surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+						size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+						textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+						SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+						SDL_FreeSurface(surfEnemyHealthTTF);
+						SDL_DestroyTexture(textEnemyHealthTTF);
+
+					}
+
 					SDL_RenderPresent(ren);
 					while (SDL_PollEvent(&ev) != NULL) {
 						switch (ev.type) {
@@ -318,14 +396,15 @@ void MenuBattle(SDL_Renderer* ren) {
 								break;
 							}
 						}
+						isPressed = pressedEnter();
 
 					}
-					if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) choiceSpell = FIREBOLT;
-					if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN]) choiceSpell = LIGHTING;
-					if (pointer == 3 and arrowState[SDL_SCANCODE_RETURN]) choiceSpell = POISON;
-
+					if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) choiceSpell = FIREBOLT;
+					if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN] and isPressed) choiceSpell = LIGHTING;
+					if (pointer == 3 and arrowState[SDL_SCANCODE_RETURN] and isPressed) choiceSpell = POISON;
+					isPressed = 0;
 				}
-				SDL_Delay(300);
+				//SDL_Delay(300);
 				choiceEnemy = 0;
 				xArrow = 450, yArrow = 100;
 				pointer = 1;
@@ -374,6 +453,14 @@ void MenuBattle(SDL_Renderer* ren) {
 							SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy2);
 							
 						}
+						if (enemy1.health <= 0) {
+							pointer = 2;
+							xArrow = 650, yArrow = 100;
+						}
+						if (enemy2.health <= 0) {
+							pointer = 1;
+							xArrow = 450, yArrow = 100;
+						}
 						SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 						SDL_RenderPresent(ren);
 						while (SDL_PollEvent(&ev) != NULL) {
@@ -381,25 +468,25 @@ void MenuBattle(SDL_Renderer* ren) {
 							case SDL_KEYDOWN:
 								switch (ev.key.keysym.scancode) {
 								case SDL_SCANCODE_LEFT:
-									if (pointer != 1) {
+									if (pointer != 1 and enemy1.health > 0) {
 										xArrow -= 200;
 										pointer--;
 									}
 									break;
 								case SDL_SCANCODE_A:
-									if (pointer != 1) {
+									if (pointer != 1 and enemy1.health > 0) {
 										xArrow -= 200;
 										pointer--;
 									}
 									break;
 								case SDL_SCANCODE_RIGHT:
-									if (pointer != 2) {
+									if (pointer != 2 and enemy2.health > 0) {
 										xArrow += 200;
 										pointer++;
 									}
 									break;
 								case SDL_SCANCODE_D:
-									if (pointer != 2) {
+									if (pointer != 2 and enemy2.health > 0) {
 										xArrow += 200;
 										pointer++;
 									}
@@ -407,12 +494,15 @@ void MenuBattle(SDL_Renderer* ren) {
 								}
 
 							}
+							isPressed = pressedEnter();
+
 						}
-						if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) choiceEnemy = 1;
-						if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN]) choiceEnemy = 2;
+						if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) choiceEnemy = 1;
+						if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN] and isPressed) choiceEnemy = 2;
+						isPressed = 0;
 					}
 					if (choiceEnemy == 1) {
-						SDL_Delay(150);
+						//SDL_Delay(150);
 						if (choiceSpell == FIREBOLT) {
 							Fireball();
 							if (enemy1.health > 0) 
@@ -442,7 +532,7 @@ void MenuBattle(SDL_Renderer* ren) {
 						}
 					}
 					else if (choiceEnemy == 2) {
-						SDL_Delay(150);
+						//SDL_Delay(150);
 						if (choiceSpell == FIREBOLT) {
 							Fireball();
 							if (enemy2.health > 0)
@@ -473,8 +563,28 @@ void MenuBattle(SDL_Renderer* ren) {
 					}
 				}
 				if (amountEnemy == 3) {
+					if (enemy2.health > 0) {
+						pointer = 2;
+						xArrow = 650, yArrow = 100;
+					}
+					if (enemy2.health <= 0 and enemy3.health > 0) {
+						pointer = 3;
+						xArrow = 850, yArrow = 100;
+					}
+					if (enemy1.health > 0) {
+						pointer = 1;
+						xArrow = 450, yArrow = 100;
+					}
+					if (enemy1.health <= 0 and enemy3.health > 0) {
+						pointer = 3;
+						xArrow = 850, yArrow = 100;
+					}
+					if (enemy1.health <= 0 and enemy2.health > 0) {
+						pointer = 2;
+						xArrow = 650, yArrow = 100;
+					}
 					while (choiceEnemy == 0) {
-						SDL_Delay(150);
+						//SDL_Delay(150);
 						dstrectArrow = { xArrow, yArrow, 75, 75 };
 						SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
 						SDL_RenderClear(ren);
@@ -548,35 +658,108 @@ void MenuBattle(SDL_Renderer* ren) {
 										xArrow -= 200;
 										pointer--;
 									}
+									if (pointer == 1 and enemy1.health <= 0) {
+										xArrow = 650, pointer = 2;
+										if (pointer == 2 and enemy2.health <= 0) {
+											xArrow = 850, pointer = 3;
+										}
+									}
+									if (pointer == 2 and enemy2.health <= 0) {
+										xArrow = 450, pointer = 1;
+										if (pointer == 1 and enemy1.health <= 0) {
+											xArrow = 850, pointer = 3;
+										}
+									}
+									if (pointer == 3 and enemy3.health <= 0) {
+										xArrow = 450, pointer = 1;
+										if (pointer == 1 and enemy1.health <= 0) {
+											xArrow = 650, pointer = 2;
+										}
+									}
 									break;
 								case SDL_SCANCODE_A:
 									if (pointer != 1) {
 										xArrow -= 200;
 										pointer--;
 									}
+									if (pointer == 1 and enemy1.health <= 0) {
+										xArrow = 650, pointer = 2;
+										if (pointer == 2 and enemy2.health <= 0) {
+											xArrow = 850, pointer = 3;
+										}
+									}
+									if (pointer == 2 and enemy2.health <= 0) {
+										xArrow = 450, pointer = 1;
+										if (pointer == 1 and enemy1.health <= 0) {
+											xArrow = 850, pointer = 3;
+										}
+									}
+									if (pointer == 3 and enemy3.health <= 0) {
+										xArrow = 450, pointer = 1;
+										if (pointer == 1 and enemy1.health <= 0) {
+											xArrow = 650, pointer = 2;
+										}
+									}
 									break;
 								case SDL_SCANCODE_RIGHT:
 									if (pointer != 3) {
-										xArrow += 200;
-										pointer++;
+										xArrow += 200, pointer++;
+									}
+									if (pointer == 1 and enemy1.health <= 0) {
+										xArrow = 650, pointer = 2;
+										if (pointer == 2 and enemy2.health <= 0) {
+											xArrow = 850, pointer = 3;
+										}
+									}
+									if (pointer == 2 and enemy2.health <= 0) {
+										xArrow = 850, pointer = 3;
+										if (pointer == 3 and enemy3.health <= 0) {
+											xArrow = 450, pointer = 1;
+										}
+									}
+									if (pointer == 3 and enemy3.health <= 0) {
+										xArrow = 450, pointer = 1;
+										if (pointer == 1 and enemy1.health <= 0) {
+											xArrow = 650, pointer = 2;
+										}
 									}
 									break;
 								case SDL_SCANCODE_D:
 									if (pointer != 3) {
-										xArrow += 200;
-										pointer++;
+										xArrow += 200, pointer++;
+									}
+									if (pointer == 1 and enemy1.health <= 0) {
+										xArrow = 650, pointer = 2;
+										if (pointer == 2 and enemy2.health <= 0) {
+											xArrow = 850, pointer = 3;
+										}
+									}
+									if (pointer == 2 and enemy2.health <= 0) {
+										xArrow = 850, pointer = 3;
+										if (pointer == 3 and enemy3.health <= 0) {
+											xArrow = 450, pointer = 1;
+										}
+									}
+									if (pointer == 3 and enemy3.health <= 0) {
+										xArrow = 450, pointer = 1;
+										if (pointer == 1 and enemy1.health <= 0) {
+											xArrow = 650, pointer = 2;
+										}
 									}
 									break;
 								}
 
 							}
+							isPressed = pressedEnter();
+
 						}
-						if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) choiceEnemy = 1;
-						if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN]) choiceEnemy = 2;
-						if (pointer == 3 and arrowState[SDL_SCANCODE_RETURN]) choiceEnemy = 3;
+						if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) choiceEnemy = 1;
+						if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN] and isPressed) choiceEnemy = 2;
+						if (pointer == 3 and arrowState[SDL_SCANCODE_RETURN] and isPressed) choiceEnemy = 3;
+						isPressed = 0;
 					}
 					if (choiceEnemy == 1) {
-						SDL_Delay(150);
+						//SDL_Delay(150);
 						if (choiceSpell == FIREBOLT) {
 							Fireball();
 							if (enemy1.health > 0)
@@ -606,7 +789,7 @@ void MenuBattle(SDL_Renderer* ren) {
 						}
 					}
 					if (choiceEnemy == 2) {
-						SDL_Delay(150);
+						//SDL_Delay(150);
 						if (choiceSpell == FIREBOLT) {
 							Fireball();
 							if (enemy2.health > 0)
@@ -636,7 +819,7 @@ void MenuBattle(SDL_Renderer* ren) {
 						}
 					}
 					if (choiceEnemy == 3) {
-						SDL_Delay(150);
+						//SDL_Delay(150);
 						if (choiceSpell == FIREBOLT) {
 							Fireball();
 							if (enemy3.health > 0)
@@ -677,7 +860,7 @@ void MenuBattle(SDL_Renderer* ren) {
 				}
 			}
 			else if (choiche == ESCAPE) {
-				SDL_Delay(250);
+				//SDL_Delay(250);
 				int storageEscape = escape();
 				if (ChanceEscape >= storageEscape) {
 					printf("You managed to escape\n");
@@ -792,6 +975,15 @@ void Battler(SDL_Renderer* ren) {
 	SDL_Surface* surfdeadEnemy = IMG_Load("sprites\\enemy\\deadEnemy.png");
 	SDL_Texture* textdeadEenemy = SDL_CreateTextureFromSurface(ren, surfdeadEnemy);
 	SDL_FreeSurface(surfdeadEnemy);
+	//
+	TTF_Font* enemyTTF = TTF_OpenFont("fonts\\BAUHS93.TTF", 75);
+	char enemyHealth[100] = "Points";
+	SDL_Surface* surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+	SDL_Texture* textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+	SDL_Rect size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+	int xPoint = 500, yPoint = 50;
+	SDL_Rect pointsTTF = { xPoint, yPoint, 55, 60 };
+	SDL_FreeSurface(surfEnemyHealthTTF);
 #pragma endregion
 	SDL_Event ev;
 	SDL_PollEvent(&ev);
@@ -825,41 +1017,72 @@ void Battler(SDL_Renderer* ren) {
 				SDL_RenderCopy(ren, textBattle, NULL, NULL);
 				SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
 				SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+				if (amountEnemy == 2) {
+					if (enemy1.health <= 0) enemy1.health = 0;
+					if (enemy2.health <= 0) enemy2.health = 0;
+					xPoint = 500, yPoint = 50;
+					pointsTTF = { xPoint, yPoint, 55, 60 };
+					sprintf_s(enemyHealth, "%d", enemy1.health);
+					surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+					size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+					textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+					SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+					SDL_FreeSurface(surfEnemyHealthTTF);
+					SDL_DestroyTexture(textEnemyHealthTTF);
+
+					xPoint = 700, yPoint = 50;
+					pointsTTF = { xPoint, yPoint, 55, 60 };
+					sprintf_s(enemyHealth, "%d", enemy2.health);
+					surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+					size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+					textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+					SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+					SDL_FreeSurface(surfEnemyHealthTTF);
+					SDL_DestroyTexture(textEnemyHealthTTF);
+
+
+				}
 				SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 				if (enemy1.health <= 0) {
 					dstrectDeadEnemy1 = { xDeadEnemy1, yDeadEnemy1, 75, 75 };
 					SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy1);
+					pointer = 2;
+					xArrow = 650, yArrow = 100;
 				}
 				if (enemy2.health <= 0) {
 					dstrectDeadEnemy2 = { xDeadEnemy2, yDeadEnemy2, 75, 75 };
 					SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy2);
-				}
-				SDL_RenderPresent(ren);
 
+					pointer = 1;
+					xArrow = 450, yArrow = 100;
+				}
+
+				SDL_RenderPresent(ren);
+				SDL_DestroyTexture(textEnemyHealthTTF);
 				while (SDL_PollEvent(&ev) != NULL) {
 					switch (ev.type) {
 					case SDL_KEYDOWN:
 						switch (ev.key.keysym.scancode) {
 						case SDL_SCANCODE_LEFT:
-							if (pointer != 1) {
+							if (pointer != 1 and enemy1.health > 0) {
 								xArrow -= 200;
 								pointer--;
 							}
 							break;
 						case SDL_SCANCODE_A:
-							if (pointer != 1) {
+							if (pointer != 1 and enemy1.health > 0) {
 								xArrow -= 200;
 								pointer--;
 							}
 							break;
 						case SDL_SCANCODE_RIGHT:
-							if (pointer != 2) {
+							if (pointer != 2 and enemy2.health > 0) {
 								xArrow += 200;
 								pointer++;
 							}
 							break;
 						case SDL_SCANCODE_D:
-							if (pointer != 2) {
+							if (pointer != 2 and enemy2.health > 0) {
 								xArrow += 200;
 								pointer++;
 							}
@@ -869,13 +1092,15 @@ void Battler(SDL_Renderer* ren) {
 					}
 
 				}
+				isPressed = pressedEnter();
 
-				if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) hitEnemy = 1;
-				if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN]) hitEnemy = 2;
+				if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed == 1) hitEnemy = 1;
+				if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN] and isPressed == 1) hitEnemy = 2;
 
+				isPressed = 0;
 			}
 			if (hitEnemy == 1 and enemy1.health > 0) {
-				SDL_Delay(200);
+				//SDL_Delay(200);
 				enemy1.health = enemy1.health - hero.Attack;
 				if (enemy1.health <= 0) {
 					enemy1.atk = 0;
@@ -885,7 +1110,7 @@ void Battler(SDL_Renderer* ren) {
 				}
 			}
 			if (hitEnemy == 2 and enemy2.health > 0) {
-				SDL_Delay(200);
+				//SDL_Delay(200);
 				enemy2.health = enemy2.health - hero.Attack;
 				if (enemy2.health <= 0) {
 					enemy2.atk = 0;
@@ -901,6 +1126,29 @@ void Battler(SDL_Renderer* ren) {
 		}
 	if (amountEnemy == 3 and livedEnemies >= 1 and hero.Health > 0) {
 			int hitEnemy = 0;
+			if (enemy2.health > 0) {
+				pointer = 2;
+				xArrow = 650, yArrow = 100;
+			}
+			if (enemy2.health <= 0 and enemy3.health > 0) {
+				pointer = 3;
+				xArrow = 850, yArrow = 100;
+			}
+			if (enemy1.health > 0) {
+				pointer = 1;
+				xArrow = 450, yArrow = 100;
+			}
+			if (enemy1.health <= 0 and enemy3.health > 0) {
+				pointer = 3;
+				xArrow = 850, yArrow = 100;
+			}
+			if (enemy1.health <= 0 and enemy2.health > 0) {
+				pointer = 2;
+				xArrow = 650, yArrow = 100;
+			}
+
+
+
 			while (hitEnemy == 0) {
 				dstrectArrow = { xArrow, yArrow, 75, 75 };
 				dstrectBat = { xEnemy1, yEnemy1, 75, 75 };
@@ -912,6 +1160,43 @@ void Battler(SDL_Renderer* ren) {
 				SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
 				SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
 				SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat3);
+				if (amountEnemy == 3) {
+					if (enemy1.health <= 0) enemy1.health = 0;
+					if (enemy2.health <= 0) enemy2.health = 0;
+					if (enemy3.health <= 0) enemy3.health = 0;
+					xPoint = 500, yPoint = 50;
+					pointsTTF = { xPoint, yPoint, 55, 60 };
+					sprintf_s(enemyHealth, "%d", enemy1.health);
+					surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+					size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+					textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+					SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+					SDL_FreeSurface(surfEnemyHealthTTF);
+					SDL_DestroyTexture(textEnemyHealthTTF);
+
+
+					xPoint = 700, yPoint = 50;
+					pointsTTF = { xPoint, yPoint, 55, 60 };
+					sprintf_s(enemyHealth, "%d", enemy2.health);
+					surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+					size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+					textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+					SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+					SDL_FreeSurface(surfEnemyHealthTTF);
+					SDL_DestroyTexture(textEnemyHealthTTF);
+
+
+					xPoint = 900, yPoint = 50;
+					pointsTTF = { xPoint, yPoint, 55, 60 };
+					sprintf_s(enemyHealth, "%d", enemy3.health);
+					surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
+					size = { 0, 0, surfEnemyHealthTTF->w, surfEnemyHealthTTF->h };
+					textEnemyHealthTTF = SDL_CreateTextureFromSurface(ren, surfEnemyHealthTTF);
+					SDL_RenderCopy(ren, textEnemyHealthTTF, &size, &pointsTTF);
+					SDL_FreeSurface(surfEnemyHealthTTF);
+					SDL_DestroyTexture(textEnemyHealthTTF);
+
+				}
 				SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 				if (enemy1.health <= 0) {
 					dstrectDeadEnemy1 = { xDeadEnemy1, yDeadEnemy1, 75, 75 };
@@ -928,8 +1213,9 @@ void Battler(SDL_Renderer* ren) {
 					SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy3);
 					
 				}
-				SDL_RenderPresent(ren);
 
+				SDL_RenderPresent(ren);
+				SDL_DestroyTexture(textEnemyHealthTTF);
 
 				while (SDL_PollEvent(&ev) != NULL) {
 					switch (ev.type) {
@@ -940,37 +1226,109 @@ void Battler(SDL_Renderer* ren) {
 								xArrow -= 200;
 								pointer--;
 							}
+							if (pointer == 1 and enemy1.health <= 0) {
+								xArrow = 650, pointer = 2;
+								if (pointer == 2 and enemy2.health <= 0) {
+									xArrow = 850, pointer = 3;
+								}
+							}
+							if (pointer == 2 and enemy2.health <= 0) {
+								xArrow = 450, pointer = 1;
+								if (pointer == 1 and enemy1.health <= 0) {
+									xArrow = 850, pointer = 3;
+								}
+							}
+							if (pointer == 3 and enemy3.health <= 0) {
+								xArrow = 450, pointer = 1;
+								if (pointer == 1 and enemy1.health <= 0) {
+									xArrow = 650, pointer = 2;
+								}
+							}
 							break;
 						case SDL_SCANCODE_A:
 							if (pointer != 1) {
 								xArrow -= 200;
 								pointer--;
 							}
+							if (pointer == 1 and enemy1.health <= 0) {
+								xArrow = 650, pointer = 2;
+								if (pointer == 2 and enemy2.health <= 0) {
+									xArrow = 850, pointer = 3;
+								}
+							}
+							if (pointer == 2 and enemy2.health <= 0) {
+								xArrow = 450, pointer = 1;
+								if (pointer == 1 and enemy1.health <= 0) {
+									xArrow = 850, pointer = 3;
+								}
+							}
+							if (pointer == 3 and enemy3.health <= 0) {
+								xArrow = 450, pointer = 1;
+								if (pointer == 1 and enemy1.health <= 0) {
+									xArrow = 650, pointer = 2;
+								}
+							}
 							break;
 						case SDL_SCANCODE_RIGHT:
 							if (pointer != 3) {
-								xArrow += 200;
-								pointer++;
+								xArrow += 200, pointer++;
+							}
+							if (pointer == 1 and enemy1.health <= 0) {
+								xArrow = 650, pointer = 2;
+								if (pointer == 2 and enemy2.health <= 0) {
+									xArrow = 850, pointer = 3;
+								}
+							}
+							if (pointer == 2 and enemy2.health <= 0) {
+								xArrow = 850, pointer = 3;
+								if (pointer == 3 and enemy3.health <= 0) {
+									xArrow = 450, pointer = 1;
+								}
+							}
+							if (pointer == 3 and enemy3.health <= 0) {
+								xArrow = 450, pointer = 1;
+								if (pointer == 1 and enemy1.health <= 0) {
+									xArrow = 650, pointer = 2;
+								}
 							}
 							break;
 						case SDL_SCANCODE_D:
 							if (pointer != 3) {
-								xArrow += 200;
-								pointer++;
+								xArrow += 200, pointer++;
+							}
+							if (pointer == 1 and enemy1.health <= 0) {
+								xArrow = 650, pointer = 2;
+								if (pointer == 2 and enemy2.health <= 0) {
+									xArrow = 850, pointer = 3;
+								}
+							}
+							if (pointer == 2 and enemy2.health <= 0) {
+								xArrow = 850, pointer = 3;
+								if (pointer == 3 and enemy3.health <= 0) {
+									xArrow = 450, pointer = 1;
+								}
+							}
+							if (pointer == 3 and enemy3.health <= 0) {
+								xArrow = 650, pointer = 2;
+								if (pointer == 2 and enemy2.health <= 0) {
+									xArrow = 450, pointer = 1;
+								}
 							}
 							break;
 						}
 
 					}
 				}
+				isPressed = pressedEnter();
 
-				if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) hitEnemy = 1;
-				if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN]) hitEnemy = 2;
-				if (pointer == 3 and arrowState[SDL_SCANCODE_RETURN]) hitEnemy = 3;
+				if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed == 1) hitEnemy = 1;
+				if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN] and isPressed == 1) hitEnemy = 2;
+				if (pointer == 3 and arrowState[SDL_SCANCODE_RETURN] and isPressed == 1) hitEnemy = 3;
 
+				isPressed = 0;
 			}
 			if (hitEnemy == 1 and enemy1.health > 0) {
-				SDL_Delay(200);
+				//SDL_Delay(200);
 				enemy1.health = enemy1.health - hero.Attack;
 				if (enemy1.health <= 0) {
 					enemy1.atk = 0;
@@ -980,7 +1338,7 @@ void Battler(SDL_Renderer* ren) {
 				}
 			}
 			if (hitEnemy == 2 and enemy2.health > 0) {
-				SDL_Delay(200);
+				//SDL_Delay(200);
 				enemy2.health = enemy2.health - hero.Attack;
 				if (enemy2.health <= 0) {
 					enemy2.atk = 0;
@@ -990,7 +1348,7 @@ void Battler(SDL_Renderer* ren) {
 				}
 			}
 			if (hitEnemy == 3 and enemy3.health > 0) {
-				SDL_Delay(200);
+				//SDL_Delay(200);
 				enemy3.health = enemy3.health - hero.Attack;
 				if (enemy3.health <= 0) {
 					enemy3.atk = 0;
@@ -1010,6 +1368,8 @@ void Battler(SDL_Renderer* ren) {
 	SDL_DestroyTexture(textArrow);
 	SDL_DestroyTexture(textBattle);
 	SDL_DestroyTexture(textdeadEenemy);
+	SDL_DestroyTexture(textEnemyHealthTTF);
+	TTF_CloseFont(enemyTTF);
 	flag = 1;
 }
 
