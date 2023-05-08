@@ -1,4 +1,5 @@
 #include "Models.h"
+#include "Battle.h"
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
@@ -35,7 +36,7 @@ void upgradeItems(SDL_Renderer* ren) {
 		SDL_RenderCopy(ren, textchoiceItem, NULL, NULL);
 		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 		SDL_RenderPresent(ren);
-		SDL_Delay(7);
+		
 
 		while (SDL_PollEvent(&ev) != NULL) {
 			switch (ev.type) {
@@ -66,18 +67,21 @@ void upgradeItems(SDL_Renderer* ren) {
 					}
 					break;
 				case SDL_SCANCODE_ESCAPE:
+					SDL_DestroyTexture(textchoiceItem);
+					SDL_DestroyTexture(textArrow);
 					return;
 					break;
 				}
 
 			}
-
+			isPressed = pressedEnter();
 		}
 
-		if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) choiche = 1;
-		if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN]) choiche = 2;
-		if (pointer == 3 and arrowState[SDL_SCANCODE_RETURN]) choiche = 3;
+		if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) choiche = 1;
+		if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN] and isPressed) choiche = 2;
+		if (pointer == 3 and arrowState[SDL_SCANCODE_RETURN] and isPressed) choiche = 3;
 
+		isPressed = 0;
 	}
 
 	SDL_DestroyTexture(textchoiceItem);
@@ -90,7 +94,6 @@ void upgradeItems(SDL_Renderer* ren) {
 
 void upgradeWeapon(SDL_Renderer* ren) {
 	system("chcp 1251");
-	SDL_Delay(300);
 #pragma region Texture
 	//Level up
 	SDL_Surface* surfupgradeWeapon = IMG_Load("sprites\\menu\\upgradeWeapon.png");
@@ -141,13 +144,20 @@ void upgradeWeapon(SDL_Renderer* ren) {
 		SDL_RenderCopy(ren, textupgradeWeapon, NULL, NULL);
 		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 		SDL_RenderPresent(ren);
-		SDL_Delay(7);
 		while (upgrade == 1) {
 			while (SDL_PollEvent(&ev) != NULL) {
-				if (arrowState[SDL_SCANCODE_ESCAPE]) return;
-				if (levelWeapon == 0 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+				isPressed = pressedEnter();
+
+				if (arrowState[SDL_SCANCODE_ESCAPE]) {
+					SDL_DestroyTexture(textupgradeWeapon);
+					SDL_DestroyTexture(textArrow);
+					return;
+				}
+				if (levelWeapon == 0 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 					if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL1) {
+						hero.Attack -= 10;
 						hero.weapon += 10;
+						hero.Attack += hero.weapon;
 						upgrade = 0;
 						levelWeapon = 1;
 						printf("Ты прокачался 1\n");
@@ -158,9 +168,11 @@ void upgradeWeapon(SDL_Renderer* ren) {
 					}
 					if (upgrade == 0) return;
 				}
-				if (levelWeapon == 1 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+				if (levelWeapon == 1 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 					if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL2) {
+						hero.Attack -= 10;
 						hero.weapon += 10;
+						hero.Attack += hero.weapon;
 						upgrade = 0;
 						levelWeapon = 2;
 						printf("Ты прокачался 2\n");
@@ -171,9 +183,11 @@ void upgradeWeapon(SDL_Renderer* ren) {
 					}
 					if (upgrade == 0) return;
 				}
-				if (levelWeapon == 2 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+				if (levelWeapon == 2 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 					if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL3) {
+						hero.Attack -= 10;
 						hero.weapon += 10;
+						hero.Attack += hero.weapon;
 						upgrade = 0;
 						levelWeapon = 3;
 					}
@@ -183,9 +197,11 @@ void upgradeWeapon(SDL_Renderer* ren) {
 					}
 					if (upgrade == 0) return;
 				}
-				if (levelWeapon == 3 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+				if (levelWeapon == 3 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 					if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL4) {
+						hero.Attack -= 10;
 						hero.weapon += 10;
+						hero.Attack += hero.weapon;
 						upgrade = 0;
 						levelWeapon = 4;
 					}
@@ -195,9 +211,11 @@ void upgradeWeapon(SDL_Renderer* ren) {
 					}
 					if (upgrade == 0) return;
 				}
-				if (levelWeapon == 4 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+				if (levelWeapon == 4 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 					if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL5) {
+						hero.Attack -= 10;
 						hero.weapon += 10;
+						hero.Attack += hero.weapon;
 						upgrade = 0;
 						levelWeapon = 5;
 					}
@@ -207,7 +225,7 @@ void upgradeWeapon(SDL_Renderer* ren) {
 					}
 					if (upgrade == 0) return;
 				}
-				if (levelWeapon == 5 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+				if (levelWeapon == 5 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 					printf("У вас максимальный уровень оружия\nВам больше нечего прокачивать\n");
 					upgrade = 0;
 				}
@@ -218,11 +236,11 @@ void upgradeWeapon(SDL_Renderer* ren) {
 			SDL_DestroyTexture(textArrow);
 			return;
 		}
+		isPressed = 0;
 }
 
 void upgradeArmor(SDL_Renderer* ren) {
 	system("chcp 1251");
-	SDL_Delay(300);
 #pragma region Texture
 	//Level up
 	SDL_Surface* surfupgradeArmor = IMG_Load("sprites\\menu\\upgradeArmor.png");
@@ -273,14 +291,22 @@ void upgradeArmor(SDL_Renderer* ren) {
 	SDL_RenderCopy(ren, textupgradeArmor, NULL, NULL);
 	SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 	SDL_RenderPresent(ren);
-	SDL_Delay(7);
 	while (upgrade == 1) {
 		while (SDL_PollEvent(&ev) != NULL) {
-			if (arrowState[SDL_SCANCODE_ESCAPE]) return;
-			if (levelArmor == 0 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+			isPressed = pressedEnter();
+			if (arrowState[SDL_SCANCODE_ESCAPE]) { 
+				SDL_DestroyTexture(textupgradeArmor);
+				SDL_DestroyTexture(textArrow);
+				return; 
+			}
+			if (levelArmor == 0 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL1) {
+					hero.maxHealth += 30;
+					hero.Defense -= 0.025;
 					hero.armorHealth += 30;
-					hero.armorDefense += 5;
+					hero.armorDefense += 0.010;
+					hero.Health = hero.maxHealth;
+					hero.Defense += hero.armorDefense;
 					upgrade = 0;
 					levelArmor = 1;
 				}
@@ -290,10 +316,14 @@ void upgradeArmor(SDL_Renderer* ren) {
 				}
 				if (upgrade == 0) return;
 			}
-			if (levelArmor == 1 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+			if (levelArmor == 1 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL2) {
+					hero.maxHealth += 30;
+					hero.Defense -= 0.025;
 					hero.armorHealth += 30;
-					hero.armorDefense += 5;
+					hero.armorDefense += 0.010;
+					hero.Health = hero.maxHealth;
+					hero.Defense += hero.armorDefense;
 					upgrade = 0;
 					levelArmor = 2;
 				}
@@ -303,10 +333,14 @@ void upgradeArmor(SDL_Renderer* ren) {
 				}
 				if (upgrade == 0) return;
 			}
-			if (levelArmor == 2 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+			if (levelArmor == 2 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL3) {
+					hero.maxHealth += 30;
+					hero.Defense -= 0.025;
 					hero.armorHealth += 30;
-					hero.armorDefense += 5;
+					hero.armorDefense += 0.010;
+					hero.Health = hero.maxHealth;
+					hero.Defense += hero.armorDefense;
 					upgrade = 0;
 					levelArmor = 3;
 				}
@@ -316,10 +350,14 @@ void upgradeArmor(SDL_Renderer* ren) {
 				}
 				if (upgrade == 0) return;
 			}
-			if (levelArmor == 3 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+			if (levelArmor == 3 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL4) {
+					hero.maxHealth += 30;
+					hero.Defense -= 0.025;
 					hero.armorHealth += 30;
-					hero.armorDefense += 5;
+					hero.armorDefense += 0.010;
+					hero.Health = hero.maxHealth;
+					hero.Defense += hero.armorDefense;
 					upgrade = 0;
 					levelArmor = 4;
 				}
@@ -329,10 +367,14 @@ void upgradeArmor(SDL_Renderer* ren) {
 				}
 				if (upgrade == 0) return;
 			}
-			if (levelArmor == 4 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+			if (levelArmor == 4 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL5) {
+					hero.maxHealth += 30;
+					hero.Defense -= 0.025;
 					hero.armorHealth += 30;
-					hero.armorDefense += 5;
+					hero.armorDefense += 0.010;
+					hero.Health = hero.maxHealth;
+					hero.Defense += hero.armorDefense;
 					upgrade = 0;
 					levelArmor = 5;
 				}
@@ -342,7 +384,7 @@ void upgradeArmor(SDL_Renderer* ren) {
 				}
 				if (upgrade == 0) return;
 			}
-			if (levelArmor == 5 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+			if (levelArmor == 5 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				printf("У вас максимальный уровень брони\nВам больше нечего прокачивать\n");
 				upgrade = 0;
 			}
@@ -353,11 +395,11 @@ void upgradeArmor(SDL_Renderer* ren) {
 		SDL_DestroyTexture(textArrow);
 		return;
 	}
+	isPressed = 0;
 }
 
 void upgradeNecklace(SDL_Renderer* ren) {
 	system("chcp 1251");
-	SDL_Delay(300);
 #pragma region Texture
 	//Level up
 	SDL_Surface* surfupgradeNecklace = IMG_Load("sprites\\menu\\upgradeNecklace.png");
@@ -408,13 +450,20 @@ void upgradeNecklace(SDL_Renderer* ren) {
 	SDL_RenderCopy(ren, textupgradeNecklace, NULL, NULL);
 	SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 	SDL_RenderPresent(ren);
-	SDL_Delay(7);
 	while (upgrade == 1) {
 		while (SDL_PollEvent(&ev) != NULL) {
-			if (arrowState[SDL_SCANCODE_ESCAPE]) return;
-			if (levelNecklace == 0 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+			isPressed = pressedEnter();
+			if (arrowState[SDL_SCANCODE_ESCAPE]) {
+				SDL_DestroyTexture(textupgradeNecklace);
+				SDL_DestroyTexture(textArrow);
+				return;
+			}
+			if (levelNecklace == 0 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL1) {
+					hero.maxMana -= 10;
 					hero.necklace += 10;
+					hero.maxMana += hero.necklace;
+					hero.Mana = hero.maxMana;
 					upgrade = 0;
 					levelNecklace = 1;
 				}
@@ -424,9 +473,12 @@ void upgradeNecklace(SDL_Renderer* ren) {
 				}
 				if (upgrade == 0) return;
 			}
-			if (levelNecklace == 1 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+			if (levelNecklace == 1 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL2) {
+					hero.maxMana -= 10;
 					hero.necklace += 10;
+					hero.maxMana += hero.necklace;
+					hero.Mana = hero.maxMana; 
 					upgrade = 0;
 					levelNecklace = 2;
 				}
@@ -436,9 +488,12 @@ void upgradeNecklace(SDL_Renderer* ren) {
 				}
 				if (upgrade == 0) return;
 			}
-			if (levelNecklace == 2 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+			if (levelNecklace == 2 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL3) {
+					hero.maxMana -= 10;
 					hero.necklace += 10;
+					hero.maxMana += hero.necklace;
+					hero.Mana = hero.maxMana; 
 					upgrade = 0;
 					levelNecklace = 3;
 				}
@@ -448,9 +503,12 @@ void upgradeNecklace(SDL_Renderer* ren) {
 				}
 				if (upgrade == 0) return;
 			}
-			if (levelNecklace == 3 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+			if (levelNecklace == 3 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL4) {
+					hero.maxMana -= 10;
 					hero.necklace += 10;
+					hero.maxMana += hero.necklace;
+					hero.Mana = hero.maxMana; 
 					upgrade = 0;
 					levelNecklace = 4;
 				}
@@ -460,9 +518,12 @@ void upgradeNecklace(SDL_Renderer* ren) {
 				}
 				if (upgrade == 0) return;
 			}
-			if (levelNecklace == 4 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+			if (levelNecklace == 4 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL5) {
+					hero.maxMana -= 10;
 					hero.necklace += 10;
+					hero.maxMana += hero.necklace;
+					hero.Mana = hero.maxMana; 
 					upgrade = 0;
 					levelNecklace = 5;
 				}
@@ -472,7 +533,7 @@ void upgradeNecklace(SDL_Renderer* ren) {
 				}
 				if (upgrade == 0) return;
 			}
-			if (levelNecklace == 5 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+			if (levelNecklace == 5 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				printf("У вас максимальный уровень ожерелья\nВам больше нечего прокачивать\n");
 				upgrade = 0;
 			}
@@ -483,6 +544,7 @@ void upgradeNecklace(SDL_Renderer* ren) {
 		SDL_DestroyTexture(textArrow);
 		return;
 	}
+	isPressed = 0;
 }
 
 //int main() {

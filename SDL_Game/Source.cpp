@@ -18,6 +18,7 @@
 
 void init(); void de_init(int error);
 
+int classHero = 0;
 float win_width = 1280, win_height = 720;
 SDL_Window* win = 0;
 SDL_Renderer* ren = 0;
@@ -51,7 +52,6 @@ void init() {
 		SDL_Quit();
 		de_init(1);
 	}
-
 	ren = SDL_CreateRenderer(win, 0, SDL_RENDERER_ACCELERATED);
 	if (ren == NULL) {
 		printf("renderer couldn't init %s", SDL_GetError());
@@ -187,7 +187,6 @@ void main_menu() {
 		SDL_RenderCopy(ren, textMainMenu, NULL, NULL);
 		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 		SDL_RenderPresent(ren);
-		SDL_Delay(8);
 		while (SDL_PollEvent(&ev) != NULL) {
 			switch (ev.type) {
 			case SDL_KEYDOWN:
@@ -221,25 +220,27 @@ void main_menu() {
 					}
 				}
 			}
-
+			isPressed = pressedEnter();
 		}
-		if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+		if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 			SDL_DestroyTexture(textMainMenu);
 			SDL_DestroyTexture(textArrow);
+			isPressed = 0;
 			return;
 		}
-		if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN]);
-		if (pointer == 3 and arrowState[SDL_SCANCODE_RETURN]) {
+		if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN] and isPressed);
+		if (pointer == 3 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 			if (flag == 0) {
 				printf("creator: Zhigalkin Maxim\n");
 				flag = 1;
 			}
 		}
-		if (pointer == 4 and arrowState[SDL_SCANCODE_RETURN]) {
+		if (pointer == 4 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 			SDL_DestroyTexture(textMainMenu);
 			SDL_DestroyTexture(textArrow);
 			de_init(1);
 		}
+		isPressed = 0;
 	}
 
 
@@ -271,14 +272,10 @@ void menu() {
 		SDL_RenderCopy(ren, textMenu, NULL, NULL);
 		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 		SDL_RenderPresent(ren);
-		SDL_Delay(8);
 		while (SDL_PollEvent(&ev) != NULL) {
 			switch (ev.type) {
 			case SDL_KEYDOWN:
 				switch (ev.key.keysym.scancode) {
-				case SDL_SCANCODE_ESCAPE:
-					return;
-					break;
 				case SDL_SCANCODE_UP:
 					if (pointer != 1) {
 						yArrow -= 145;
@@ -305,25 +302,27 @@ void menu() {
 					}
 				}
 			}
-
+			isPressed = pressedEnter();
 		}
 
-		if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+		if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 			SDL_DestroyTexture(textMenu);
 			SDL_DestroyTexture(textArrow);
 			return; //continue
 		}
-		if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN]) {
+		if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 			SDL_DestroyTexture(textMenu);
 			SDL_DestroyTexture(textArrow);
 			printf("You save a game\n");
 			return; //save
 		}
-		if (pointer == 3 and arrowState[SDL_SCANCODE_RETURN]) {
+		if (pointer == 3 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 			SDL_DestroyTexture(textMenu);
 			SDL_DestroyTexture(textArrow);
 			de_init(1); //exit
 		}
+
+		isPressed = 0;
 	}
 }
 
@@ -353,7 +352,6 @@ void choiceClass() {
 		SDL_RenderCopy(ren, textClass, NULL, NULL);
 		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 		SDL_RenderPresent(ren);
-		SDL_Delay(8);
 		while (SDL_PollEvent(&ev) != NULL) {
 			switch (ev.type) {
 			case SDL_KEYDOWN:
@@ -387,24 +385,26 @@ void choiceClass() {
 					}
 				}
 			}
-
+			isPressed = pressedEnter();
 		}
-		if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN]) {
+		if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 			hero.Attack = warrior.Attack, hero.Health = warrior.Health, hero.Defense = warrior.Defense, hero.Gold = warrior.Gold, hero.Mana = warrior.Mana;
 			hero.maxAttack = warrior.maxAttack, hero.maxHealth = warrior.maxHealth, hero.maxMana = warrior.maxMana;
 			SDL_DestroyTexture(textArrow);
 			SDL_DestroyTexture(textClass);
+			classHero = 1;
 			return;
 		}
-		if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN]) {
+		if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 			hero.Attack = mage.Attack, hero.Health = mage.Health, hero.Defense = mage.Defense, hero.Gold = mage.Gold, hero.Mana = mage.Mana;
 			hero.maxAttack = mage.maxAttack, hero.maxHealth = mage.maxHealth, hero.maxMana = mage.maxMana;
 			hero.pointsLevel = mage.pointsLevel;
 			SDL_DestroyTexture(textArrow);
 			SDL_DestroyTexture(textClass);
-			printf("defense %.2f\n", hero.Defense);
+			classHero = 2;
 			return;
 		}
+		isPressed = 0;
 	}
 }
 
@@ -440,7 +440,6 @@ int main(int argc, char* argv[]) {
 		SDL_FreeSurface(surfRoom);
 		// character 
 		SDL_Surface* surfCharacter = IMG_Load("sprites\\character\\character.png");
-
 		SDL_Texture* textCharacter = SDL_CreateTextureFromSurface(ren, surfCharacter);
 		SDL_FreeSurface(surfCharacter);
 		//Bat
@@ -450,7 +449,6 @@ int main(int argc, char* argv[]) {
 	#pragma endregion
 
 		main_menu();
-		SDL_Delay(300);
 		choiceClass();
 	while (isRunning) {
 		r = { Xcoordinate, Ycoordinate, Xsize, Ysize };
@@ -466,7 +464,10 @@ int main(int argc, char* argv[]) {
 
 			case SDL_KEYDOWN:
 				switch (ev.key.keysym.scancode) {
-				case SDL_SCANCODE_ESCAPE: menu(); break;
+				case SDL_SCANCODE_ESCAPE: {
+					menu(); 
+					break;
+				}
 				case SDL_SCANCODE_TAB: character_leveling(ren); break;
 				case SDL_SCANCODE_I: upgradeItems(ren); break;
 				}

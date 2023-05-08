@@ -50,6 +50,7 @@ void character_leveling(SDL_Renderer* ren) {
 	SDL_Rect size = {0, 0, surftHeroPointTTF->w, surftHeroPointTTF->h};
 	int xPoint = 1100, yPoint = 20;
 	SDL_Rect pointsTTF = { xPoint, yPoint, 55, 60 };
+	int xStats = 700, yStats = 165;
 #pragma endregion
 	int xArrow = 370, yArrow = 175;
 	int pointer = 1;
@@ -63,6 +64,8 @@ void character_leveling(SDL_Renderer* ren) {
 		SDL_PollEvent(&ev);
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
 
+		xPoint = 1100, yPoint = 20;
+		pointsTTF = { xPoint, yPoint, 55, 60 };
 		sprintf_s(heroPoints, "%d", hero.pointsLevel);
 		surftHeroPointTTF = TTF_RenderText_Blended(heroPointTTF, heroPoints, { 255, 255, 255, 255 });
 		size = { 0, 0, surftHeroPointTTF->w, surftHeroPointTTF->h };
@@ -72,11 +75,82 @@ void character_leveling(SDL_Renderer* ren) {
 		SDL_RenderClear(ren);
 		SDL_RenderCopy(ren, textLevelUp, NULL, NULL);
 		SDL_RenderCopy(ren, textHeroPointTTF, &size, &pointsTTF);
+		SDL_FreeSurface(surftHeroPointTTF);
+		SDL_DestroyTexture(textHeroPointTTF);
+
+		xPoint = 700, yPoint = 180;
+		sprintf_s(heroPoints, "-> %d", hero.Attack);
+		surftHeroPointTTF = TTF_RenderText_Blended(heroPointTTF, heroPoints, { 255, 255, 255, 255 });
+		pointsTTF = { xPoint, yPoint, 200, 80 };
+		size = { 0, 0, surftHeroPointTTF->w, surftHeroPointTTF->h };
+		textHeroPointTTF = SDL_CreateTextureFromSurface(ren, surftHeroPointTTF);
+		SDL_RenderCopy(ren, textHeroPointTTF, &size, &pointsTTF);
+		SDL_FreeSurface(surftHeroPointTTF);
+		SDL_DestroyTexture(textHeroPointTTF);
+
+		xPoint = 700, yPoint = 290;
+		sprintf_s(heroPoints, "-> %d", hero.maxHealth);
+		surftHeroPointTTF = TTF_RenderText_Blended(heroPointTTF, heroPoints, { 255, 255, 255, 255 });
+		pointsTTF = { xPoint, yPoint, 200, 80 };
+		size = { 0, 0, surftHeroPointTTF->w, surftHeroPointTTF->h };
+		textHeroPointTTF = SDL_CreateTextureFromSurface(ren, surftHeroPointTTF);
+		SDL_RenderCopy(ren, textHeroPointTTF, &size, &pointsTTF);
+		SDL_FreeSurface(surftHeroPointTTF);
+		SDL_DestroyTexture(textHeroPointTTF);
+
+		xPoint = 700, yPoint = 400;
+		sprintf_s(heroPoints, "-> %.2f", hero.Defense);
+		surftHeroPointTTF = TTF_RenderText_Blended(heroPointTTF, heroPoints, { 255, 255, 255, 255 });
+		pointsTTF = { xPoint, yPoint, 200, 80 };
+		size = { 0, 0, surftHeroPointTTF->w, surftHeroPointTTF->h };
+		textHeroPointTTF = SDL_CreateTextureFromSurface(ren, surftHeroPointTTF);
+		SDL_RenderCopy(ren, textHeroPointTTF, &size, &pointsTTF);
+		SDL_FreeSurface(surftHeroPointTTF);
+		SDL_DestroyTexture(textHeroPointTTF);
+
+		xPoint = 700, yPoint = 510;
+		sprintf_s(heroPoints, "-> mana %d", hero.maxMana);
+		surftHeroPointTTF = TTF_RenderText_Blended(heroPointTTF, heroPoints, { 255, 255, 255, 255 });
+		pointsTTF = { xPoint, yPoint, 400, 80 };
+		size = { 0, 0, surftHeroPointTTF->w, surftHeroPointTTF->h };
+		textHeroPointTTF = SDL_CreateTextureFromSurface(ren, surftHeroPointTTF);
+		SDL_RenderCopy(ren, textHeroPointTTF, &size, &pointsTTF);
+		SDL_FreeSurface(surftHeroPointTTF);
+		SDL_DestroyTexture(textHeroPointTTF);
+
+		xPoint = 10, yPoint = 510;
+		sprintf_s(heroPoints, "fireball %d <-", abilityDamageFireball);
+		surftHeroPointTTF = TTF_RenderText_Blended(heroPointTTF, heroPoints, { 255, 255, 255, 255 });
+		pointsTTF = { xPoint, yPoint, 440, 80 };
+		size = { 0, 0, surftHeroPointTTF->w, surftHeroPointTTF->h };
+		textHeroPointTTF = SDL_CreateTextureFromSurface(ren, surftHeroPointTTF);
+		SDL_RenderCopy(ren, textHeroPointTTF, &size, &pointsTTF);
+		SDL_FreeSurface(surftHeroPointTTF);
+		SDL_DestroyTexture(textHeroPointTTF);
+
+		xPoint = 10, yPoint = 400;
+		sprintf_s(heroPoints, "lightning %d", abilityDamageLightning);
+		surftHeroPointTTF = TTF_RenderText_Blended(heroPointTTF, heroPoints, { 255, 255, 255, 255 });
+		pointsTTF = { xPoint, yPoint, 400, 80 };
+		size = { 0, 0, surftHeroPointTTF->w, surftHeroPointTTF->h };
+		textHeroPointTTF = SDL_CreateTextureFromSurface(ren, surftHeroPointTTF);
+		SDL_RenderCopy(ren, textHeroPointTTF, &size, &pointsTTF);
+		SDL_FreeSurface(surftHeroPointTTF);
+		SDL_DestroyTexture(textHeroPointTTF);
+
+		xPoint = 10, yPoint = 290;
+		sprintf_s(heroPoints, "poison %d", abilityDamagePoison);
+		surftHeroPointTTF = TTF_RenderText_Blended(heroPointTTF, heroPoints, { 255, 255, 255, 255 });
+		pointsTTF = { xPoint, yPoint, 320, 80 };
+		size = { 0, 0, surftHeroPointTTF->w, surftHeroPointTTF->h };
+		textHeroPointTTF = SDL_CreateTextureFromSurface(ren, surftHeroPointTTF);
+		SDL_RenderCopy(ren, textHeroPointTTF, &size, &pointsTTF);
+		SDL_FreeSurface(surftHeroPointTTF);
+		SDL_DestroyTexture(textHeroPointTTF);
+
 		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 		SDL_RenderPresent(ren);
-		SDL_Delay(7);
-		SDL_FreeSurface(surftHeroPointTTF);
-
+	
 		while (SDL_PollEvent(&ev) != NULL) {
 			switch (ev.type) {
 			case SDL_KEYDOWN:
@@ -136,117 +210,36 @@ void character_leveling(SDL_Renderer* ren) {
 		printf("You don't have points\n");
 	}
 
-
-	int xStats = 700, yStats = 165;
-	TTF_Font* heroAtk = TTF_OpenFont("fonts\\BAUHS93.TTF", 75);
-	char strheroAtk[100] = "Atk";
-	SDL_Surface* surftHeroAtk = TTF_RenderText_Blended(heroAtk, strheroAtk, { 255, 255, 255, 255 });
-	SDL_Texture* textHeroAtk = SDL_CreateTextureFromSurface(ren, surftHeroAtk);
-	SDL_Rect statsTTF = { xStats, yStats, 280, 105 };
-
 	if (choicheParameter == ATTACK and hero.pointsLevel != 0) {
 		hero.Attack = hero.Attack * 1.1;
-		hero.maxAttack = hero.Attack * 1.1;
+		hero.maxAttack = hero.Attack;
 		system("cls");
-		printf("Attack %d\n", hero.Attack);
-		sprintf_s(strheroAtk, "Attack %d", hero.Attack);
-		surftHeroAtk = TTF_RenderText_Blended(heroAtk, strheroAtk, { 255, 255, 255, 255 });
-		size = { 0, 0, surftHeroAtk->w, surftHeroAtk->h };
-		textHeroAtk = SDL_CreateTextureFromSurface(ren, surftHeroAtk);
-		SDL_RenderCopy(ren, textHeroAtk, &size, &statsTTF);
-		SDL_RenderPresent(ren);
-		SDL_Delay(1500);
 		hero.pointsLevel--;
 	}
 	if (choicheParameter == HEALTH and hero.pointsLevel != 0) {
 		hero.Health = hero.Health * 1.15;
-		hero.maxHealth = hero.Health * 1.15;
+		hero.maxHealth = hero.Health;
 		system("cls");
-		printf("Health %d\n", hero.maxHealth);
-		sprintf_s(strheroAtk, "Health %d", hero.maxHealth);
-		xStats = 700, yStats = 275;
-		statsTTF = { xStats, yStats, 280, 105 };
-		surftHeroAtk = TTF_RenderText_Blended(heroAtk, strheroAtk, { 255, 255, 255, 255 });
-		size = { 0, 0, surftHeroAtk->w, surftHeroAtk->h };
-		textHeroAtk = SDL_CreateTextureFromSurface(ren, surftHeroAtk);
-		SDL_RenderCopy(ren, textHeroAtk, &size, &statsTTF);
-		SDL_RenderPresent(ren);
-		SDL_Delay(1500);
 		hero.pointsLevel--;
 	}
 	if (choicheParameter == PROTECTION and hero.pointsLevel != 0) {
-		if (hero.Defense >= 0.85) {
+		if (hero.Defense >= 0.55) {
 			printf("Defense max\n");
 			return;
 		}
-		hero.Defense = hero.Defense + 0.05;
+		hero.Defense = hero.Defense + 0.025;
 		system("cls");
-		printf("Defense %.2f\n", hero.Defense);
-		sprintf_s(strheroAtk, "Defense %.2f", hero.Defense);
-		xStats = 700, yStats = 385;
-		statsTTF = { xStats, yStats, 280, 105 };
-		surftHeroAtk = TTF_RenderText_Blended(heroAtk, strheroAtk, { 255, 255, 255, 255 });
-		size = { 0, 0, surftHeroAtk->w, surftHeroAtk->h };
-		textHeroAtk = SDL_CreateTextureFromSurface(ren, surftHeroAtk);
-		SDL_RenderCopy(ren, textHeroAtk, &size, &statsTTF);
-		SDL_RenderPresent(ren);
-		SDL_Delay(1500);
 		hero.pointsLevel--;
 	}
 	if (choicheParameter == ABILITYATTACK and hero.pointsLevel != 0) {
 		hero.Mana = hero.Mana * 1.1;
-		hero.maxMana = hero.Mana * 1.3;
+		hero.maxMana = hero.Mana;
 		abilityDamageFireball *= 1.3;
-		abilityDamageLighting *= 1.15;
+		abilityDamageLightning *= 1.15;
 		abilityDamagePoison += 1;
 		system("cls");
-		printf("Mana %d\n", hero.maxMana);
-		printf("abilityDamageFireball %d\n", abilityDamageFireball);
-		printf("abilityDamageLighting %d\n", abilityDamageLighting);
-		printf("abilityDamagePosion %d\n", abilityDamagePoison);
-		sprintf_s(strheroAtk, "Mana %d", hero.maxMana);
-		xStats = 700, yStats = 495;
-		statsTTF = { xStats, yStats, 280, 105 };
-		surftHeroAtk = TTF_RenderText_Blended(heroAtk, strheroAtk, { 255, 255, 255, 255 });
-		size = { 0, 0, surftHeroAtk->w, surftHeroAtk->h };
-		textHeroAtk = SDL_CreateTextureFromSurface(ren, surftHeroAtk);
-		SDL_RenderCopy(ren, textHeroAtk, &size, &statsTTF);
-		SDL_RenderPresent(ren);
-
-		sprintf_s(strheroAtk, "Fireball damage %d", abilityDamageFireball);
-		xStats = 25, yStats = 220;
-		statsTTF = { xStats, yStats, 400, 105 };
-		surftHeroAtk = TTF_RenderText_Blended(heroAtk, strheroAtk, { 255, 255, 255, 255 });
-		size = { 0, 0, surftHeroAtk->w, surftHeroAtk->h };
-		textHeroAtk = SDL_CreateTextureFromSurface(ren, surftHeroAtk);
-		SDL_RenderCopy(ren, textHeroAtk, &size, &statsTTF);
-		SDL_RenderPresent(ren);
-
-		sprintf_s(strheroAtk, "Lightting damage %d", abilityDamageLighting);
-		xStats = 25, yStats = 320;
-		statsTTF = { xStats, yStats, 400, 105 };
-		surftHeroAtk = TTF_RenderText_Blended(heroAtk, strheroAtk, { 255, 255, 255, 255 });
-		size = { 0, 0, surftHeroAtk->w, surftHeroAtk->h };
-		textHeroAtk = SDL_CreateTextureFromSurface(ren, surftHeroAtk);
-		SDL_RenderCopy(ren, textHeroAtk, &size, &statsTTF);
-		SDL_RenderPresent(ren);
-
-		sprintf_s(strheroAtk, "Poison damage %d", abilityDamagePoison);
-		xStats = 25, yStats = 420;
-		statsTTF = { xStats, yStats, 400, 105 };
-		surftHeroAtk = TTF_RenderText_Blended(heroAtk, strheroAtk, { 255, 255, 255, 255 });
-		size = { 0, 0, surftHeroAtk->w, surftHeroAtk->h };
-		textHeroAtk = SDL_CreateTextureFromSurface(ren, surftHeroAtk);
-		SDL_RenderCopy(ren, textHeroAtk, &size, &statsTTF);
-		SDL_RenderPresent(ren);
-		SDL_Delay(1500);
-
-
 		hero.pointsLevel--;
 	}
-	SDL_DestroyTexture(textHeroAtk);
-	TTF_CloseFont(heroAtk);
-	SDL_FreeSurface(surftHeroAtk);
 }
 
 void skill_tree() {
