@@ -5,6 +5,7 @@
 #define EXIT 5
 #include "Models.h"
 #include "Ability.h"
+#include "Runes.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL.h>
@@ -247,4 +248,58 @@ void skill_tree() {
 		hero.pointsTree--;
 	}
 	else printf("you don't have skill tree points\n");
+}
+
+void runes() {
+	Rune water;
+	water.attack = 1;
+	water.damageAbility = 1.20;
+	water.defense = 1;
+	water.health = 1.25;
+
+	Rune fire;
+	fire.attack = 1.25;
+	fire.damageAbility = 1;
+	fire.defense = 1;
+	fire.health = 1.1;
+
+	Rune earth;
+	earth.attack = 1;
+	earth.damageAbility = 1.15;
+	earth.defense = 1.15;
+	earth.health = 1.35;
+
+	int WATER, FIRE, EARTH;
+	WATER = FIRE = EARTH = 0;
+
+	if (WATER == 1) {
+		FIRE = EARTH = 0;
+
+		hero.Attack *= water.attack;
+		abilityDamageFireball *= water.damageAbility;
+		abilityDamageLightning *= water.damageAbility;
+		abilityDamagePoison *= water.damageAbility;
+		hero.Defense *= water.defense;
+		hero.Health *= water.health;
+	}
+	if (FIRE == 1) {
+		WATER = EARTH = 0;
+
+		hero.Attack *= fire.attack;
+		abilityDamageFireball *= fire.damageAbility;
+		abilityDamageLightning *= fire.damageAbility;
+		abilityDamagePoison *= fire.damageAbility;
+		hero.Defense *= fire.defense;
+		hero.Health *= fire.health;
+	}
+	if (EARTH == 1) {
+		WATER = FIRE = 0;
+
+		hero.Attack *= earth.attack;
+		abilityDamageFireball *= earth.damageAbility;
+		abilityDamageLightning *= earth.damageAbility;
+		abilityDamagePoison *= earth.damageAbility;
+		hero.Defense *= earth.defense;
+		hero.Health *= earth.health;
+	}
 }

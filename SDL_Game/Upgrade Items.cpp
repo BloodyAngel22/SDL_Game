@@ -3,6 +3,7 @@
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 
 int levelWeapon = 0; int levelArmor = 0; int levelNecklace = 0;
 
@@ -103,6 +104,15 @@ void upgradeWeapon(SDL_Renderer* ren) {
 	SDL_Surface* surfArrow = IMG_Load("sprites\\menu\\arrow.png");
 	SDL_Texture* textArrow = SDL_CreateTextureFromSurface(ren, surfArrow);
 	SDL_FreeSurface(surfArrow);
+	//
+	TTF_Font* statItemsFont = TTF_OpenFont("fonts\\BAUHS93.TTF", 75);
+	char stats[100] = "stats";
+	SDL_Surface* surfStatItems = TTF_RenderText_Blended(statItemsFont, stats, { 255, 255, 255, 255 });
+	SDL_Texture* textStatItemsText = SDL_CreateTextureFromSurface(ren, surfStatItems);
+	SDL_Rect size = { 0, 0, surfStatItems->w, surfStatItems->h };
+	int xPoint = 100, yPoint = 50;
+	SDL_Rect statsRect = { xPoint, yPoint, 55, 60 };
+	SDL_FreeSurface(surfStatItems);
 #pragma endregion
 	int upgrade = 1;
 	int xArrow = 40, yArrow = 350;
@@ -139,11 +149,6 @@ void upgradeWeapon(SDL_Renderer* ren) {
 			dstrectArrow = { xArrow, yArrow, 75, 75 };
 		}
 #pragma endregion
-		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
-		SDL_RenderClear(ren);
-		SDL_RenderCopy(ren, textupgradeWeapon, NULL, NULL);
-		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
-		SDL_RenderPresent(ren);
 		while (upgrade == 1) {
 			while (SDL_PollEvent(&ev) != NULL) {
 				isPressed = pressedEnter();
@@ -166,7 +171,6 @@ void upgradeWeapon(SDL_Renderer* ren) {
 						printf("У вас не достаточно денег\n");
 						upgrade = 0;
 					}
-					if (upgrade == 0) return;
 				}
 				if (levelWeapon == 1 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 					if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL2) {
@@ -181,7 +185,6 @@ void upgradeWeapon(SDL_Renderer* ren) {
 						printf("У вас не достаточно денег\n");
 						upgrade = 0;
 					}
-					if (upgrade == 0) return;
 				}
 				if (levelWeapon == 2 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 					if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL3) {
@@ -195,7 +198,6 @@ void upgradeWeapon(SDL_Renderer* ren) {
 						printf("У вас не достаточно денег\n");
 						upgrade = 0;
 					}
-					if (upgrade == 0) return;
 				}
 				if (levelWeapon == 3 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 					if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL4) {
@@ -209,7 +211,6 @@ void upgradeWeapon(SDL_Renderer* ren) {
 						printf("У вас не достаточно денег\n");
 						upgrade = 0;
 					}
-					if (upgrade == 0) return;
 				}
 				if (levelWeapon == 4 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 					if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL5) {
@@ -223,20 +224,37 @@ void upgradeWeapon(SDL_Renderer* ren) {
 						printf("У вас не достаточно денег\n");
 						upgrade = 0;
 					}
-					if (upgrade == 0) return;
 				}
 				if (levelWeapon == 5 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 					printf("У вас максимальный уровень оружия\nВам больше нечего прокачивать\n");
 					upgrade = 0;
 				}
 			}
-		}
-		if (upgrade == 0) {
-			SDL_DestroyTexture(textupgradeWeapon);
-			SDL_DestroyTexture(textArrow);
-			return;
+
+			SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+			SDL_RenderClear(ren);
+			SDL_RenderCopy(ren, textupgradeWeapon, NULL, NULL);
+			SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
+
+			xPoint = 100, yPoint = 50;
+			statsRect = { xPoint, yPoint, 55, 60 };
+			sprintf_s(stats, "%d", hero.weapon);
+			surfStatItems = TTF_RenderText_Blended(statItemsFont, stats, { 255, 255, 255, 255 });
+			size = { 0, 0, surfStatItems->w, surfStatItems->h };
+			textStatItemsText = SDL_CreateTextureFromSurface(ren, surfStatItems);
+			SDL_RenderCopy(ren, textStatItemsText, &size, &statsRect);
+			SDL_FreeSurface(surfStatItems);
+			SDL_DestroyTexture(textStatItemsText);
+
+			SDL_RenderPresent(ren);
 		}
 		isPressed = 0;
+		
+		SDL_DestroyTexture(textArrow);
+		SDL_DestroyTexture(textStatItemsText);
+		SDL_DestroyTexture(textupgradeWeapon);
+
+		TTF_CloseFont(statItemsFont);
 }
 
 void upgradeArmor(SDL_Renderer* ren) {
@@ -250,6 +268,15 @@ void upgradeArmor(SDL_Renderer* ren) {
 	SDL_Surface* surfArrow = IMG_Load("sprites\\menu\\arrow.png");
 	SDL_Texture* textArrow = SDL_CreateTextureFromSurface(ren, surfArrow);
 	SDL_FreeSurface(surfArrow);
+	//
+	TTF_Font* statItemsFont = TTF_OpenFont("fonts\\BAUHS93.TTF", 75);
+	char stats[100] = "stats";
+	SDL_Surface* surfStatItems = TTF_RenderText_Blended(statItemsFont, stats, { 255, 255, 255, 255 });
+	SDL_Texture* textStatItemsText = SDL_CreateTextureFromSurface(ren, surfStatItems);
+	SDL_Rect size = { 0, 0, surfStatItems->w, surfStatItems->h };
+	int xPoint = 100, yPoint = 50;
+	SDL_Rect statsRect = { xPoint, yPoint, 55, 60 };
+	SDL_FreeSurface(surfStatItems);
 #pragma endregion
 	int upgrade = 1;
 	int xArrow = 40, yArrow = 245;
@@ -286,11 +313,7 @@ void upgradeArmor(SDL_Renderer* ren) {
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
 	}
 #pragma endregion
-	SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
-	SDL_RenderClear(ren);
-	SDL_RenderCopy(ren, textupgradeArmor, NULL, NULL);
-	SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
-	SDL_RenderPresent(ren);
+	
 	while (upgrade == 1) {
 		while (SDL_PollEvent(&ev) != NULL) {
 			isPressed = pressedEnter();
@@ -314,7 +337,6 @@ void upgradeArmor(SDL_Renderer* ren) {
 					printf("У вас не достаточно денег\n");
 					upgrade = 0;
 				}
-				if (upgrade == 0) return;
 			}
 			if (levelArmor == 1 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL2) {
@@ -331,7 +353,7 @@ void upgradeArmor(SDL_Renderer* ren) {
 					printf("У вас не достаточно денег\n");
 					upgrade = 0;
 				}
-				if (upgrade == 0) return;
+				
 			}
 			if (levelArmor == 2 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL3) {
@@ -348,7 +370,7 @@ void upgradeArmor(SDL_Renderer* ren) {
 					printf("У вас не достаточно денег\n");
 					upgrade = 0;
 				}
-				if (upgrade == 0) return;
+				
 			}
 			if (levelArmor == 3 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL4) {
@@ -365,7 +387,7 @@ void upgradeArmor(SDL_Renderer* ren) {
 					printf("У вас не достаточно денег\n");
 					upgrade = 0;
 				}
-				if (upgrade == 0) return;
+				
 			}
 			if (levelArmor == 4 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL5) {
@@ -382,19 +404,46 @@ void upgradeArmor(SDL_Renderer* ren) {
 					printf("У вас не достаточно денег\n");
 					upgrade = 0;
 				}
-				if (upgrade == 0) return;
+				
 			}
 			if (levelArmor == 5 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				printf("У вас максимальный уровень брони\nВам больше нечего прокачивать\n");
 				upgrade = 0;
 			}
 		}
+		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+		SDL_RenderClear(ren);
+		SDL_RenderCopy(ren, textupgradeArmor, NULL, NULL);
+
+		xPoint = 100, yPoint = 50;
+		statsRect = { xPoint, yPoint, 55, 60 };
+		sprintf_s(stats, "%d", hero.armorHealth);
+		surfStatItems = TTF_RenderText_Blended(statItemsFont, stats, { 255, 255, 255, 255 });
+		size = { 0, 0, surfStatItems->w, surfStatItems->h };
+		textStatItemsText = SDL_CreateTextureFromSurface(ren, surfStatItems);
+		SDL_RenderCopy(ren, textStatItemsText, &size, &statsRect);
+		SDL_FreeSurface(surfStatItems);
+		SDL_DestroyTexture(textStatItemsText);
+
+		xPoint = 100, yPoint = 100;
+		statsRect = { xPoint, yPoint, 55, 60 };
+		sprintf_s(stats, "%.2f", hero.armorDefense);
+		surfStatItems = TTF_RenderText_Blended(statItemsFont, stats, { 255, 255, 255, 255 });
+		size = { 0, 0, surfStatItems->w, surfStatItems->h };
+		textStatItemsText = SDL_CreateTextureFromSurface(ren, surfStatItems);
+		SDL_RenderCopy(ren, textStatItemsText, &size, &statsRect);
+		SDL_FreeSurface(surfStatItems);
+		SDL_DestroyTexture(textStatItemsText);
+
+		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
+		SDL_RenderPresent(ren);
 	}
-	if (upgrade == 0) {
-		SDL_DestroyTexture(textupgradeArmor);
-		SDL_DestroyTexture(textArrow);
-		return;
-	}
+	
+	SDL_DestroyTexture(textArrow);
+	SDL_DestroyTexture(textStatItemsText);
+	SDL_DestroyTexture(textupgradeArmor);
+
+	TTF_CloseFont(statItemsFont);
 	isPressed = 0;
 }
 
@@ -409,6 +458,15 @@ void upgradeNecklace(SDL_Renderer* ren) {
 	SDL_Surface* surfArrow = IMG_Load("sprites\\menu\\arrow.png");
 	SDL_Texture* textArrow = SDL_CreateTextureFromSurface(ren, surfArrow);
 	SDL_FreeSurface(surfArrow);
+	//
+	TTF_Font* statItemsFont = TTF_OpenFont("fonts\\BAUHS93.TTF", 75);
+	char stats[100] = "stats";
+	SDL_Surface* surfStatItems = TTF_RenderText_Blended(statItemsFont, stats, { 255, 255, 255, 255 });
+	SDL_Texture* textStatItemsText = SDL_CreateTextureFromSurface(ren, surfStatItems);
+	SDL_Rect size = { 0, 0, surfStatItems->w, surfStatItems->h };
+	int xPoint = 100, yPoint = 50;
+	SDL_Rect statsRect = { xPoint, yPoint, 55, 60 };
+	SDL_FreeSurface(surfStatItems);
 #pragma endregion
 	int upgrade = 1;
 	int xArrow = 40, yArrow = 245;
@@ -445,11 +503,7 @@ void upgradeNecklace(SDL_Renderer* ren) {
 		dstrectArrow = { xArrow, yArrow, 75, 75 };
 	}
 #pragma endregion
-	SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
-	SDL_RenderClear(ren);
-	SDL_RenderCopy(ren, textupgradeNecklace, NULL, NULL);
-	SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
-	SDL_RenderPresent(ren);
+	
 	while (upgrade == 1) {
 		while (SDL_PollEvent(&ev) != NULL) {
 			isPressed = pressedEnter();
@@ -471,7 +525,7 @@ void upgradeNecklace(SDL_Renderer* ren) {
 					printf("У вас не достаточно денег\n");
 					upgrade = 0;
 				}
-				if (upgrade == 0) return;
+				
 			}
 			if (levelNecklace == 1 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL2) {
@@ -486,7 +540,7 @@ void upgradeNecklace(SDL_Renderer* ren) {
 					printf("У вас не достаточно денег\n");
 					upgrade = 0;
 				}
-				if (upgrade == 0) return;
+				
 			}
 			if (levelNecklace == 2 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL3) {
@@ -501,7 +555,7 @@ void upgradeNecklace(SDL_Renderer* ren) {
 					printf("У вас не достаточно денег\n");
 					upgrade = 0;
 				}
-				if (upgrade == 0) return;
+				
 			}
 			if (levelNecklace == 3 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL4) {
@@ -516,7 +570,7 @@ void upgradeNecklace(SDL_Renderer* ren) {
 					printf("У вас не достаточно денег\n");
 					upgrade = 0;
 				}
-				if (upgrade == 0) return;
+				
 			}
 			if (levelNecklace == 4 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				if (upgrade == 1 and hero.Gold >= itemUpgrade.LVL5) {
@@ -531,19 +585,37 @@ void upgradeNecklace(SDL_Renderer* ren) {
 					printf("У вас не достаточно денег\n");
 					upgrade = 0;
 				}
-				if (upgrade == 0) return;
+				
 			}
 			if (levelNecklace == 5 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 				printf("У вас максимальный уровень ожерелья\nВам больше нечего прокачивать\n");
 				upgrade = 0;
 			}
 		}
+		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+		SDL_RenderClear(ren);
+		SDL_RenderCopy(ren, textupgradeNecklace, NULL, NULL);
+
+		xPoint = 100, yPoint = 50;
+		statsRect = { xPoint, yPoint, 55, 60 };
+		sprintf_s(stats, "%d", hero.necklace);
+		surfStatItems = TTF_RenderText_Blended(statItemsFont, stats, { 255, 255, 255, 255 });
+		size = { 0, 0, surfStatItems->w, surfStatItems->h };
+		textStatItemsText = SDL_CreateTextureFromSurface(ren, surfStatItems);
+		SDL_RenderCopy(ren, textStatItemsText, &size, &statsRect);
+		SDL_FreeSurface(surfStatItems);
+		SDL_DestroyTexture(textStatItemsText);
+
+		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
+		SDL_RenderPresent(ren);
 	}
-	if (upgrade == 0) {
-		SDL_DestroyTexture(textupgradeNecklace);
-		SDL_DestroyTexture(textArrow);
-		return;
-	}
+	
+	SDL_DestroyTexture(textArrow);
+	SDL_DestroyTexture(textStatItemsText);
+	SDL_DestroyTexture(textupgradeNecklace);
+
+	TTF_CloseFont(statItemsFont);
+
 	isPressed = 0;
 }
 

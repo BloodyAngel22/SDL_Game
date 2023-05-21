@@ -36,6 +36,9 @@
     <ClCompile Include="Upgrade Items.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Save.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Battle.h">
@@ -59,5 +62,22 @@
     <ClInclude Include="Upgrade Items.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="Save.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Runes.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="save1.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="save2.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="save3.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
   </ItemGroup>
 </Project>

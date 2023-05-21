@@ -23,6 +23,7 @@
     <ClCompile Include="Battle.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Leveling.cpp" />
+    <ClCompile Include="Save.cpp" />
     <ClCompile Include="Shop.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Upgrade Items.cpp" />
@@ -33,8 +34,15 @@
     <ClInclude Include="Items.h" />
     <ClInclude Include="Leveling.h" />
     <ClInclude Include="Models.h" />
+    <ClInclude Include="Runes.h" />
+    <ClInclude Include="Save.h" />
     <ClInclude Include="SDL_general.h" />
     <ClInclude Include="Upgrade Items.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="save1.txt" />
+    <Text Include="save2.txt" />
+    <Text Include="save3.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

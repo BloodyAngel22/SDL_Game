@@ -10,18 +10,20 @@
 #include "Models.h"
 #include "SDL_general.h"
 #include "Upgrade Items.h"
+#include "Save.h"
 #define  EnemyUp 1
 #define  EnemyRight 2
 #define  EnemyDown 3
 #define  EnemyLeft 4
 
 
-void init(); void de_init(int error);
+void init(); void de_init(int error); void choiceClass();
 
 int classHero = 0;
 float win_width = 1280, win_height = 720;
 SDL_Window* win = 0;
 SDL_Renderer* ren = 0;
+int Xcoordinate, Ycoordinate;
 
 void init() {
 
@@ -169,6 +171,15 @@ void main_menu() {
 	SDL_Surface* surfArrow = IMG_Load("sprites\\menu\\arrow.png");
 	SDL_Texture* textArrow = SDL_CreateTextureFromSurface(ren, surfArrow);
 	SDL_FreeSurface(surfArrow);
+	//
+	TTF_Font* statItemsFont = TTF_OpenFont("fonts\\BAUHS93.TTF", 75);
+	char stats[100] = "stats";
+	SDL_Surface* surfStatItems = TTF_RenderText_Blended(statItemsFont, stats, { 255, 255, 255, 255 });
+	SDL_Texture* textStatItemsText = SDL_CreateTextureFromSurface(ren, surfStatItems);
+	SDL_Rect size = { 0, 0, surfStatItems->w, surfStatItems->h };
+	int xPoint = 100, yPoint = 50;
+	SDL_Rect statsRect = { xPoint, yPoint, 55, 60 };
+	SDL_FreeSurface(surfStatItems);
 #pragma endregion
 	int mainMenu = 0;
 	SDL_Event ev;
@@ -181,12 +192,10 @@ void main_menu() {
 	SDL_Rect dstrectArrow;
 	int flag = 0;
 	while (mainMenu == 0) {
-		dstrectArrow = { xArrow, yArrow, 75, 75 };
 		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
 		SDL_RenderClear(ren);
 		SDL_RenderCopy(ren, textMainMenu, NULL, NULL);
-		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
-		SDL_RenderPresent(ren);
+		dstrectArrow = { xArrow, yArrow, 75, 75 };
 		while (SDL_PollEvent(&ev) != NULL) {
 			switch (ev.type) {
 			case SDL_KEYDOWN:
@@ -225,15 +234,26 @@ void main_menu() {
 		if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 			SDL_DestroyTexture(textMainMenu);
 			SDL_DestroyTexture(textArrow);
+			SDL_FreeSurface(surfStatItems);
+			SDL_DestroyTexture(textStatItemsText);
+			TTF_CloseFont(statItemsFont);
 			isPressed = 0;
+			choiceClass();
 			return;
 		}
-		if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN] and isPressed);
+		if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
+			isPressed = 0;
+			SDL_DestroyTexture(textMainMenu);
+			SDL_DestroyTexture(textArrow);
+			SDL_FreeSurface(surfStatItems);
+			SDL_DestroyTexture(textStatItemsText);
+			TTF_CloseFont(statItemsFont);
+			print_in_file(ren);
+			return;
+		}
 		if (pointer == 3 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
-			if (flag == 0) {
-				printf("creator: Zhigalkin Maxim\n");
+			if (flag == 0)
 				flag = 1;
-			}
 		}
 		if (pointer == 4 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 			SDL_DestroyTexture(textMainMenu);
@@ -241,6 +261,19 @@ void main_menu() {
 			de_init(1);
 		}
 		isPressed = 0;
+		if (flag == 1) {
+			xPoint = 750, yPoint = 390;
+			statsRect = { xPoint, yPoint, 200, 60 };
+			sprintf_s(stats, "Zhigalkin Maxim");
+			surfStatItems = TTF_RenderText_Blended(statItemsFont, stats, { 255, 255, 255, 255 });
+			size = { 0, 0, surfStatItems->w, surfStatItems->h };
+			textStatItemsText = SDL_CreateTextureFromSurface(ren, surfStatItems);
+			SDL_RenderCopy(ren, textStatItemsText, &size, &statsRect);
+			SDL_FreeSurface(surfStatItems);
+			SDL_DestroyTexture(textStatItemsText);
+		}
+		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
+		SDL_RenderPresent(ren);
 	}
 
 
@@ -313,6 +346,7 @@ void menu() {
 		if (pointer == 2 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 			SDL_DestroyTexture(textMenu);
 			SDL_DestroyTexture(textArrow);
+			save_in_file(ren);
 			printf("You save a game\n");
 			return; //save
 		}
@@ -408,6 +442,27 @@ void choiceClass() {
 	}
 }
 
+void wall(SDL_Rect a) {
+	int leftA;
+	int rightA;
+	int topA;
+	int bottomA;
+
+	leftA = a.x;
+	rightA = a.x + a.w;
+	topA = a.y;
+	bottomA = a.y + a.h;
+
+	if (rightA > win_width)
+		Xcoordinate-=4;
+	if (leftA < 0)
+		Xcoordinate+=4;
+	if (bottomA > win_height)
+		Ycoordinate-=4;
+	if (topA < 0)
+		Ycoordinate+=4;
+}
+
 int main(int argc, char* argv[]) {
 	init();
 	srand(time(NULL));
@@ -421,9 +476,8 @@ int main(int argc, char* argv[]) {
 	int flagEnemy1 = EnemyUp;
 	int flagEnemy2 = EnemyDown;
 	int shiftX = win_width / 2, shiftY = win_height / 2, Xsize = 40, Ysize = 40;
-	int Xcoordinate = shiftX - Xsize / 2, Ycoordinate = shiftY - Ysize / 2;
+	Xcoordinate = shiftX - Xsize / 2, Ycoordinate = shiftY - Ysize / 2;
 	float EnemyX = shiftX + 200, EnemyY = shiftY + 100, XsizeEnemy = 40, YsizeEnemy = 40;
-	SDL_Rect r = { Xcoordinate, Ycoordinate, Xsize, Ysize };
 	SDL_FRect enemy = { EnemyX, EnemyY, Xsize, Ysize };
 	SDL_FRect enemy1 = { EnemyX, EnemyY, Xsize, Ysize };
 	SDL_Event ev;
@@ -434,27 +488,34 @@ int main(int argc, char* argv[]) {
 	SDL_PollEvent(&ev);
 
 	#pragma region Texture
-		//room
-		SDL_Surface* surfRoom = IMG_Load("sprites\\background\\part1.png");
-		SDL_Texture* textRoom = SDL_CreateTextureFromSurface(ren, surfRoom);
-		SDL_FreeSurface(surfRoom);
-		// character 
-		SDL_Surface* surfCharacter = IMG_Load("sprites\\character\\character.png");
-		SDL_Texture* textCharacter = SDL_CreateTextureFromSurface(ren, surfCharacter);
-		SDL_FreeSurface(surfCharacter);
-		//Bat
-		SDL_Surface* surfBat = IMG_Load("sprites\\enemy\\bat.png");
-		SDL_Texture* textBat = SDL_CreateTextureFromSurface(ren, surfBat);
-		SDL_FreeSurface(surfBat);
+	//room
+	SDL_Surface* surfRoom = IMG_Load("sprites\\background\\part1.png");
+	SDL_Texture* textRoom = SDL_CreateTextureFromSurface(ren, surfRoom);
+	SDL_FreeSurface(surfRoom);
+	// character 
+	SDL_Surface* surfCharacter = IMG_Load("sprites\\character\\character.png");
+	SDL_Texture* textCharacter = SDL_CreateTextureFromSurface(ren, surfCharacter);
+	SDL_Rect player = { Xcoordinate, Ycoordinate, Xsize, Ysize };
+	player.w = player.h;
+	SDL_FreeSurface(surfCharacter);
+	//Bat
+	SDL_Surface* surfBat = IMG_Load("sprites\\enemy\\bat.png");
+	SDL_Texture* textBat = SDL_CreateTextureFromSurface(ren, surfBat);
+	SDL_FreeSurface(surfBat);
 	#pragma endregion
 
-		main_menu();
-		choiceClass();
+	int frame = 0, frame_count = 10, cur_frametime = 0, max_frametime = 1000/120;
+	int lasttime = SDL_GetTicks(); int newtime = SDL_GetTicks();
+	int	dt = 0;
+	bool animation = false;
+
+	main_menu();
 	while (isRunning) {
-		r = { Xcoordinate, Ycoordinate, Xsize, Ysize };
+		UP = DOWN = LEFT = RIGHT = 0;
+		player = { Xcoordinate, Ycoordinate, Xsize, Ysize };
 		enemy = { EnemyX, EnemyY, XsizeEnemy, YsizeEnemy };
 		enemy1 = { EnemyX, EnemyY - 200, XsizeEnemy, YsizeEnemy };
-		bool hitbox = checkCollision(r, enemy);
+		bool hitbox = checkCollision(player, enemy);
 		while (SDL_PollEvent(&ev) != NULL) {
 
 			switch (ev.type) {
@@ -500,18 +561,49 @@ int main(int argc, char* argv[]) {
 
 
 		}
-		if ((state[SDL_SCANCODE_UP] or state[SDL_SCANCODE_W]) and (!state[SDL_SCANCODE_DOWN] or !state[SDL_SCANCODE_S]))	Ycoordinate	-= 4;
-		if ((state[SDL_SCANCODE_DOWN] or state[SDL_SCANCODE_S]) and (!state[SDL_SCANCODE_UP] or !state[SDL_SCANCODE_W]))	Ycoordinate	+=	4;
-		if ((state[SDL_SCANCODE_RIGHT] or state[SDL_SCANCODE_D]) and (!state[SDL_SCANCODE_LEFT] or !state[SDL_SCANCODE_A])) Xcoordinate += 4;
-		if ((state[SDL_SCANCODE_LEFT] or state[SDL_SCANCODE_A]) and (!state[SDL_SCANCODE_RIGHT] or !state[SDL_SCANCODE_D])) Xcoordinate -= 4;
 
+		newtime = SDL_GetTicks();
+		dt = newtime - lasttime;
+		lasttime = newtime;
+
+		if ((state[SDL_SCANCODE_UP] or state[SDL_SCANCODE_W]) and (!state[SDL_SCANCODE_DOWN] or !state[SDL_SCANCODE_S])) {
+			UP = 1;
+			if (UP) {
+				DOWN = 0, LEFT = 0, RIGHT = 0;
+			}
+			Ycoordinate -= 4;
+		}
+		if ((state[SDL_SCANCODE_DOWN] or state[SDL_SCANCODE_S]) and (!state[SDL_SCANCODE_UP] or !state[SDL_SCANCODE_W])) {
+			DOWN = 1;
+			if (DOWN) {
+				UP = 0, LEFT = 0, RIGHT = 0;
+			}
+			Ycoordinate += 4;
+		}
+		if ((state[SDL_SCANCODE_LEFT] or state[SDL_SCANCODE_A]) and (!state[SDL_SCANCODE_RIGHT] or !state[SDL_SCANCODE_D])) {
+			LEFT = 1;
+			if (LEFT) {
+				UP = 0, RIGHT = 0, DOWN = 0;
+			}
+			Xcoordinate -= 4;
+		}
+		if ((state[SDL_SCANCODE_RIGHT] or state[SDL_SCANCODE_D]) and (!state[SDL_SCANCODE_LEFT] or !state[SDL_SCANCODE_A])) {
+			RIGHT = 1;
+			if (RIGHT) {
+				UP = 0, LEFT = 0, DOWN = 0;
+			}
+			Xcoordinate += 4;
+		}
+
+		animation = UP or DOWN or LEFT or RIGHT;
 
 		streing(EnemyX, EnemyY, i, flagEnemy1);
 
-		SDL_Rect srcrectCharacter = { 10, 10, 100, 140 };
-		SDL_Rect dstrectCharacter = { Xcoordinate - 7, Ycoordinate - 5, Xsize + 20, Ysize + 20};
+		SDL_Rect srcrectCharacter = { 10, 10, 120, 120 };
+		SDL_Rect dstrectCharacter = { Xcoordinate - 7, Ycoordinate - 5, Xsize+20, Ysize+20};
 		SDL_Rect srcrectBat = { 10, 10, 100, 140 };
 		SDL_Rect dstrectBat = { EnemyX - 19, EnemyY, XsizeEnemy + 25, YsizeEnemy + 25};
+
 
 		if (hitbox == true) {
 			battle(EnemyX, EnemyY, switcher);
@@ -530,6 +622,7 @@ int main(int argc, char* argv[]) {
 			printf("Respawned\n");
 			flag = 0;
 		}
+		wall(player);
 
 		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
 		SDL_RenderClear(ren);
@@ -537,13 +630,42 @@ int main(int argc, char* argv[]) {
 		SDL_SetRenderDrawColor(ren, 200, 100, 0, 0);
 		SDL_RenderFillRectF(ren, &enemy);
 		SDL_SetRenderDrawColor(ren, 200, 0, 0, 0);
-		SDL_RenderFillRect(ren, &r);
+		SDL_RenderFillRect(ren, &player);
 
 		SDL_RenderCopy(ren, textRoom, NULL, NULL);
-		SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
+		
+
+		if (animation) {
+			cur_frametime += dt;
+			if (cur_frametime >= max_frametime) {
+				cur_frametime -= max_frametime;
+				frame = (frame + 1) % frame_count;
+				srcrectCharacter.x = 120 * frame;
+			}
+		}
+
+		if (!animation)
+			SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
+		if (animation and RIGHT and !UP and !DOWN ) {
+			srcrectCharacter.x, srcrectCharacter.y = 918, srcrectCharacter.w = 120, srcrectCharacter.h = 120;
+			SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);	
+		}
+		if (animation and LEFT and !UP and !DOWN ) {
+			srcrectCharacter.x, srcrectCharacter.y = 660, srcrectCharacter.w = 120, srcrectCharacter.h = 120;
+			SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
+		}
+		if (animation and UP) {
+			srcrectCharacter.x, srcrectCharacter.y = 785, srcrectCharacter.w = 120, srcrectCharacter.h = 120;
+			SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
+		}
+		if (animation and DOWN) {
+			srcrectCharacter.x, srcrectCharacter.y = 530, srcrectCharacter.w = 120, srcrectCharacter.h = 120;
+			SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
+		}
+
 		SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
 		SDL_RenderPresent(ren);
-		SDL_Delay(16);
+		SDL_Delay(18);
 
 	}
 	SDL_DestroyTexture(textRoom);
