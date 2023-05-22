@@ -52,7 +52,7 @@ int pressedEnter() {
 		isEnterPressed = 1;
 		return 1;
 	}
-	else return 0;
+	else return 0;	
 }
 
 void MenuBattle(SDL_Renderer* ren); void StartBattle(); void Battle(); int escape();
@@ -109,9 +109,10 @@ void MenuBattle(SDL_Renderer* ren) {
 		flag = 1;
 		return;
 	}
-		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
-		SDL_RenderClear(ren);
-		SDL_RenderCopy(ren, textBattle, NULL, NULL);
+
+	SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+	SDL_RenderClear(ren);
+	SDL_RenderCopy(ren, textBattle, NULL, NULL);
 
 	while ((hero.Health > 0) and (livedEnemies >= 1)) {
 		int choiche = 0;
@@ -1019,8 +1020,8 @@ void MenuBattle(SDL_Renderer* ren) {
 	SDL_DestroyTexture(textBattle);
 	SDL_DestroyTexture(textBat);
 	SDL_DestroyTexture(textEnemyHealthTTF);
-	TTF_CloseFont(enemyTTF);
 	SDL_DestroyTexture(textCharacter);
+	TTF_CloseFont(enemyTTF);
 
 	if (livedEnemies < 1) {
 		abilityDamagePoison = 6;
@@ -1109,6 +1110,10 @@ void Battler(SDL_Renderer* ren) {
 	SDL_Texture* textArrow = SDL_CreateTextureFromSurface(ren, surfArrow);
 	SDL_FreeSurface(surfArrow);
 	//
+	SDL_Surface* surfAtk = IMG_Load("sprites\\attack\\attack.png");
+	SDL_Texture* textAtk = SDL_CreateTextureFromSurface(ren, surfAtk);
+	SDL_FreeSurface(surfAtk);
+	//
 	SDL_Surface* surfdeadEnemy = IMG_Load("sprites\\enemy\\deadEnemy.png");
 	SDL_Texture* textdeadEenemy = SDL_CreateTextureFromSurface(ren, surfdeadEnemy);
 	SDL_FreeSurface(surfdeadEnemy);
@@ -1139,6 +1144,17 @@ void Battler(SDL_Renderer* ren) {
 	
 	SDL_Rect srcrectDeadEnemy = { 0, 0, 100, 140 };
 	SDL_Rect dstrectDeadEnemy1; SDL_Rect dstrectDeadEnemy2; SDL_Rect dstrectDeadEnemy3; SDL_Rect dstrectDeadEnemy4;
+
+	//animation
+	int frame = 0, frame_count = 3, cur_frametime = 0, max_frametime = 1000 / 12;
+	int lasttime = SDL_GetTicks(); int newtime = SDL_GetTicks();
+	int	dt = 0;
+	int animation = 1;
+	int frameFlag = 0;
+
+	SDL_Rect srcrectAtk = { 200,200,0,0 };
+	SDL_Rect dstrectAtk = { 120, 50, 200, 160 };
+
 	if (livedEnemies < 1) {
 		SDL_DestroyTexture(textBat);
 		SDL_DestroyTexture(textArrow);
@@ -1152,6 +1168,7 @@ void Battler(SDL_Renderer* ren) {
 		flag = 1;
 		return;
 	}
+
 	if (amountEnemy == 2 and livedEnemies >= 1 and hero.Health > 0) {
 			int hitEnemy = 0;
 			while (hitEnemy == 0) {
@@ -1284,11 +1301,51 @@ void Battler(SDL_Renderer* ren) {
 					hero.experience += enemy2.level;
 				}
 			}
+
+			newtime = SDL_GetTicks();
+			dt = newtime - lasttime;
+			lasttime = newtime;
+
+			while (animation == 1) {
+				cur_frametime += dt;
+				if (cur_frametime >= max_frametime) {
+					cur_frametime -= max_frametime;
+					frame = (frame + 1) % frame_count;
+					srcrectAtk.x = 530 * frameFlag;
+					frameFlag += 1;
+				}
+				if (animation == 1) {
+					srcrectAtk.x, srcrectAtk.y = 140, srcrectAtk.w = 513, srcrectAtk.h = 380;
+					SDL_RenderClear(ren);
+					SDL_RenderCopy(ren, textBattle, NULL, NULL);
+					SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
+					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
+					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+					SDL_RenderCopy(ren, textAtk, &srcrectAtk, &dstrectAtk);
+					SDL_RenderPresent(ren);
+					SDL_Delay(70);
+				}
+				if (frameFlag == 4) {
+					animation = 0;
+					frameFlag = 0;
+				}
+			}
+
 			hero.Health = hero.Health - (enemy1.atk - (enemy1.atk * hero.Defense));
 			if (hero.Health <= 0) de_init(1);
 			hero.Health = hero.Health - (enemy2.atk - (enemy2.atk * hero.Defense));
 			if (hero.Health <= 0) de_init(1);
+
+			SDL_DestroyTexture(textBat);
+			SDL_DestroyTexture(textArrow);
+			SDL_DestroyTexture(textBattle);
+			SDL_DestroyTexture(textdeadEenemy);
+			SDL_DestroyTexture(textEnemyHealthTTF);
+			SDL_DestroyTexture(textAtk);
+			TTF_CloseFont(enemyTTF);
+			SDL_DestroyTexture(textCharacter);
 		}
+
 	if (amountEnemy == 3 and livedEnemies >= 1 and hero.Health > 0) {
 			int hitEnemy = 0;
 			if (enemy2.health > 0) {
@@ -1542,20 +1599,56 @@ void Battler(SDL_Renderer* ren) {
 					hero.experience += enemy3.level;
 				}
 			}
+
+			newtime = SDL_GetTicks();
+			dt = newtime - lasttime;
+			lasttime = newtime;
+
+			while (animation == 1) {
+				cur_frametime += dt;
+				if (cur_frametime >= max_frametime) {
+					cur_frametime -= max_frametime;
+					frame = (frame + 1) % frame_count;
+					srcrectAtk.x = 530 * frameFlag;
+					frameFlag += 1;
+				}
+				if (animation == 1) {
+					srcrectAtk.x, srcrectAtk.y = 140, srcrectAtk.w = 513, srcrectAtk.h = 380;
+					SDL_RenderClear(ren);
+					SDL_RenderCopy(ren, textBattle, NULL, NULL);
+					SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
+					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
+					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat3);
+					SDL_RenderCopy(ren, textAtk, &srcrectAtk, &dstrectAtk);
+					SDL_RenderPresent(ren);
+					SDL_Delay(70);
+				}
+				if (frameFlag == 4) {
+					animation = 0;
+					frameFlag = 0;
+				}
+			}
+
 			hero.Health = hero.Health - (enemy1.atk - (enemy1.atk * hero.Defense));
 			if (hero.Health <= 0) de_init(1);
 			hero.Health = hero.Health - (enemy2.atk - (enemy2.atk * hero.Defense));
 			if (hero.Health <= 0) de_init(1);
 			hero.Health = hero.Health - (enemy3.atk - (enemy3.atk * hero.Defense));
 			if (hero.Health <= 0) de_init(1);
+
+			SDL_DestroyTexture(textBat);
+			SDL_DestroyTexture(textArrow);
+			SDL_DestroyTexture(textBattle);
+			SDL_DestroyTexture(textdeadEenemy);
+			SDL_DestroyTexture(textEnemyHealthTTF);
+			SDL_DestroyTexture(textAtk);
+			TTF_CloseFont(enemyTTF);
+			SDL_DestroyTexture(textCharacter);
 		}
-	SDL_DestroyTexture(textBat);
-	SDL_DestroyTexture(textArrow);
-	SDL_DestroyTexture(textBattle);
-	SDL_DestroyTexture(textdeadEenemy);
-	SDL_DestroyTexture(textEnemyHealthTTF);
-	TTF_CloseFont(enemyTTF);
-	SDL_DestroyTexture(textCharacter);
+
+
+	
 
 	flag = 1;
 }
