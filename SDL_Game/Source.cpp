@@ -232,11 +232,13 @@ void main_menu() {
 			isPressed = pressedEnter();
 		}
 		if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
-			/*SDL_DestroyTexture(textMainMenu);
+			SDL_DestroyTexture(textMainMenu);
 			SDL_DestroyTexture(textArrow);
-			SDL_FreeSurface(surfStatItems);
-			SDL_DestroyTexture(textStatItemsText);
-			TTF_CloseFont(statItemsFont);*/
+			if (flag == 1) {
+				SDL_FreeSurface(surfStatItems);
+				SDL_DestroyTexture(textStatItemsText);
+				TTF_CloseFont(statItemsFont);
+			}
 			isPressed = 0;
 			choiceClass();
 			return;
@@ -245,9 +247,11 @@ void main_menu() {
 			isPressed = 0;
 			SDL_DestroyTexture(textMainMenu);
 			SDL_DestroyTexture(textArrow);
-			SDL_FreeSurface(surfStatItems);
-			SDL_DestroyTexture(textStatItemsText);
-			TTF_CloseFont(statItemsFont);
+			if (flag == 1) {
+				SDL_FreeSurface(surfStatItems);
+				SDL_DestroyTexture(textStatItemsText);
+				TTF_CloseFont(statItemsFont);
+			}
 			print_in_file(ren);
 			return;
 		}
