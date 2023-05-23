@@ -78,7 +78,7 @@ void character_leveling(SDL_Renderer* ren) {
 		SDL_RenderCopy(ren, textHeroPointTTF, &size, &pointsTTF);
 		SDL_FreeSurface(surftHeroPointTTF);
 		SDL_DestroyTexture(textHeroPointTTF);
-
+		#pragma region TTF
 		xPoint = 700, yPoint = 180;
 		sprintf_s(heroPoints, "-> %d", hero.Attack);
 		surftHeroPointTTF = TTF_RenderText_Blended(heroPointTTF, heroPoints, { 255, 255, 255, 255 });
@@ -148,7 +148,7 @@ void character_leveling(SDL_Renderer* ren) {
 		SDL_RenderCopy(ren, textHeroPointTTF, &size, &pointsTTF);
 		SDL_FreeSurface(surftHeroPointTTF);
 		SDL_DestroyTexture(textHeroPointTTF);
-
+#pragma endregion
 		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 		SDL_RenderPresent(ren);
 	

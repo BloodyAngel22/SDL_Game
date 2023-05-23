@@ -232,11 +232,11 @@ void main_menu() {
 			isPressed = pressedEnter();
 		}
 		if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
-			SDL_DestroyTexture(textMainMenu);
+			/*SDL_DestroyTexture(textMainMenu);
 			SDL_DestroyTexture(textArrow);
 			SDL_FreeSurface(surfStatItems);
 			SDL_DestroyTexture(textStatItemsText);
-			TTF_CloseFont(statItemsFont);
+			TTF_CloseFont(statItemsFont);*/
 			isPressed = 0;
 			choiceClass();
 			return;
