@@ -250,56 +250,101 @@ void skill_tree() {
 	else printf("you don't have skill tree points\n");
 }
 
-void runes() {
+void set_runes(bool& runeWater, bool& runeFire, bool& runeEarth) {
 	Rune water;
 	water.attack = 1;
-	water.damageAbility = 1.20;
+	water.damageAbility = 1.2;
 	water.defense = 1;
-	water.health = 1.25;
+	water.health = 1.3;
 
 	Rune fire;
-	fire.attack = 1.25;
+	fire.attack = 1.3;
 	fire.damageAbility = 1;
 	fire.defense = 1;
 	fire.health = 1.1;
 
 	Rune earth;
 	earth.attack = 1;
-	earth.damageAbility = 1.15;
-	earth.defense = 1.15;
-	earth.health = 1.35;
+	earth.damageAbility = 1.2;
+	earth.defense = 1.2;
+	earth.health = 1.2;
 
-	int WATER, FIRE, EARTH;
-	WATER = FIRE = EARTH = 0;
-
-	if (WATER == 1) {
-		FIRE = EARTH = 0;
-
+	if (runeWater == 1) {
 		hero.Attack *= water.attack;
 		abilityDamageFireball *= water.damageAbility;
 		abilityDamageLightning *= water.damageAbility;
 		abilityDamagePoison *= water.damageAbility;
 		hero.Defense *= water.defense;
 		hero.Health *= water.health;
+		hero.maxHealth = hero.Health;
 	}
-	if (FIRE == 1) {
-		WATER = EARTH = 0;
-
+	if (runeFire == 1) {
 		hero.Attack *= fire.attack;
 		abilityDamageFireball *= fire.damageAbility;
 		abilityDamageLightning *= fire.damageAbility;
 		abilityDamagePoison *= fire.damageAbility;
 		hero.Defense *= fire.defense;
 		hero.Health *= fire.health;
+		hero.maxHealth = hero.Health;
 	}
-	if (EARTH == 1) {
-		WATER = FIRE = 0;
-
+	if (runeEarth == 1) {
 		hero.Attack *= earth.attack;
 		abilityDamageFireball *= earth.damageAbility;
 		abilityDamageLightning *= earth.damageAbility;
 		abilityDamagePoison *= earth.damageAbility;
 		hero.Defense *= earth.defense;
 		hero.Health *= earth.health;
+		hero.maxHealth = hero.Health;
+	}
+}
+
+void remove_the_rune(bool& runeWater, bool& runeFire, bool& runeEarth) {
+	Rune water;
+	water.attack = 1;
+	water.damageAbility = 1.2;
+	water.defense = 1;
+	water.health = 1.3;
+
+	Rune fire;
+	fire.attack = 1.3;
+	fire.damageAbility = 1;
+	fire.defense = 1;
+	fire.health = 1.1;
+
+	Rune earth;
+	earth.attack = 1;
+	earth.damageAbility = 1.2;
+	earth.defense = 1.2;
+	earth.health = 1.2;
+
+	if (runeWater == 1) {
+		hero.Attack /= water.attack;
+		abilityDamageFireball /= water.damageAbility;
+		abilityDamageLightning /= water.damageAbility;
+		abilityDamagePoison /= water.damageAbility;
+		hero.Defense /= water.defense;
+		hero.Health /= water.health;
+		hero.maxHealth = hero.Health;
+		runeWater = 0;
+	}
+	if (runeFire == 1) {
+		hero.Attack /= fire.attack;
+		abilityDamageFireball /= fire.damageAbility;
+		abilityDamageLightning /= fire.damageAbility;
+		abilityDamagePoison /= fire.damageAbility;
+		hero.Defense /= fire.defense;
+		hero.Health /= fire.health;
+		hero.maxHealth = hero.Health;
+		runeFire = 0;
+	}
+	if (runeEarth == 1) {
+		hero.Attack /= earth.attack;
+		abilityDamageFireball /= earth.damageAbility;
+		abilityDamageLightning /= earth.damageAbility;
+		abilityDamagePoison /= earth.damageAbility;
+		hero.Defense /= earth.defense;
+		hero.Health /= earth.health;
+		hero.maxHealth = hero.Health;
+		runeEarth = 0;
 	}
 }

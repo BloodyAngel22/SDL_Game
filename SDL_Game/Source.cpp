@@ -491,6 +491,23 @@ int main(int argc, char* argv[]) {
 	Xcoordinate = shiftX - Xsize / 2, Ycoordinate = shiftY - Ysize / 2;
 	SDL_PollEvent(&ev);
 
+	float RuneSize = 60;
+	//Water
+	bool runeWater = 0;
+	SDL_Rect dstrune = { 100, 100, RuneSize, RuneSize };
+	SDL_Rect srcrune = { 60, 60, 190, 190 };
+	SDL_FRect rune = { dstrune.x, dstrune.y, RuneSize, RuneSize };
+	//Fire
+	bool runeFire = 0;
+	SDL_Rect dstrune2 = { 200, 100, RuneSize, RuneSize };
+	SDL_Rect srcrune2 = { 430, 70, 190, 190 };
+	SDL_FRect rune2 = { dstrune2.x, dstrune2.y, RuneSize, RuneSize };
+	//Earth
+	bool runeEarth = 0;
+	SDL_Rect dstrune3 = { 400, 100, RuneSize, RuneSize };
+	SDL_Rect srcrune3 = { 240, 60, 190, 190 };
+	SDL_FRect rune3 = { dstrune3.x, dstrune3.y, RuneSize, RuneSize };
+
 	#pragma region Texture
 	//room
 	SDL_Surface* surfRoom = IMG_Load("sprites\\background\\part1.png");
@@ -506,6 +523,10 @@ int main(int argc, char* argv[]) {
 	SDL_Surface* surfBat = IMG_Load("sprites\\enemy\\bat.png");
 	SDL_Texture* textBat = SDL_CreateTextureFromSurface(ren, surfBat);
 	SDL_FreeSurface(surfBat);
+	//
+	SDL_Surface* surfRune = IMG_Load("sprites\\runes\\runes.png");
+	SDL_Texture* textRune = SDL_CreateTextureFromSurface(ren, surfRune);
+	SDL_FreeSurface(surfRune);
 	#pragma endregion
 
 	int frame = 0, frame_count = 10, cur_frametime = 0, max_frametime = 1000/120;
@@ -647,6 +668,35 @@ int main(int argc, char* argv[]) {
 				srcrectCharacter.x = 120 * frame;
 			}
 		}
+		//Water
+		SDL_RenderCopy(ren, textRune, &srcrune, &dstrune);
+		//Fire
+		SDL_RenderCopy(ren, textRune, &srcrune2, &dstrune2);
+		//Earth
+		SDL_RenderCopy(ren, textRune, &srcrune3, &dstrune3);
+
+		if (checkCollision(player, rune) and state[SDL_SCANCODE_RETURN]) {//Water
+			rune.x = -100, rune.y = -100;
+			dstrune.x = dstrune.y = -100;
+			remove_the_rune(runeWater, runeFire, runeEarth);
+			runeWater = 1;
+			set_runes(runeWater, runeFire, runeEarth);
+		}
+		if (checkCollision(player, rune2) and state[SDL_SCANCODE_RETURN]) {//Fire
+			rune2.x = -100, rune2.y = -100;
+			dstrune2.x = dstrune2.y = -100;
+			remove_the_rune(runeWater, runeFire, runeEarth);
+			runeFire = 1;
+			set_runes(runeWater, runeFire, runeEarth);
+		}
+		if (checkCollision(player, rune3) and state[SDL_SCANCODE_RETURN]) {//Eatrh
+			rune3.x = -100, rune3.y = -100;
+			dstrune3.x = dstrune3.y = -100;
+			remove_the_rune(runeWater, runeFire, runeEarth);
+			runeEarth = 1;
+			set_runes(runeWater, runeFire, runeEarth);
+		}
+
 
 		if (!animation)
 			SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
@@ -669,12 +719,13 @@ int main(int argc, char* argv[]) {
 
 		SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
 		SDL_RenderPresent(ren);
-		SDL_Delay(18);
+		SDL_Delay(17);
 
 	}
 	SDL_DestroyTexture(textRoom);
 	SDL_DestroyTexture(textCharacter);
 	SDL_DestroyTexture(textBat);
+	SDL_DestroyTexture(textRune);
 	de_init(0);
 	return 0;
 }
