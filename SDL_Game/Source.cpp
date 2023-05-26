@@ -527,7 +527,25 @@ int main(int argc, char* argv[]) {
 	SDL_Surface* surfRune = IMG_Load("sprites\\runes\\runes.png");
 	SDL_Texture* textRune = SDL_CreateTextureFromSurface(ren, surfRune);
 	SDL_FreeSurface(surfRune);
-	#pragma endregion
+	//Portal
+	SDL_Surface* surfPortal = IMG_Load("sprites\\portal\\mainPortal.png");
+	SDL_Texture* textPortal = SDL_CreateTextureFromSurface(ren, surfPortal);
+	SDL_FreeSurface(surfPortal);
+	int portalSize = 80;
+	//Portal1
+	SDL_Rect dstPortal1 = { 0, 300, portalSize , portalSize };
+	SDL_FRect Portal1 = { dstPortal1.x, dstPortal1.y, portalSize , portalSize };
+	SDL_Rect srcPortal = { 0, 0, 29, 32 };
+	//Portal2
+	SDL_Rect dstPortal2 = { 1200, 300, portalSize , portalSize };
+	SDL_FRect Portal2 = { dstPortal2.x, dstPortal2.y, portalSize , portalSize };
+	//Portal3
+	SDL_Rect dstPortal3 = { 570, 5, portalSize , portalSize };
+	SDL_FRect Portal3 = { dstPortal3.x, dstPortal3.y, portalSize , portalSize };
+	//Portal4
+	SDL_Rect dstPortal4 = { 570, 635, portalSize , portalSize };
+	SDL_FRect Portal4 = { dstPortal4.x, dstPortal4.y, portalSize , portalSize };
+#pragma endregion
 
 	int frame = 0, frame_count = 10, cur_frametime = 0, max_frametime = 1000/120;
 	int lasttime = SDL_GetTicks(); int newtime = SDL_GetTicks();
@@ -697,6 +715,24 @@ int main(int argc, char* argv[]) {
 			set_runes(runeWater, runeFire, runeEarth);
 		}
 
+		//Portal
+		SDL_RenderCopy(ren, textPortal, &srcPortal, &dstPortal1);
+		SDL_RenderCopy(ren, textPortal, &srcPortal, &dstPortal2);
+		SDL_RenderCopy(ren, textPortal, &srcPortal, &dstPortal3);
+		SDL_RenderCopy(ren, textPortal, &srcPortal, &dstPortal4);
+		isPressed = pressedEnter();
+		if (checkCollision(player, Portal1) and state[SDL_SCANCODE_RETURN] and isPressed) {
+			Xcoordinate = dstPortal2.x + 25, Ycoordinate = dstPortal2.y + 10;
+		}
+		if (checkCollision(player, Portal2) and state[SDL_SCANCODE_RETURN] and isPressed) {
+			Xcoordinate = dstPortal1.x + 25, Ycoordinate = dstPortal1.y + 10;
+		}
+		if (checkCollision(player, Portal3) and state[SDL_SCANCODE_RETURN] and isPressed) {
+			Xcoordinate = dstPortal4.x + 25, Ycoordinate = dstPortal4.y + 10;
+		}
+		if (checkCollision(player, Portal4) and state[SDL_SCANCODE_RETURN] and isPressed) {
+			Xcoordinate = dstPortal3.x + 25, Ycoordinate = dstPortal3.y + 10;
+		}
 
 		if (!animation)
 			SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
@@ -716,6 +752,7 @@ int main(int argc, char* argv[]) {
 			srcrectCharacter.x, srcrectCharacter.y = 530, srcrectCharacter.w = 120, srcrectCharacter.h = 120;
 			SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
 		}
+		isPressed = 0;
 
 		SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
 		SDL_RenderPresent(ren);
@@ -726,6 +763,7 @@ int main(int argc, char* argv[]) {
 	SDL_DestroyTexture(textCharacter);
 	SDL_DestroyTexture(textBat);
 	SDL_DestroyTexture(textRune);
+	SDL_DestroyTexture(textPortal);
 	de_init(0);
 	return 0;
 }
