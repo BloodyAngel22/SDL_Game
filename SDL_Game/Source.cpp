@@ -509,10 +509,24 @@ int main(int argc, char* argv[]) {
 	SDL_FRect rune3 = { dstrune3.x, dstrune3.y, RuneSize, RuneSize };
 
 	#pragma region Texture
-	//room
+	//room1
 	SDL_Surface* surfRoom = IMG_Load("sprites\\background\\part1.png");
-	SDL_Texture* textRoom = SDL_CreateTextureFromSurface(ren, surfRoom);
+	SDL_Texture* textRoom1 = SDL_CreateTextureFromSurface(ren, surfRoom);
 	SDL_FreeSurface(surfRoom);
+	//room2
+	SDL_Surface* surfRoom2 = IMG_Load("sprites\\background\\part2.png");
+	SDL_Texture* textRoom2 = SDL_CreateTextureFromSurface(ren, surfRoom2);
+	SDL_FreeSurface(surfRoom2);
+	//room3
+	SDL_Surface* surfRoom3 = IMG_Load("sprites\\background\\part3.png");
+	SDL_Texture* textRoom3 = SDL_CreateTextureFromSurface(ren, surfRoom3);
+	SDL_FreeSurface(surfRoom3);
+	//room4
+	SDL_Surface* surfRoom4 = IMG_Load("sprites\\background\\part4.png");
+	SDL_Texture* textRoom4 = SDL_CreateTextureFromSurface(ren, surfRoom4);
+	SDL_FreeSurface(surfRoom4);
+	int row = 1, col = 1;
+	int room = 1;
 	// character 
 	SDL_Surface* surfCharacter = IMG_Load("sprites\\character\\character.png");
 	SDL_Texture* textCharacter = SDL_CreateTextureFromSurface(ren, surfCharacter);
@@ -639,8 +653,9 @@ int main(int argc, char* argv[]) {
 		}
 
 		animation = UP or DOWN or LEFT or RIGHT;
-
-		streing(EnemyX, EnemyY, i, flagEnemy1);
+		
+		if (row == 1 and col == 1)
+			streing(EnemyX, EnemyY, i, flagEnemy1);
 
 		SDL_Rect srcrectCharacter = { 10, 10, 120, 120 };
 		SDL_Rect dstrectCharacter = { Xcoordinate - 7, Ycoordinate - 5, Xsize+20, Ysize+20};
@@ -648,7 +663,7 @@ int main(int argc, char* argv[]) {
 		SDL_Rect dstrectBat = { EnemyX - 19, EnemyY, XsizeEnemy + 25, YsizeEnemy + 25};
 
 
-		if (hitbox == true) {
+		if (hitbox == true and row == 1 and col == 1) {
 			battle(EnemyX, EnemyY, switcher);
 			winner = true;
 			//printf("true\n");
@@ -671,12 +686,26 @@ int main(int argc, char* argv[]) {
 		SDL_RenderClear(ren);
 
 		SDL_SetRenderDrawColor(ren, 200, 100, 0, 0);
-		SDL_RenderFillRectF(ren, &enemy);
+
+		if (row == 1 and col == 1) {
+			SDL_RenderFillRectF(ren, &enemy);
+		}
 		SDL_SetRenderDrawColor(ren, 200, 0, 0, 0);
 		SDL_RenderFillRect(ren, &player);
 
-		SDL_RenderCopy(ren, textRoom, NULL, NULL);
-		
+		//отрисовка комнат
+		if (row == 1 and col == 1) {
+			SDL_RenderCopy(ren, textRoom1, NULL, NULL);
+		}
+		if (row == 2 and col == 1) {
+			SDL_RenderCopy(ren, textRoom2, NULL, NULL);
+		}
+		if (row == 1 and col == 2) {
+			SDL_RenderCopy(ren, textRoom3, NULL, NULL);
+		}
+		if (row == 2 and col == 2) {
+			SDL_RenderCopy(ren, textRoom4, NULL, NULL);
+		}
 
 		if (animation) {
 			cur_frametime += dt;
@@ -686,52 +715,72 @@ int main(int argc, char* argv[]) {
 				srcrectCharacter.x = 120 * frame;
 			}
 		}
-		//Water
-		SDL_RenderCopy(ren, textRune, &srcrune, &dstrune);
-		//Fire
-		SDL_RenderCopy(ren, textRune, &srcrune2, &dstrune2);
-		//Earth
-		SDL_RenderCopy(ren, textRune, &srcrune3, &dstrune3);
-
-		if (checkCollision(player, rune) and state[SDL_SCANCODE_RETURN]) {//Water
-			rune.x = -100, rune.y = -100;
-			dstrune.x = dstrune.y = -100;
-			remove_the_rune(runeWater, runeFire, runeEarth);
-			runeWater = 1;
-			set_runes(runeWater, runeFire, runeEarth);
+		if (row == 2 and col == 2) {//отрисовка рун
+			//Water
+			SDL_RenderCopy(ren, textRune, &srcrune, &dstrune);
+			//Fire
+			SDL_RenderCopy(ren, textRune, &srcrune2, &dstrune2);
+			//Earth
+			SDL_RenderCopy(ren, textRune, &srcrune3, &dstrune3);
 		}
-		if (checkCollision(player, rune2) and state[SDL_SCANCODE_RETURN]) {//Fire
-			rune2.x = -100, rune2.y = -100;
-			dstrune2.x = dstrune2.y = -100;
-			remove_the_rune(runeWater, runeFire, runeEarth);
-			runeFire = 1;
-			set_runes(runeWater, runeFire, runeEarth);
+		if (row == 2 and col == 2) {//коллизия рун
+			if (checkCollision(player, rune) and state[SDL_SCANCODE_RETURN]) {//Water
+				rune.x = -100, rune.y = -100;
+				dstrune.x = dstrune.y = -100;
+				remove_the_rune(runeWater, runeFire, runeEarth);
+				runeWater = 1;
+				set_runes(runeWater, runeFire, runeEarth);
+			}
+			if (checkCollision(player, rune2) and state[SDL_SCANCODE_RETURN]) {//Fire
+				rune2.x = -100, rune2.y = -100;
+				dstrune2.x = dstrune2.y = -100;
+				remove_the_rune(runeWater, runeFire, runeEarth);
+				runeFire = 1;
+				set_runes(runeWater, runeFire, runeEarth);
+			}
+			if (checkCollision(player, rune3) and state[SDL_SCANCODE_RETURN]) {//Eatrh
+				rune3.x = -100, rune3.y = -100;
+				dstrune3.x = dstrune3.y = -100;
+				remove_the_rune(runeWater, runeFire, runeEarth);
+				runeEarth = 1;
+				set_runes(runeWater, runeFire, runeEarth);
+			}
 		}
-		if (checkCollision(player, rune3) and state[SDL_SCANCODE_RETURN]) {//Eatrh
-			rune3.x = -100, rune3.y = -100;
-			dstrune3.x = dstrune3.y = -100;
-			remove_the_rune(runeWater, runeFire, runeEarth);
-			runeEarth = 1;
-			set_runes(runeWater, runeFire, runeEarth);
-		}
-
 		//Portal
-		SDL_RenderCopy(ren, textPortal, &srcPortal, &dstPortal1);
-		SDL_RenderCopy(ren, textPortal, &srcPortal, &dstPortal2);
-		SDL_RenderCopy(ren, textPortal, &srcPortal, &dstPortal3);
-		SDL_RenderCopy(ren, textPortal, &srcPortal, &dstPortal4);
+		if (row != 1)
+			SDL_RenderCopy(ren, textPortal, &srcPortal, &dstPortal1);//левый
+		if (row != 2)
+			SDL_RenderCopy(ren, textPortal, &srcPortal, &dstPortal2);//правый
+		if (col != 2)
+			SDL_RenderCopy(ren, textPortal, &srcPortal, &dstPortal3);//верхний
+		if (col != 1)
+			SDL_RenderCopy(ren, textPortal, &srcPortal, &dstPortal4);//нижний
+
+
 		isPressed = pressedEnter();
-		if (checkCollision(player, Portal1) and state[SDL_SCANCODE_RETURN] and isPressed) {
-			Xcoordinate = dstPortal2.x + 25, Ycoordinate = dstPortal2.y + 10;
+		if (checkCollision(player, Portal1) and state[SDL_SCANCODE_RETURN] and isPressed) {//Левый портал
+			if (row != 1) {
+				Xcoordinate = dstPortal2.x + 25, Ycoordinate = dstPortal2.y + 10;
+				row -= 1;
+			}
 		}
-		if (checkCollision(player, Portal2) and state[SDL_SCANCODE_RETURN] and isPressed) {
-			Xcoordinate = dstPortal1.x + 25, Ycoordinate = dstPortal1.y + 10;
+		if (checkCollision(player, Portal2) and state[SDL_SCANCODE_RETURN] and isPressed) {//Правый портал
+			if (row != 2) {
+				Xcoordinate = dstPortal1.x + 25, Ycoordinate = dstPortal1.y + 10;
+				row += 1;
+			}
 		}
-		if (checkCollision(player, Portal3) and state[SDL_SCANCODE_RETURN] and isPressed) {
-			Xcoordinate = dstPortal4.x + 25, Ycoordinate = dstPortal4.y + 10;
+		if (checkCollision(player, Portal3) and state[SDL_SCANCODE_RETURN] and isPressed) {//Верхний портал
+			if (col != 2) {
+				Xcoordinate = dstPortal4.x + 25, Ycoordinate = dstPortal4.y + 10;
+				col += 1;
+			}
 		}
-		if (checkCollision(player, Portal4) and state[SDL_SCANCODE_RETURN] and isPressed) {
-			Xcoordinate = dstPortal3.x + 25, Ycoordinate = dstPortal3.y + 10;
+		if (checkCollision(player, Portal4) and state[SDL_SCANCODE_RETURN] and isPressed) {//Нижний портал
+			if (col != 1) {
+				Xcoordinate = dstPortal3.x + 25, Ycoordinate = dstPortal3.y + 10;
+				col -= 1;
+			}
 		}
 
 		if (!animation)
@@ -753,13 +802,14 @@ int main(int argc, char* argv[]) {
 			SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
 		}
 		isPressed = 0;
-
-		SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
+		if (row == 1 and col == 1)
+			SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
+		
 		SDL_RenderPresent(ren);
 		SDL_Delay(17);
 
 	}
-	SDL_DestroyTexture(textRoom);
+	SDL_DestroyTexture(textRoom1);
 	SDL_DestroyTexture(textCharacter);
 	SDL_DestroyTexture(textBat);
 	SDL_DestroyTexture(textRune);
