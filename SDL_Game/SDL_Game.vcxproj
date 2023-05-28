@@ -24,6 +24,7 @@
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Leveling.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Quest.cpp" />
     <ClCompile Include="Save.cpp" />
     <ClCompile Include="Shop.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -35,6 +36,7 @@
     <ClInclude Include="Items.h" />
     <ClInclude Include="Leveling.h" />
     <ClInclude Include="Models.h" />
+    <ClInclude Include="Quest.h" />
     <ClInclude Include="Runes.h" />
     <ClInclude Include="Save.h" />
     <ClInclude Include="SDL_general.h" />

@@ -4,6 +4,7 @@
 #include "Leveling.h"
 #include "Ability.h"
 #include "Battle.h"
+#include "Quest.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -53,6 +54,18 @@ int pressedEnter() {
 		return 1;
 	}
 	else return 0;	
+}
+
+int pressedEscape() {
+	const Uint8* enterState = SDL_GetKeyboardState(NULL);
+	wasEnterPressed = 0;
+	if (!enterState[SDL_SCANCODE_ESCAPE]) isEnterPressed = 0;
+
+	if (enterState[SDL_SCANCODE_ESCAPE] and wasEnterPressed == 0 and isEnterPressed == 0) {
+		isEnterPressed = 1;
+		return 1;
+	}
+	else return 0;
 }
 
 void MenuBattle(SDL_Renderer* ren); void StartBattle(); void Battle(); int escape();
@@ -107,6 +120,8 @@ void MenuBattle(SDL_Renderer* ren) {
 		SDL_DestroyTexture(textdeadEenemy);
 		SDL_DestroyTexture(textCharacter);
 		flag = 1;
+		if (questFlag)
+			counterKilledEnemies += 1;
 		return;
 	}
 
@@ -988,6 +1003,10 @@ void MenuBattle(SDL_Renderer* ren) {
 					recovery_character();
 					if (hero.experience >= hero.levelUp)
 						level_up();
+					if (questFlag)
+						counterKilledEnemies += 1;
+
+
 					return;
 				}
 				
@@ -1029,20 +1048,11 @@ void MenuBattle(SDL_Renderer* ren) {
 		recovery_character();
 		if (hero.experience >= hero.levelUp)
 			level_up();
-	}
-}
+		if (questFlag)
+			counterKilledEnemies += 1;
 
-void Battle() {
-	if (hero.Health > 0)
-		opponent.Health -= hero.Attack;
-	if (livedEnemies < 1) {
-		printf("%d\n", opponent.Health);
-		hero.experience += enemy1.level * amountEnemy;
-		if (hero.experience >= hero.levelUp)
-			level_up();
+
 	}
-	if (hero.Health <= 0)
-		exit(1);
 }
 
 void StartBattle() {

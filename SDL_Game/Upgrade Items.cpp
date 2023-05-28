@@ -1,5 +1,6 @@
 #include "Models.h"
 #include "Battle.h"
+#include "Upgrade Items.h"
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
@@ -165,7 +166,7 @@ void upgradeWeapon(SDL_Renderer* ren) {
 						hero.Attack += hero.weapon;
 						upgrade = 0;
 						levelWeapon = 1;
-						printf("Ты прокачался 1\n");
+						hero.Gold -= itemUpgrade.LVL1;
 					}
 					if (upgrade == 1 and hero.Gold < itemUpgrade.LVL1) {
 						printf("У вас не достаточно денег\n");
@@ -179,7 +180,7 @@ void upgradeWeapon(SDL_Renderer* ren) {
 						hero.Attack += hero.weapon;
 						upgrade = 0;
 						levelWeapon = 2;
-						printf("Ты прокачался 2\n");
+						hero.Gold -= itemUpgrade.LVL2;
 					}
 					if (upgrade == 1 and hero.Gold < itemUpgrade.LVL2) {
 						printf("У вас не достаточно денег\n");
@@ -193,6 +194,7 @@ void upgradeWeapon(SDL_Renderer* ren) {
 						hero.Attack += hero.weapon;
 						upgrade = 0;
 						levelWeapon = 3;
+						hero.Gold -= itemUpgrade.LVL3;
 					}
 					if (upgrade == 1 and hero.Gold < itemUpgrade.LVL3) {
 						printf("У вас не достаточно денег\n");
@@ -206,6 +208,7 @@ void upgradeWeapon(SDL_Renderer* ren) {
 						hero.Attack += hero.weapon;
 						upgrade = 0;
 						levelWeapon = 4;
+						hero.Gold -= itemUpgrade.LVL4;
 					}
 					if (upgrade == 1 and hero.Gold < itemUpgrade.LVL4) {
 						printf("У вас не достаточно денег\n");
@@ -219,6 +222,7 @@ void upgradeWeapon(SDL_Renderer* ren) {
 						hero.Attack += hero.weapon;
 						upgrade = 0;
 						levelWeapon = 5;
+						hero.Gold -= itemUpgrade.LVL5;
 					}
 					if (upgrade == 1 and hero.Gold < itemUpgrade.LVL5) {
 						printf("У вас не достаточно денег\n");
@@ -332,6 +336,7 @@ void upgradeArmor(SDL_Renderer* ren) {
 					hero.Defense += hero.armorDefense;
 					upgrade = 0;
 					levelArmor = 1;
+					hero.Gold -= itemUpgrade.LVL1;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL1) {
 					printf("У вас не достаточно денег\n");
@@ -348,6 +353,7 @@ void upgradeArmor(SDL_Renderer* ren) {
 					hero.Defense += hero.armorDefense;
 					upgrade = 0;
 					levelArmor = 2;
+					hero.Gold -= itemUpgrade.LVL2;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL2) {
 					printf("У вас не достаточно денег\n");
@@ -365,6 +371,7 @@ void upgradeArmor(SDL_Renderer* ren) {
 					hero.Defense += hero.armorDefense;
 					upgrade = 0;
 					levelArmor = 3;
+					hero.Gold -= itemUpgrade.LVL3;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL3) {
 					printf("У вас не достаточно денег\n");
@@ -382,6 +389,7 @@ void upgradeArmor(SDL_Renderer* ren) {
 					hero.Defense += hero.armorDefense;
 					upgrade = 0;
 					levelArmor = 4;
+					hero.Gold -= itemUpgrade.LVL4;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL4) {
 					printf("У вас не достаточно денег\n");
@@ -399,6 +407,7 @@ void upgradeArmor(SDL_Renderer* ren) {
 					hero.Defense += hero.armorDefense;
 					upgrade = 0;
 					levelArmor = 5;
+					hero.Gold -= itemUpgrade.LVL5;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL5) {
 					printf("У вас не достаточно денег\n");
@@ -520,6 +529,7 @@ void upgradeNecklace(SDL_Renderer* ren) {
 					hero.Mana = hero.maxMana;
 					upgrade = 0;
 					levelNecklace = 1;
+					hero.Gold -= itemUpgrade.LVL1;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL1) {
 					printf("У вас не достаточно денег\n");
@@ -535,6 +545,7 @@ void upgradeNecklace(SDL_Renderer* ren) {
 					hero.Mana = hero.maxMana; 
 					upgrade = 0;
 					levelNecklace = 2;
+					hero.Gold -= itemUpgrade.LVL2;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL2) {
 					printf("У вас не достаточно денег\n");
@@ -550,6 +561,7 @@ void upgradeNecklace(SDL_Renderer* ren) {
 					hero.Mana = hero.maxMana; 
 					upgrade = 0;
 					levelNecklace = 3;
+					hero.Gold -= itemUpgrade.LVL3;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL3) {
 					printf("У вас не достаточно денег\n");
@@ -565,6 +577,7 @@ void upgradeNecklace(SDL_Renderer* ren) {
 					hero.Mana = hero.maxMana; 
 					upgrade = 0;
 					levelNecklace = 4;
+					hero.Gold -= itemUpgrade.LVL4;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL4) {
 					printf("У вас не достаточно денег\n");
@@ -580,6 +593,7 @@ void upgradeNecklace(SDL_Renderer* ren) {
 					hero.Mana = hero.maxMana; 
 					upgrade = 0;
 					levelNecklace = 5;
+					hero.Gold -= itemUpgrade.LVL5;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL5) {
 					printf("У вас не достаточно денег\n");
