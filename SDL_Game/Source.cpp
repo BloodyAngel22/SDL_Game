@@ -310,18 +310,15 @@ void menu() {
 		SDL_RenderCopy(ren, textMenu, NULL, NULL);
 		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 		SDL_RenderPresent(ren);
-		isPressed = pressedEscape();
 		while (SDL_PollEvent(&ev) != NULL) {
 			switch (ev.type) {
 			case SDL_KEYDOWN:
 				switch (ev.key.keysym.scancode) {
-				case SDL_SCANCODE_ESCAPE:
-					if (isPressed) {
-						SDL_DestroyTexture(textMenu);
-						SDL_DestroyTexture(textArrow);
-						return;
-						break;
-					}
+				/*case SDL_SCANCODE_ESCAPE:
+					SDL_DestroyTexture(textMenu);
+					SDL_DestroyTexture(textArrow);
+					return;
+					break;*/
 				case SDL_SCANCODE_UP:
 					if (pointer != 1) {
 						yArrow -= 145;
@@ -348,8 +345,9 @@ void menu() {
 					}
 				}
 			}
-			isPressed = pressedEnter();
 		}
+
+		isPressed = pressedEnter();
 
 		if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 			SDL_DestroyTexture(textMenu);
@@ -370,6 +368,7 @@ void menu() {
 		}
 
 		isPressed = 0;
+		isPressedEscape = 0;
 	}
 }
 
@@ -600,7 +599,7 @@ int main(int argc, char* argv[]) {
 			case SDL_KEYDOWN:
 				switch (ev.key.keysym.scancode) {
 				case SDL_SCANCODE_ESCAPE: 
-					menu(); 
+					menu();
 					break;
 				case SDL_SCANCODE_Q:
 					complete_the_quest(ren);

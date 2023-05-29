@@ -24,7 +24,7 @@ extern int choiceEnemy = 0;
 int amountEnemy;
 int livedEnemies = 1;
 int ratio;
-bool isEnterPressed = 0, wasEnterPressed = 0, isPressed = 0;
+bool isEnterPressed = 0, wasEnterPressed = 0, isPressed = 0, isPressedEscape = 0;
 Character hero;
 Enemy opponent;
 ClassMage mage;
