@@ -11,6 +11,8 @@
 #include "SDL_general.h"
 #include "Upgrade Items.h"
 #include "Save.h"
+#include "Quest.h"
+#include "Puzzle.h"
 #define  EnemyUp 1
 #define  EnemyRight 2
 #define  EnemyDown 3
@@ -309,10 +311,18 @@ void menu() {
 		SDL_RenderCopy(ren, textMenu, NULL, NULL);
 		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 		SDL_RenderPresent(ren);
+		isPressed = pressedEscape();
 		while (SDL_PollEvent(&ev) != NULL) {
 			switch (ev.type) {
 			case SDL_KEYDOWN:
 				switch (ev.key.keysym.scancode) {
+				case SDL_SCANCODE_ESCAPE:
+					if (isPressed) {
+						SDL_DestroyTexture(textMenu);
+						SDL_DestroyTexture(textArrow);
+						return;
+						break;
+					}
 				case SDL_SCANCODE_UP:
 					if (pointer != 1) {
 						yArrow -= 145;
@@ -595,12 +605,22 @@ int main(int argc, char* argv[]) {
 	//Portal4
 	SDL_Rect dstPortal4 = { 570, 635, portalSize , portalSize };
 	SDL_FRect Portal4 = { dstPortal4.x, dstPortal4.y, portalSize , portalSize };
+	//NPC
+	int sizeNPC = 80;
+	SDL_Surface* surfNPC = IMG_Load("sprites\\npc\\npc.png");
+	SDL_Texture* textNPC = SDL_CreateTextureFromSurface(ren, surfNPC);
+	SDL_FreeSurface(surfNPC);
+	SDL_Rect srcNPC = { 232, 40, 99, 118 };
+	SDL_Rect dstNPC = { 200, 200, sizeNPC, sizeNPC };
+	SDL_FRect NPC = { dstNPC.x, dstNPC.y, sizeNPC, sizeNPC };
 #pragma endregion
 
 	int frame = 0, frame_count = 10, cur_frametime = 0, max_frametime = 1000/120;
 	int lasttime = SDL_GetTicks(); int newtime = SDL_GetTicks();
 	int	dt = 0;
 	bool animation = false;
+
+	SDL_FRect chest = { 900, 200, 70, 70 };
 
 	main_menu();
 	while (isRunning) {
@@ -622,6 +642,9 @@ int main(int argc, char* argv[]) {
 					menu(); 
 					break;
 				}
+				case SDL_SCANCODE_Q:
+					complete_the_quest(ren);
+					break;
 				case SDL_SCANCODE_TAB: character_leveling(ren); break;
 				case SDL_SCANCODE_I: upgradeItems(ren); break;
 				}
@@ -687,6 +710,7 @@ int main(int argc, char* argv[]) {
 			}
 			Xcoordinate += 4;
 		}
+		isPressed = pressedEnter();
 		animation = UP or DOWN or LEFT or RIGHT;
 		
 		if (row == 1 and col == 1)
@@ -724,6 +748,7 @@ int main(int argc, char* argv[]) {
 
 		if (row == 1 and col == 1) {
 			SDL_RenderFillRectF(ren, &enemy);
+			SDL_RenderFillRectF(ren, &NPC);
 		}
 		SDL_SetRenderDrawColor(ren, 200, 0, 0, 0);
 		SDL_RenderFillRect(ren, &player);
@@ -731,6 +756,7 @@ int main(int argc, char* argv[]) {
 		//отрисовка комнат
 		if (row == 1 and col == 1) {
 			SDL_RenderCopy(ren, textRoom1, NULL, NULL);
+			SDL_RenderCopy(ren, textNPC, &srcNPC, &dstNPC);
 			/*SDL_Rect Hitbox1 = { 727,191,15,53 };
 			SDL_RenderFillRect(ren, &Hitbox1);
 			if (object_collision(player, Hitbox1)) {
@@ -738,6 +764,9 @@ int main(int argc, char* argv[]) {
 		}
 		if (row == 2 and col == 1) {
 			SDL_RenderCopy(ren, textRoom2, NULL, NULL);
+			SDL_RenderFillRectF(ren, &chest);
+			if (checkCollision(player, chest) and state[SDL_SCANCODE_RETURN])
+				code_lock(ren);
 		}
 		if (row == 1 and col == 2) {
 			SDL_RenderCopy(ren, textRoom3, NULL, NULL);
@@ -795,8 +824,11 @@ int main(int argc, char* argv[]) {
 		if (col != 1)
 			SDL_RenderCopy(ren, textPortal, &srcPortal, &dstPortal4);//нижний
 
-
-		isPressed = pressedEnter();
+		//NPC
+		if (checkCollision(player, NPC) and state[SDL_SCANCODE_RETURN] and isPressed) {
+			questFlag = 1;
+			quest(ren);
+		}
 		if (checkCollision(player, Portal1) and state[SDL_SCANCODE_RETURN] and isPressed) {//Левый портал
 			if (row != 1) {
 				Xcoordinate = dstPortal2.x + 25, Ycoordinate = dstPortal2.y + 10;
@@ -853,6 +885,7 @@ int main(int argc, char* argv[]) {
 	SDL_DestroyTexture(textBat);
 	SDL_DestroyTexture(textRune);
 	SDL_DestroyTexture(textPortal);
+	SDL_DestroyTexture(textNPC);
 	de_init(0);
 	return 0;
 }
