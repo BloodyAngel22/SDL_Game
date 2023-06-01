@@ -249,7 +249,7 @@ void code_lock(SDL_Renderer* ren) {//Логика кодового замка
 					return;
 				}
 				SDL_RenderPresent(ren);
-			}
-		
+				SDL_Delay(17);
+		}		
 	}
 }

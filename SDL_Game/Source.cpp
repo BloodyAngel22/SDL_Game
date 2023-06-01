@@ -613,6 +613,17 @@ int main(int argc, char* argv[]) {
 	SDL_Rect srcNPC = { 232, 40, 99, 118 };
 	SDL_Rect dstNPC = { 200, 200, sizeNPC, sizeNPC };
 	SDL_FRect NPC = { dstNPC.x, dstNPC.y, sizeNPC, sizeNPC };
+	//Locked Chest
+	SDL_FRect chest = { 900, 200, 70, 70 };
+	SDL_Surface* surfLockedChest = IMG_Load("sprites\\puzzles\\lockedChest.png");
+	SDL_Texture* textLockedChest = SDL_CreateTextureFromSurface(ren, surfLockedChest);
+	SDL_FreeSurface(surfLockedChest);
+	SDL_Rect dstLockedChest = {chest.x, chest.y, chest.w, chest.h};
+	//Open Chest
+	SDL_Surface* surfOpenChest = IMG_Load("sprites\\puzzles\\openChest.png");
+	SDL_Texture* textOpenChest = SDL_CreateTextureFromSurface(ren, surfOpenChest);
+	SDL_FreeSurface(surfOpenChest);
+	SDL_Rect dstOpenChest = { chest.x, chest.y, chest.w, chest.h };
 #pragma endregion
 
 	int frame = 0, frame_count = 10, cur_frametime = 0, max_frametime = 1000/120;
@@ -620,7 +631,6 @@ int main(int argc, char* argv[]) {
 	int	dt = 0;
 	bool animation = false;
 
-	SDL_FRect chest = { 900, 200, 70, 70 };
 
 	main_menu();
 	while (isRunning) {
@@ -764,8 +774,12 @@ int main(int argc, char* argv[]) {
 		}
 		if (row == 2 and col == 1) {
 			SDL_RenderCopy(ren, textRoom2, NULL, NULL);
-			SDL_RenderFillRectF(ren, &chest);
-			if (checkCollision(player, chest) and state[SDL_SCANCODE_RETURN])
+			//SDL_RenderFillRectF(ren, &chest);
+			if (flagCode)
+				SDL_RenderCopy(ren, textLockedChest, NULL, &dstLockedChest);
+			if (flagCode == 0)
+				SDL_RenderCopy(ren, textOpenChest, NULL, &dstOpenChest);
+			if (checkCollision(player, chest) and state[SDL_SCANCODE_RETURN] and isPressed)
 				code_lock(ren);
 		}
 		if (row == 1 and col == 2) {
@@ -829,6 +843,7 @@ int main(int argc, char* argv[]) {
 			questFlag = 1;
 			quest(ren);
 		}
+		//Порталы
 		if (checkCollision(player, Portal1) and state[SDL_SCANCODE_RETURN] and isPressed) {//Левый портал
 			if (row != 1) {
 				Xcoordinate = dstPortal2.x + 25, Ycoordinate = dstPortal2.y + 10;
