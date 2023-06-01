@@ -1,7 +1,9 @@
 #include "Puzzle.h"
 #include "Models.h"
+#include "Battle.h"
 
 extern int flagCode = 1;
+extern int flagLamps = 1;
 
 void code_lock(SDL_Renderer* ren) {//Логика кодового замка
 	if (flagCode) {
@@ -62,6 +64,10 @@ void code_lock(SDL_Renderer* ren) {//Логика кодового замка
 		SDL_Surface* surfBackground = IMG_Load("sprites\\puzzles\\background.png");
 		SDL_Texture* textBackground = SDL_CreateTextureFromSurface(ren, surfBackground);
 		SDL_FreeSurface(surfBackground);
+		//
+		SDL_Surface* surfEnterChoice = IMG_Load("sprites\\puzzles\\ENTER_choice.png");
+		SDL_Texture* textEnterChoice = SDL_CreateTextureFromSurface(ren, surfEnterChoice);
+		SDL_FreeSurface(surfEnterChoice);
 #pragma endregion
 		int firstPtr = 2;
 		int secondPtr = 2;
@@ -120,7 +126,10 @@ void code_lock(SDL_Renderer* ren) {//Логика кодового замка
 					SDL_RenderCopy(ren, textM, NULL, &dstPtr);
 			}
 			dstEnter.x = 1000; dstEnter.y = 200;
-			SDL_RenderCopy(ren, textENTER, NULL, &dstEnter);
+			if (pointer != 5)
+				SDL_RenderCopy(ren, textENTER, NULL, &dstEnter);
+			if (pointer == 5)
+				SDL_RenderCopy(ren, textEnterChoice, NULL, &dstEnter);
 			
 			if (pointer == 1) {
 				dstArrow.x = 200; dstArrow.y = 150;
@@ -230,6 +239,7 @@ void code_lock(SDL_Renderer* ren) {//Логика кодового замка
 					SDL_DestroyTexture(textP);
 					SDL_DestroyTexture(textR);
 					SDL_DestroyTexture(textX);
+					SDL_DestroyTexture(textEnterChoice);
 					return;
 				}
 				if (State[SDL_SCANCODE_ESCAPE]) {
@@ -246,10 +256,289 @@ void code_lock(SDL_Renderer* ren) {//Логика кодового замка
 					SDL_DestroyTexture(textP);
 					SDL_DestroyTexture(textR);
 					SDL_DestroyTexture(textX);
+					SDL_DestroyTexture(textEnterChoice);
 					return;
 				}
 				SDL_RenderPresent(ren);
 				SDL_Delay(17);
 		}		
 	}
+}
+
+void lamps(SDL_Renderer* ren, SDL_Rect &dstLamp) {//Логика ламп
+	if (flagLamps == 1) {
+#pragma region Texture
+		//
+		SDL_Surface* surfBackground = IMG_Load("sprites\\puzzles\\background.png");
+		SDL_Texture* textBackground = SDL_CreateTextureFromSurface(ren, surfBackground);
+		SDL_FreeSurface(surfBackground);
+		//
+		SDL_Surface* surfArrowUp = IMG_Load("sprites\\puzzles\\arrowUp.png");
+		SDL_Texture* textArrowUp = SDL_CreateTextureFromSurface(ren, surfArrowUp);
+		SDL_FreeSurface(surfArrowUp);
+		//
+		SDL_Surface* surfArrowDown = IMG_Load("sprites\\puzzles\\arrowDown.png");
+		SDL_Texture* textArrowDown = SDL_CreateTextureFromSurface(ren, surfArrowDown);
+		SDL_FreeSurface(surfArrowDown);
+		//Lamp off
+		SDL_Rect dstLamp = { 0,0, 100, 100 };
+		SDL_Surface* surfLampOff = IMG_Load("sprites\\puzzles\\extinguished_lamp.png");
+		SDL_Texture* textLampOff = SDL_CreateTextureFromSurface(ren, surfLampOff);
+		SDL_FreeSurface(surfLampOff);
+		//Lamp on
+		SDL_Surface* surfLampOn = IMG_Load("sprites\\puzzles\\lit_lamp.png");
+		SDL_Texture* textLampOn = SDL_CreateTextureFromSurface(ren, surfLampOn);
+		SDL_FreeSurface(surfLampOn);
+		//
+#pragma endregion
+		int lamp1 = 0, lamp2 = 0, lamp3 = 0, lamp4 = 0, lamp5 = 0, lamp6 = 0;
+		int pointer = 1;
+		const Uint8* State = SDL_GetKeyboardState(NULL);
+		SDL_Rect dstArrow = { 0,0, 100, 50 };
+		SDL_Event ev;
+		SDL_PollEvent(&ev);
+
+
+		while (flagLamps) {
+
+			SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+			SDL_RenderClear(ren);
+			SDL_RenderCopy(ren, textBackground, NULL, NULL);
+
+
+			if (pointer == 1) {
+				dstArrow.x = 200; dstArrow.y = 250;
+				SDL_RenderCopy(ren, textArrowUp, NULL, &dstArrow);
+				dstArrow.x = 200; dstArrow.y = 400;
+				SDL_RenderCopy(ren, textArrowDown, NULL, &dstArrow);
+
+			}
+			if (pointer == 2) {
+				dstArrow.x = 350; dstArrow.y = 250;
+				SDL_RenderCopy(ren, textArrowUp, NULL, &dstArrow);
+				dstArrow.x = 350; dstArrow.y = 400;
+				SDL_RenderCopy(ren, textArrowDown, NULL, &dstArrow);
+			}
+			if (pointer == 3) {
+				dstArrow.x = 500; dstArrow.y = 250;
+				SDL_RenderCopy(ren, textArrowUp, NULL, &dstArrow);
+				dstArrow.x = 500; dstArrow.y = 400;
+				SDL_RenderCopy(ren, textArrowDown, NULL, &dstArrow);
+			}
+			if (pointer == 4) {
+				dstArrow.x = 650; dstArrow.y = 250;
+				SDL_RenderCopy(ren, textArrowUp, NULL, &dstArrow);
+				dstArrow.x = 650; dstArrow.y = 400;
+				SDL_RenderCopy(ren, textArrowDown, NULL, &dstArrow);
+			}
+			if (pointer == 5) {
+				dstArrow.x = 800; dstArrow.y = 250;
+				SDL_RenderCopy(ren, textArrowUp, NULL, &dstArrow);
+				dstArrow.x = 800; dstArrow.y = 400;
+				SDL_RenderCopy(ren, textArrowDown, NULL, &dstArrow);
+			}
+			if (pointer == 6) {
+				dstArrow.x = 950; dstArrow.y = 250;
+				SDL_RenderCopy(ren, textArrowUp, NULL, &dstArrow);
+				dstArrow.x = 950; dstArrow.y = 400;
+				SDL_RenderCopy(ren, textArrowDown, NULL, &dstArrow);
+			}
+
+			while (SDL_PollEvent(&ev) != NULL) {
+				SDL_PollEvent(&ev);
+				if (pointer == 1 and State[SDL_SCANCODE_W]) {
+					if (lamp2 == 1)
+						lamp2 = 0;
+					else
+						lamp2 = 1;
+				}
+				if (pointer == 1 and State[SDL_SCANCODE_S]) {
+					if (lamp2 == 1)
+						lamp2 = 0;
+					else
+						lamp2 = 1;
+				}
+				if (pointer == 2 and State[SDL_SCANCODE_W]) {
+					if (lamp1 == 1)
+						lamp1 = 0;
+					else 
+						lamp1 = 1; 
+					if (lamp3 == 1)
+						lamp3 = 0;
+					else
+						lamp3 = 1;
+				}
+				if (pointer == 2 and State[SDL_SCANCODE_S]) {
+					if (lamp1 == 1)
+						lamp1 = 0;
+					else
+						lamp1 = 1;
+					if (lamp3 == 1)
+						lamp3 = 0;
+					else
+						lamp3 = 1;
+				}
+				if (pointer == 3 and State[SDL_SCANCODE_W]) {
+					if (lamp1 == 1)
+						lamp1 = 0;
+					else
+						lamp1 = 1;
+				}
+				if (pointer == 3 and State[SDL_SCANCODE_S]) {
+					if (lamp1 == 1)
+						lamp1 = 0;
+					else
+						lamp1 = 1;
+				}
+				if (pointer == 4 and State[SDL_SCANCODE_W]) {
+					if (lamp6 == 1)
+						lamp6 = 0;
+					else lamp6 = 1;
+				}
+				if (pointer == 4 and State[SDL_SCANCODE_S]) {
+					if (lamp6 == 1)
+						lamp6 = 0;
+					else lamp6 = 1;
+				}
+				if (pointer == 5 and State[SDL_SCANCODE_W]) {
+					if (lamp4 == 1)
+						lamp4 = 0;
+					else lamp4 = 1;
+					if (lamp6 == 1)
+						lamp6 = 0;
+					else lamp6 = 1;
+				}
+				if (pointer == 5 and State[SDL_SCANCODE_S]) {
+					if (lamp4 == 1)
+						lamp4 = 0;
+					else lamp4 = 1;
+					if (lamp6 == 1)
+						lamp6 = 0;
+					else lamp6 = 1;
+				}
+				if (pointer == 6 and State[SDL_SCANCODE_W]) {
+					if (lamp5 == 1)
+						lamp5 = 0;
+					else lamp5 = 1;
+				}
+				if (pointer == 6 and State[SDL_SCANCODE_S]) {
+					if (lamp5 == 1)
+						lamp5 = 0;
+					else lamp5 = 1;
+				}
+
+				if (State[SDL_SCANCODE_D])
+					pointer += 1;
+				if (State[SDL_SCANCODE_A])
+					pointer -= 1;
+			}
+
+			if (pointer == 0)
+				pointer = 6;
+			if (pointer == 7)
+				pointer = 1;
+
+			if (lamp1 == 1) {
+				dstLamp.x = 200, dstLamp.y = 300;
+				SDL_RenderCopy(ren, textLampOn, NULL, &dstLamp);
+			}
+			else if (lamp1 == 0) {
+				dstLamp.x = 200, dstLamp.y = 300;
+				SDL_RenderCopy(ren, textLampOff, NULL, &dstLamp);
+			}
+			if (lamp2 == 1) {
+				dstLamp.x = 350, dstLamp.y = 300;
+				SDL_RenderCopy(ren, textLampOn, NULL, &dstLamp);
+			}
+			else if (lamp2 == 0) {
+				dstLamp.x = 350, dstLamp.y = 300;
+				SDL_RenderCopy(ren, textLampOff, NULL, &dstLamp);
+			}
+			if (lamp3 == 1) {
+				dstLamp.x = 500, dstLamp.y = 300;
+				SDL_RenderCopy(ren, textLampOn, NULL, &dstLamp);
+			}
+			else {
+				dstLamp.x = 500, dstLamp.y = 300;
+				SDL_RenderCopy(ren, textLampOff, NULL, &dstLamp);
+			}
+			if (lamp4 == 1) {
+				dstLamp.x = 650, dstLamp.y = 300;
+				SDL_RenderCopy(ren, textLampOn, NULL, &dstLamp);
+			}
+			else {
+				dstLamp.x = 650, dstLamp.y = 300;
+				SDL_RenderCopy(ren, textLampOff, NULL, &dstLamp);
+			}
+			if (lamp5 == 1) {
+				dstLamp.x = 800, dstLamp.y = 300;
+				SDL_RenderCopy(ren, textLampOn, NULL, &dstLamp);
+			}
+			else {
+				dstLamp.x = 800, dstLamp.y = 300;
+				SDL_RenderCopy(ren, textLampOff, NULL, &dstLamp);
+			}
+			if (lamp6 == 1) {
+				dstLamp.x = 950, dstLamp.y = 300;
+				SDL_RenderCopy(ren, textLampOn, NULL, &dstLamp);
+			}
+			else {
+				dstLamp.x = 950, dstLamp.y = 300;
+				SDL_RenderCopy(ren, textLampOff, NULL, &dstLamp);
+			}
+
+
+			if (State[SDL_SCANCODE_ESCAPE]) {
+				SDL_DestroyTexture(textBackground);
+				SDL_DestroyTexture(textArrowUp);
+				return;
+			}
+
+			if (lamp1 and lamp2 and lamp3 and lamp4 and lamp5 and lamp6) {
+				hero.Gold += 500;
+				flagLamps = 0;
+				SDL_DestroyTexture(textBackground);
+				SDL_DestroyTexture(textArrowUp);
+				return;
+			}
+			SDL_RenderPresent(ren);
+			SDL_Delay(50);
+		}
+	}
+}
+
+bool object_collision(SDL_Rect a, SDL_Rect b) {
+	//The sides of the rectangles
+	int leftA, leftB;
+	int rightA, rightB;
+	int topA, topB;
+	int bottomA, bottomB;
+
+	//Calculate the sides of rect A
+	leftA = a.x;
+	rightA = a.x + a.w;
+	topA = a.y;
+	bottomA = a.y + a.h;
+
+	//Calculate the sides of rect B
+	leftB = b.x;
+	rightB = b.x + b.w;
+	topB = b.y;
+	bottomB = b.y + b.h;
+	//If any of the sides from A are outside of B
+	if (bottomA <= topB) {
+		return false;
+	}
+	if (topA >= bottomB) {
+		return false;
+	}
+	if (rightA <= leftB) {
+		return false;
+	}
+	if (leftA >= rightB) {
+		return false;
+	}
+
+	//If none of the sides from A are outside B
+	return true;
 }

@@ -477,42 +477,6 @@ void wall(SDL_Rect a) {
 		Ycoordinate+=4;
 }
 
-bool object_collision(SDL_Rect a, SDL_Rect b) {
-	//The sides of the rectangles
-	int leftA, leftB;
-	int rightA, rightB;
-	int topA, topB;
-	int bottomA, bottomB;
-
-	//Calculate the sides of rect A
-	leftA = a.x;
-	rightA = a.x + a.w;
-	topA = a.y;
-	bottomA = a.y + a.h;
-
-	//Calculate the sides of rect B
-	leftB = b.x;
-	rightB = b.x + b.w;
-	topB = b.y;
-	bottomB = b.y + b.h;
-	//If any of the sides from A are outside of B
-	if (bottomA <= topB) {
-		return false;
-	}
-	if (topA >= bottomB) {
-		return false;
-	}
-	if (rightA <= leftB) {
-		return false;
-	}
-	if (leftA >= rightB) {
-		return false;
-	}
-
-	//If none of the sides from A are outside B
-	return true;
-}
-
 int main(int argc, char* argv[]) {
 	init();
 	srand(time(NULL));
@@ -614,7 +578,7 @@ int main(int argc, char* argv[]) {
 	SDL_Rect dstNPC = { 200, 200, sizeNPC, sizeNPC };
 	SDL_FRect NPC = { dstNPC.x, dstNPC.y, sizeNPC, sizeNPC };
 	//Locked Chest
-	SDL_FRect chest = { 900, 200, 70, 70 };
+	SDL_FRect chest = { 200, 82, 70, 70 };
 	SDL_Surface* surfLockedChest = IMG_Load("sprites\\puzzles\\lockedChest.png");
 	SDL_Texture* textLockedChest = SDL_CreateTextureFromSurface(ren, surfLockedChest);
 	SDL_FreeSurface(surfLockedChest);
@@ -624,6 +588,16 @@ int main(int argc, char* argv[]) {
 	SDL_Texture* textOpenChest = SDL_CreateTextureFromSurface(ren, surfOpenChest);
 	SDL_FreeSurface(surfOpenChest);
 	SDL_Rect dstOpenChest = { chest.x, chest.y, chest.w, chest.h };
+	//Lamp off
+	SDL_Rect dstLamp = { 180,465, 35, 35 };
+	SDL_FRect dstFLamp = { 180,465, 35, 35 };
+	SDL_Surface* surfLampOff = IMG_Load("sprites\\puzzles\\extinguished_lamp.png");
+	SDL_Texture* textLampOff = SDL_CreateTextureFromSurface(ren, surfLampOff);
+	SDL_FreeSurface(surfLampOff);
+	//Lamp on
+	SDL_Surface* surfLampOn = IMG_Load("sprites\\puzzles\\lit_lamp.png");
+	SDL_Texture* textLampOn = SDL_CreateTextureFromSurface(ren, surfLampOn);
+	SDL_FreeSurface(surfLampOn);
 #pragma endregion
 
 	int frame = 0, frame_count = 10, cur_frametime = 0, max_frametime = 1000/120;
@@ -774,13 +748,18 @@ int main(int argc, char* argv[]) {
 		}
 		if (row == 2 and col == 1) {
 			SDL_RenderCopy(ren, textRoom2, NULL, NULL);
-			//SDL_RenderFillRectF(ren, &chest);
 			if (flagCode)
 				SDL_RenderCopy(ren, textLockedChest, NULL, &dstLockedChest);
 			if (flagCode == 0)
 				SDL_RenderCopy(ren, textOpenChest, NULL, &dstOpenChest);
 			if (checkCollision(player, chest) and state[SDL_SCANCODE_RETURN] and isPressed)
 				code_lock(ren);
+			if (flagLamps)
+				SDL_RenderCopy(ren, textLampOn, NULL, &dstLamp);
+			if (flagLamps == 0)
+				SDL_RenderCopy(ren, textLampOff, NULL, &dstLamp);
+			if (checkCollision(player, dstFLamp) and state[SDL_SCANCODE_RETURN] and flagLamps and isPressed)
+				lamps(ren, dstLamp);
 		}
 		if (row == 1 and col == 2) {
 			SDL_RenderCopy(ren, textRoom3, NULL, NULL);
@@ -901,6 +880,11 @@ int main(int argc, char* argv[]) {
 	SDL_DestroyTexture(textRune);
 	SDL_DestroyTexture(textPortal);
 	SDL_DestroyTexture(textNPC);
+	SDL_DestroyTexture(textLampOff);
+	SDL_DestroyTexture(textLampOn);
+	SDL_DestroyTexture(textLockedChest);
+	SDL_DestroyTexture(textOpenChest);
+
 	de_init(0);
 	return 0;
 }
