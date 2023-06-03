@@ -24,7 +24,8 @@ extern int choiceEnemy = 0;
 int amountEnemy;
 int livedEnemies = 1;
 int ratio;
-bool isEnterPressed = 0, wasEnterPressed = 0, isPressed = 0, isPressedEscape = 0;
+bool isEnterPressed = 0, wasEnterPressed = 0, isPressed = 0;
+bool isEscapePressed = 0, wasEscapePressed = 0, isPressedEscape = 0;
 Character hero;
 Enemy opponent;
 ClassMage mage;
@@ -57,12 +58,12 @@ int pressedEnter() {
 }
 
 int pressedEscape() {
-	const Uint8* enterState = SDL_GetKeyboardState(NULL);
-	wasEnterPressed = 0;
-	if (!enterState[SDL_SCANCODE_ESCAPE]) isEnterPressed = 0;
+	const Uint8* escapeState = SDL_GetKeyboardState(NULL);
+	wasEscapePressed = 0;
+	if (!escapeState[SDL_SCANCODE_ESCAPE]) isEscapePressed = 0;
 
-	if (enterState[SDL_SCANCODE_ESCAPE] and wasEnterPressed == 0 and isEnterPressed == 0) {
-		isEnterPressed = 1;
+	if (escapeState[SDL_SCANCODE_ESCAPE] and wasEscapePressed == 0 and isEscapePressed == 0) {
+		isEscapePressed = 1;
 		return 1;
 	}
 	else return 0;

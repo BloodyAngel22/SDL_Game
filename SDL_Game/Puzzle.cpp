@@ -4,6 +4,7 @@
 
 extern int flagCode = 1;
 extern int flagLamps = 1;
+extern int flagRunes = 1;
 
 void code_lock(SDL_Renderer* ren) {//Логика кодового замка
 	if (flagCode) {
@@ -495,7 +496,6 @@ void lamps(SDL_Renderer* ren, SDL_Rect &dstLamp) {//Логика ламп
 			}
 
 			if (lamp1 and lamp2 and lamp3 and lamp4 and lamp5 and lamp6) {
-				hero.Gold += 500;
 				flagLamps = 0;
 				SDL_DestroyTexture(textBackground);
 				SDL_DestroyTexture(textArrowUp);
@@ -504,6 +504,291 @@ void lamps(SDL_Renderer* ren, SDL_Rect &dstLamp) {//Логика ламп
 			SDL_RenderPresent(ren);
 			SDL_Delay(50);
 		}
+	}
+}
+
+void runes_puzzle(SDL_Renderer* ren) {
+	if (flagRunes) {
+		//Texture
+		SDL_Surface* surfRunesPuzzle = IMG_Load("sprites\\puzzles\\puzzle3.png");
+		SDL_Texture* textRunesPuzzle = SDL_CreateTextureFromSurface(ren, surfRunesPuzzle);
+		SDL_FreeSurface(surfRunesPuzzle);
+		//
+		SDL_Surface* surfBackground = IMG_Load("sprites\\puzzles\\background.png");
+		SDL_Texture* textBackground = SDL_CreateTextureFromSurface(ren, surfBackground);
+		SDL_FreeSurface(surfBackground);
+		//
+		SDL_Surface* surfArrowUp = IMG_Load("sprites\\puzzles\\arrowUp.png");
+		SDL_Texture* textArrowUp = SDL_CreateTextureFromSurface(ren, surfArrowUp);
+		SDL_FreeSurface(surfArrowUp);
+		//
+		SDL_Surface* surfArrowDown = IMG_Load("sprites\\puzzles\\arrowDown.png");
+		SDL_Texture* textArrowDown = SDL_CreateTextureFromSurface(ren, surfArrowDown);
+		SDL_FreeSurface(surfArrowDown);
+		//Options
+		SDL_Rect dstRunesRect[5];
+		for (int i = 0; i < 5; i++) {
+			dstRunesRect[i].w = 100, dstRunesRect[i].h = 100; dstRunesRect[i].y = 300;
+		}
+		dstRunesRect[0].x = 200;
+		dstRunesRect[1].x = 400;
+		dstRunesRect[2].x = 600;
+		dstRunesRect[3].x = 800;
+		dstRunesRect[4].x = 1000;
+		SDL_Rect srcRunesRect[9];
+		srcRunesRect[0].x = 0, srcRunesRect[0].y = 34; srcRunesRect[0].w = 182, srcRunesRect[0].h = 147;
+		srcRunesRect[1].x = 234, srcRunesRect[1].y = 19; srcRunesRect[1].w = 189, srcRunesRect[1].h = 175;
+		srcRunesRect[2].x = 480, srcRunesRect[2].y = 15; srcRunesRect[2].w = 168, srcRunesRect[2].h = 179;
+		srcRunesRect[3].x = 680, srcRunesRect[3].y = 20; srcRunesRect[3].w = 200, srcRunesRect[3].h = 177;
+		srcRunesRect[4].x = 945, srcRunesRect[4].y = 20; srcRunesRect[4].w = 168, srcRunesRect[4].h = 175;
+		srcRunesRect[5].x = 1180, srcRunesRect[5].y = 32; srcRunesRect[5].w = 180, srcRunesRect[5].h = 164;
+		srcRunesRect[6].x = 1390, srcRunesRect[6].y = 40; srcRunesRect[6].w = 206, srcRunesRect[6].h = 142;
+		srcRunesRect[7].x = 1640, srcRunesRect[7].y = 18; srcRunesRect[7].w = 187, srcRunesRect[7].h = 181;
+		srcRunesRect[8].x = 1880, srcRunesRect[8].y = 20; srcRunesRect[8].w = 211, srcRunesRect[8].h = 182;
+
+		int RunePtr1 = 1, RunePtr2 = 1, RunePtr3 = 1, RunePtr4 = 1, RunePtr5 = 1;
+		int pointer = 1;
+		int image = 1;
+
+		int code[5] = { 5,8,2,1,9 };
+
+		int row = 1; int col = 1;
+
+		const Uint8* State = SDL_GetKeyboardState(NULL);
+		SDL_Rect dstArrow = { 0,0, 100, 50 };
+		SDL_Event ev;
+		SDL_PollEvent(&ev);
+
+		//Event
+		while (flagRunes) {
+
+			SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+			SDL_RenderClear(ren);
+			SDL_RenderCopy(ren, textBackground, NULL, NULL);
+
+
+			while (SDL_PollEvent(&ev) != NULL) {
+				SDL_PollEvent(&ev);
+
+				if (pointer == 1 and State[SDL_SCANCODE_W]) {
+					RunePtr1 += 1;
+					if (RunePtr1 == 10)
+						RunePtr1 = 1;
+				}
+				if (pointer == 1 and State[SDL_SCANCODE_S]) {
+					RunePtr1 -= 1;
+					if (RunePtr1 == 0)
+						RunePtr1 = 9;
+				}
+				if (pointer == 2 and State[SDL_SCANCODE_W]) {
+					RunePtr2 += 1;
+					if (RunePtr2 == 10)
+						RunePtr2 = 1;
+				}
+				if (pointer == 2 and State[SDL_SCANCODE_S]) {
+					RunePtr2 -= 1;
+					if (RunePtr2 == 0)
+						RunePtr2 = 9;
+				}
+				if (pointer == 3 and State[SDL_SCANCODE_W]) {
+					RunePtr3 += 1;
+					if (RunePtr3 == 10)
+						RunePtr3 = 1;
+				}
+				if (pointer == 3 and State[SDL_SCANCODE_S]) {
+					RunePtr3 -= 1;
+					if (RunePtr3 == 0)
+						RunePtr3 = 9;
+				}
+				if (pointer == 4 and State[SDL_SCANCODE_W]) {
+					RunePtr4 += 1;
+					if (RunePtr4 == 10)
+						RunePtr4 = 1;
+				}
+				if (pointer == 4 and State[SDL_SCANCODE_S]) {
+					RunePtr4 -= 1;
+					if (RunePtr4 == 0)
+						RunePtr4 = 9;
+				}
+				if (pointer == 5 and State[SDL_SCANCODE_W]) {
+					RunePtr5 += 1;
+					if (RunePtr5 == 10)
+						RunePtr5 = 1;
+				}
+				if (pointer == 5 and State[SDL_SCANCODE_S]) {
+					RunePtr5 -= 1;
+					if (RunePtr5 == 0)
+						RunePtr5 = 9;
+				}
+
+
+				if (State[SDL_SCANCODE_D]) {
+					pointer += 1;
+					if (pointer == 6)
+						pointer = 1;
+				}
+				if (State[SDL_SCANCODE_A]) {
+					pointer -= 1;
+					if (pointer == 0)
+						pointer = 5;
+				}
+
+				if (State[SDL_SCANCODE_ESCAPE]) {
+					SDL_DestroyTexture(textArrowDown);
+					SDL_DestroyTexture(textArrowUp);
+					SDL_DestroyTexture(textBackground);
+					SDL_DestroyTexture(textRunesPuzzle);
+					return;
+				}
+			}
+
+			if (RunePtr1 != 0) {
+				if (pointer == 1) {
+					dstArrow.x = dstRunesRect[0].x, dstArrow.y = dstRunesRect[0].y - 50;
+					SDL_RenderCopy(ren, textArrowUp, NULL, &dstArrow);
+					dstArrow.x = dstRunesRect[0].x, dstArrow.y = dstRunesRect[0].y + 100;
+					SDL_RenderCopy(ren, textArrowDown, NULL, &dstArrow);
+				}
+				for (int i = 1; i <= 9; i++) {
+					if (RunePtr1 == i) {
+						SDL_RenderCopy(ren, textRunesPuzzle, &srcRunesRect[i - 1], &dstRunesRect[0]);
+					}
+				}
+			}
+			if (RunePtr2 != 0) {
+				if (pointer == 2) {
+					dstArrow.x = dstRunesRect[1].x, dstArrow.y = dstRunesRect[1].y - 50;
+					SDL_RenderCopy(ren, textArrowUp, NULL, &dstArrow);
+					dstArrow.x = dstRunesRect[1].x, dstArrow.y = dstRunesRect[1].y + 100;
+					SDL_RenderCopy(ren, textArrowDown, NULL, &dstArrow);
+				}
+				for (int i = 1; i <= 9; i++) {
+					if (RunePtr2 == i) {
+						SDL_RenderCopy(ren, textRunesPuzzle, &srcRunesRect[i - 1], &dstRunesRect[1]);
+					}
+				}
+			}
+			if (RunePtr3 != 0) {
+				if (pointer == 3) {
+					dstArrow.x = dstRunesRect[2].x, dstArrow.y = dstRunesRect[2].y - 50;
+					SDL_RenderCopy(ren, textArrowUp, NULL, &dstArrow);
+					dstArrow.x = dstRunesRect[2].x, dstArrow.y = dstRunesRect[2].y + 100;
+					SDL_RenderCopy(ren, textArrowDown, NULL, &dstArrow);
+				}
+				for (int i = 1; i <= 9; i++) {
+					if (RunePtr3 == i) {
+						SDL_RenderCopy(ren, textRunesPuzzle, &srcRunesRect[i - 1], &dstRunesRect[2]);
+					}
+				}
+			}
+			if (RunePtr4 != 0) {
+				if (pointer == 4) {
+					dstArrow.x = dstRunesRect[3].x, dstArrow.y = dstRunesRect[3].y - 50;
+					SDL_RenderCopy(ren, textArrowUp, NULL, &dstArrow);
+					dstArrow.x = dstRunesRect[3].x, dstArrow.y = dstRunesRect[3].y + 100;
+					SDL_RenderCopy(ren, textArrowDown, NULL, &dstArrow);
+				}
+				for (int i = 1; i <= 9; i++) {
+					if (RunePtr4 == i) {
+						SDL_RenderCopy(ren, textRunesPuzzle, &srcRunesRect[i - 1], &dstRunesRect[3]);
+					}
+				}
+			}
+			if (RunePtr5 != 0) {
+				if (pointer == 5) {
+					dstArrow.x = dstRunesRect[4].x, dstArrow.y = dstRunesRect[4].y - 50;
+					SDL_RenderCopy(ren, textArrowUp, NULL, &dstArrow);
+					dstArrow.x = dstRunesRect[4].x, dstArrow.y = dstRunesRect[4].y + 100;
+					SDL_RenderCopy(ren, textArrowDown, NULL, &dstArrow);
+				}
+				for (int i = 1; i <= 9; i++) {
+					if (RunePtr5 == i) {
+						SDL_RenderCopy(ren, textRunesPuzzle, &srcRunesRect[i - 1], &dstRunesRect[4]);
+					}
+				}
+			}
+
+			if (RunePtr1 == 5 and RunePtr2 == 8 and RunePtr3 == 2 and RunePtr4 == 1 and RunePtr5 == 9) {
+				flagRunes = 0;
+				SDL_DestroyTexture(textArrowDown);
+				SDL_DestroyTexture(textArrowUp);
+				SDL_DestroyTexture(textBackground);
+				SDL_DestroyTexture(textRunesPuzzle);
+				return;
+				//win
+			}
+
+			SDL_RenderPresent(ren);
+			SDL_Delay(50);
+		}
+	}
+}
+
+void nameplate(SDL_Renderer* ren) {
+	//Nameplate
+	SDL_Surface* surfNameplate = IMG_Load("sprites\\puzzles\\nameplate.png");
+	SDL_Texture* textNameplate = SDL_CreateTextureFromSurface(ren, surfNameplate);
+	SDL_FreeSurface(surfNameplate);
+
+	const Uint8* State = SDL_GetKeyboardState(NULL);
+	SDL_Event ev;
+	SDL_PollEvent(&ev);
+
+	while (true) {
+		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+		SDL_RenderClear(ren);
+		SDL_RenderCopy(ren, textNameplate, NULL, NULL);
+
+		while (SDL_PollEvent(&ev) != NULL) {
+		isPressed = pressedEnter();
+			SDL_PollEvent(&ev);
+
+			if (State[SDL_SCANCODE_ESCAPE]) {
+				SDL_DestroyTexture(textNameplate);
+				return;
+			}
+			if (State[SDL_SCANCODE_RETURN] and isPressed) {
+				SDL_DestroyTexture(textNameplate);
+				return;
+			}
+		}
+
+		SDL_RenderPresent(ren);
+		isPressed = 0;
+	}
+}
+
+void hint(SDL_Renderer* ren) {
+	//Hint
+	SDL_Surface* surfHint = IMG_Load("sprites\\puzzles\\hint.png");
+	SDL_Texture* textHint = SDL_CreateTextureFromSurface(ren, surfHint);
+	SDL_FreeSurface(surfHint);
+
+	const Uint8* State = SDL_GetKeyboardState(NULL);
+	SDL_Event ev;
+	SDL_PollEvent(&ev);
+
+	while (true) {
+		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+		SDL_RenderClear(ren);
+		SDL_RenderCopy(ren, textHint, NULL, NULL);
+
+		while (SDL_PollEvent(&ev) != NULL) {
+			isPressed = pressedEnter();
+			SDL_PollEvent(&ev);
+
+			if (State[SDL_SCANCODE_ESCAPE]) {
+				SDL_DestroyTexture(textHint);
+				return;
+			}
+			if (State[SDL_SCANCODE_RETURN] and isPressed) {
+				SDL_DestroyTexture(textHint);
+				return;
+			}
+		}
+
+		SDL_RenderPresent(ren);
+		isPressed = 0;
 	}
 }
 

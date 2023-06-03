@@ -8,7 +8,8 @@ int escape();
 void generateEnemy(); 
 void Battler(SDL_Renderer* ren); 
 int randomAmountEnemy();
-extern bool isEnterPressed, wasEnterPressed, isPressed, isPressedEscape;
+extern bool isEnterPressed, wasEnterPressed, isPressed;
+extern bool wasEscapePressed, isEscapePressed, isPressedEscape;
 int pressedEnter();
 int pressedEscape();
 

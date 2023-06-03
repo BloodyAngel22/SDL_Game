@@ -26,6 +26,8 @@ float win_width = 1280, win_height = 720;
 SDL_Window* win = 0;
 SDL_Renderer* ren = 0;
 int Xcoordinate, Ycoordinate;
+extern int checkChest = 0;
+extern int checkChest2 = 0;
 
 void init() {
 
@@ -311,18 +313,16 @@ void menu() {
 		SDL_RenderCopy(ren, textMenu, NULL, NULL);
 		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 		SDL_RenderPresent(ren);
-		isPressed = pressedEscape();
 		while (SDL_PollEvent(&ev) != NULL) {
+			/*isPressedEscape = pressedEscape();
+			if (isPressedEscape and arrowState[SDL_SCANCODE_ESCAPE]) {
+				SDL_DestroyTexture(textMenu);
+				SDL_DestroyTexture(textArrow);
+				return;
+			}*/
 			switch (ev.type) {
 			case SDL_KEYDOWN:
 				switch (ev.key.keysym.scancode) {
-				case SDL_SCANCODE_ESCAPE:
-					if (isPressed) {
-						SDL_DestroyTexture(textMenu);
-						SDL_DestroyTexture(textArrow);
-						return;
-						break;
-					}
 				case SDL_SCANCODE_UP:
 					if (pointer != 1) {
 						yArrow -= 145;
@@ -371,6 +371,7 @@ void menu() {
 		}
 
 		isPressed = 0;
+		isPressedEscape = 0;
 	}
 }
 
@@ -598,6 +599,13 @@ int main(int argc, char* argv[]) {
 	SDL_Surface* surfLampOn = IMG_Load("sprites\\puzzles\\lit_lamp.png");
 	SDL_Texture* textLampOn = SDL_CreateTextureFromSurface(ren, surfLampOn);
 	SDL_FreeSurface(surfLampOn);
+	//Runes Puzzle
+	SDL_Surface* surfRunesPuzzle = IMG_Load("sprites\\puzzles\\puzzle3.png");
+	SDL_Texture* textRunesPuzzle = SDL_CreateTextureFromSurface(ren, surfRunesPuzzle);
+	SDL_FreeSurface(surfRunesPuzzle);
+	SDL_FRect RunesRect = { 900, 500, 60, 60};
+	SDL_Rect dstRunesRect = { RunesRect.x, RunesRect.y, RunesRect.w, RunesRect.h };
+	SDL_Rect srcRunesRect = { 0 , 34, 182, 147};
 #pragma endregion
 
 	int frame = 0, frame_count = 10, cur_frametime = 0, max_frametime = 1000/120;
@@ -614,7 +622,11 @@ int main(int argc, char* argv[]) {
 		enemy1 = { EnemyX, EnemyY - 200, XsizeEnemy, YsizeEnemy };
 		bool hitbox = checkCollision(player, enemy);
 		while (SDL_PollEvent(&ev) != NULL) {
-
+		//isPressedEscape = pressedEscape();
+		isPressed = pressedEnter();
+			if (state[SDL_SCANCODE_ESCAPE]) {
+				menu();
+			}
 			switch (ev.type) {
 			case SDL_QUIT:
 				isRunning = false;
@@ -622,10 +634,10 @@ int main(int argc, char* argv[]) {
 
 			case SDL_KEYDOWN:
 				switch (ev.key.keysym.scancode) {
-				case SDL_SCANCODE_ESCAPE: {
+				/*case SDL_SCANCODE_ESCAPE: {
 					menu(); 
 					break;
-				}
+				}*/
 				case SDL_SCANCODE_Q:
 					complete_the_quest(ren);
 					break;
@@ -694,7 +706,6 @@ int main(int argc, char* argv[]) {
 			}
 			Xcoordinate += 4;
 		}
-		isPressed = pressedEnter();
 		animation = UP or DOWN or LEFT or RIGHT;
 		
 		if (row == 1 and col == 1)
@@ -741,6 +752,10 @@ int main(int argc, char* argv[]) {
 		if (row == 1 and col == 1) {
 			SDL_RenderCopy(ren, textRoom1, NULL, NULL);
 			SDL_RenderCopy(ren, textNPC, &srcNPC, &dstNPC);
+			SDL_FRect Plate2 = { 86,274,39,41 };
+			if (checkCollision(player, Plate2) and state[SDL_SCANCODE_RETURN] and isPressed) {
+				hint(ren);
+			}
 			/*SDL_Rect Hitbox1 = { 727,191,15,53 };
 			SDL_RenderFillRect(ren, &Hitbox1);
 			if (object_collision(player, Hitbox1)) {
@@ -748,21 +763,37 @@ int main(int argc, char* argv[]) {
 		}
 		if (row == 2 and col == 1) {
 			SDL_RenderCopy(ren, textRoom2, NULL, NULL);
-			if (flagCode)
+			if (flagCode)//Кодовый замок
 				SDL_RenderCopy(ren, textLockedChest, NULL, &dstLockedChest);
 			if (flagCode == 0)
 				SDL_RenderCopy(ren, textOpenChest, NULL, &dstOpenChest);
 			if (checkCollision(player, chest) and state[SDL_SCANCODE_RETURN] and isPressed)
 				code_lock(ren);
-			if (flagLamps)
+			if (flagLamps)//Лапмпа
 				SDL_RenderCopy(ren, textLampOn, NULL, &dstLamp);
-			if (flagLamps == 0)
-				SDL_RenderCopy(ren, textLampOff, NULL, &dstLamp);
+			if (flagLamps == 0) {
+				dstLamp.x = dstOpenChest.x; dstLamp.w = dstOpenChest.w; dstLamp.h = dstOpenChest.h;
+				dstFLamp.x = dstLamp.x; dstFLamp.w = dstLamp.w; dstFLamp.h = dstLamp.h;
+				if (checkChest == 0) {
+					SDL_RenderCopy(ren, textLockedChest, NULL, &dstLamp);
+				}
+				if (checkChest == 1) {
+					SDL_RenderCopy(ren, textOpenChest, NULL, &dstLamp);
+				}
+				if (checkCollision(player, dstFLamp) and state[SDL_SCANCODE_RETURN] and isPressed) {
+					hero.Gold += 300;
+					checkChest = 1;
+				}
+			}
 			if (checkCollision(player, dstFLamp) and state[SDL_SCANCODE_RETURN] and flagLamps and isPressed)
 				lamps(ren, dstLamp);
 		}
 		if (row == 1 and col == 2) {
 			SDL_RenderCopy(ren, textRoom3, NULL, NULL);
+			//1144 274 40 42
+			SDL_FRect NamePlate = { 1144,274,40,42 };
+			if (checkCollision(player, NamePlate) and state[SDL_SCANCODE_RETURN] and isPressed)
+				nameplate(ren);
 		}
 		if (row == 2 and col == 2) {
 			SDL_RenderCopy(ren, textRoom4, NULL, NULL);
@@ -776,13 +807,35 @@ int main(int argc, char* argv[]) {
 				srcrectCharacter.x = 120 * frame;
 			}
 		}
-		if (row == 2 and col == 2) {//отрисовка рун
+		if (row == 2 and col == 2) {//отрисовка рун и головоломка
 			//Water
 			SDL_RenderCopy(ren, textRune, &srcrune, &dstrune);
 			//Fire
 			SDL_RenderCopy(ren, textRune, &srcrune2, &dstrune2);
 			//Earth
 			SDL_RenderCopy(ren, textRune, &srcrune3, &dstrune3);
+
+			//SDL_RenderFillRectF(ren, &RunesRect);
+			if (flagRunes == 1)
+				SDL_RenderCopy(ren, textRunesPuzzle, &srcRunesRect, &dstRunesRect);
+
+			if (checkCollision(player, RunesRect) and state[SDL_SCANCODE_RETURN] and isPressed and flagRunes)
+				runes_puzzle(ren);
+
+			if (flagRunes == 0) {
+				dstRunesRect.w = dstLockedChest.w; dstRunesRect.h = dstLockedChest.h;
+				RunesRect.w = dstLockedChest.w; RunesRect.h = dstLockedChest.h;
+				if (checkChest2 == 0) {
+					SDL_RenderCopy(ren, textLockedChest, NULL, &dstRunesRect);
+					if (checkCollision(player, RunesRect) and state[SDL_SCANCODE_RETURN] and isPressed) {
+						hero.Gold += 500;
+						checkChest2 = 1;
+					}
+				}
+				if (checkChest2 == 1) {
+					SDL_RenderCopy(ren, textOpenChest, NULL, &dstRunesRect);
+				}
+			}
 		}
 		if (row == 2 and col == 2) {//коллизия рун
 			if (checkCollision(player, rune) and state[SDL_SCANCODE_RETURN]) {//Water
@@ -867,6 +920,7 @@ int main(int argc, char* argv[]) {
 			SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
 		}
 		isPressed = 0;
+		isPressedEscape = 0;
 		if (row == 1 and col == 1)
 			SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
 		
