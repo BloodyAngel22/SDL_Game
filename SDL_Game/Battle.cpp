@@ -16,7 +16,7 @@
 #define LIGHTING 2
 #define POISON 3
 
-
+int stepFight = 1;
 int abilityDamageLightning = 48, abilityDamageFireball = 30, abilityDamagePoison = 6;
 extern bool posionEffect = false;
 extern bool lightingEffect = false;
@@ -27,12 +27,13 @@ int ratio;
 bool isEnterPressed = 0, wasEnterPressed = 0, isPressed = 0;
 bool isEscapePressed = 0, wasEscapePressed = 0, isPressedEscape = 0;
 Character hero;
-Enemy opponent;
+EnemyCharacteristics batCharacteristics, goblinCharacteristics;
 ClassMage mage;
 ClassWarrior warrior;
 genEnemy enemy1, enemy2, enemy3, enemy4;
 SDL_Rect srcrectDeadEnemy = { 0, 0, 100, 140 };
 SDL_Rect srcrectBat = { 0, 0, 100, 140 };
+SDL_Rect srcrectGoblin = { 71, 25, 141, 127 };
 SDL_Rect dstrectDeadEnemy1; SDL_Rect dstrectDeadEnemy2; SDL_Rect dstrectDeadEnemy3; SDL_Rect dstrectDeadEnemy4;
 SDL_Rect dstrectBat; SDL_Rect dstrectBat2; SDL_Rect dstrectBat3; SDL_Rect dstrectBat4;
 int xEnemy1 = 500, yEnemy1 = 100;
@@ -69,9 +70,9 @@ int pressedEscape() {
 	else return 0;
 }
 
-void MenuBattle(SDL_Renderer* ren); void StartBattle(); void Battle(); int escape();
+void MenuBattle(SDL_Renderer* ren, int enemy); void StartBattle(); void Battle(); int escape();
 
-void MenuBattle(SDL_Renderer* ren) {
+void MenuBattle(SDL_Renderer* ren, int enemy) {
 	#pragma region Texture
 		//Battle menu
 		SDL_Surface* surfBattle = IMG_Load("sprites\\menu\\battle.png");
@@ -90,6 +91,10 @@ void MenuBattle(SDL_Renderer* ren) {
 		SDL_Texture* textBat = SDL_CreateTextureFromSurface(ren, surfBat);
 		SDL_FreeSurface(surfBat);
 		//
+		SDL_Surface* surfGoblin = IMG_Load("sprites\\enemy\\goblin.png");
+		SDL_Texture* textGoblin = SDL_CreateTextureFromSurface(ren, surfGoblin);
+		SDL_FreeSurface(surfGoblin);
+		//
 		TTF_Font* enemyTTF = TTF_OpenFont("fonts\\BAUHS93.TTF", 75);
 		char enemyHealth[100] = "Points";
 		SDL_Surface* surfEnemyHealthTTF = TTF_RenderText_Blended(enemyTTF, enemyHealth, { 255, 255, 255, 255 });
@@ -106,25 +111,19 @@ void MenuBattle(SDL_Renderer* ren) {
 		SDL_Rect srcrectCharacter = { 10, 10, 100, 140 };
 		SDL_Rect dstrectCharacter = {xCharacter, yCharacter, 75, 75};
 		#pragma endregion
+
 	SDL_Event ev;
 	SDL_PollEvent(&ev);
 	StartBattle();
-	if (flag == 0) {
-		generateEnemy();
-		amountEnemy = randomAmountEnemy();
-		livedEnemies = amountEnemy;
-	}
-	if (livedEnemies < 1) {
-		SDL_DestroyTexture(textBat);
-		SDL_DestroyTexture(textArrow);
-		SDL_DestroyTexture(textBattle);
-		SDL_DestroyTexture(textdeadEenemy);
-		SDL_DestroyTexture(textCharacter);
-		flag = 1;
-		if (questFlag)
-			counterKilledEnemies += 1;
-		return;
-	}
+	
+	stepFight = 1;
+
+	if (enemy == Bat)
+		generateEnemy(Bat);
+	if (enemy == Goblin)
+		generateEnemy(Goblin);
+	amountEnemy = randomAmountEnemy();
+	livedEnemies = amountEnemy;
 
 	SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
 	SDL_RenderClear(ren);
@@ -145,16 +144,29 @@ void MenuBattle(SDL_Renderer* ren) {
 			if (amountEnemy == 2) {
 				dstrectBat = { xEnemy1, yEnemy1, 75, 75 };
 				dstrectBat2 = { xEnemy2, yEnemy2, 75, 75 };
-				SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-				SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+				if (enemy == Bat) {
+					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
+					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+				}
+				if (enemy == Goblin) {
+					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
+					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
+				}
 			}
 			if (amountEnemy == 3) {
 				dstrectBat = { xEnemy1, yEnemy1, 75, 75 };
 				dstrectBat2 = { xEnemy2, yEnemy2, 75, 75 };
 				dstrectBat3 = { xEnemy3, yEnemy3, 75, 75 };
-				SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-				SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
-				SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat3);
+				if (enemy == Bat) {
+					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
+					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat3);
+				}
+				if (enemy == Goblin) {
+					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
+					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
+					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat3);
+				}
 			}
 			if (enemy1.health <= 0) {
 				dstrectDeadEnemy1 = { xDeadEnemy1, yDeadEnemy1, 75, 75 };
@@ -319,9 +331,12 @@ void MenuBattle(SDL_Renderer* ren) {
 			if (choiche == BATTLE) {
 				//SDL_Delay(250);
 				system("cls");
-				Battler(ren);
+				if (enemy == Bat)
+					Battler(ren, Bat);
+				if (enemy == Goblin)
+					Battler(ren, Goblin);
 				if (enemy1.isPoison == true or enemy2.isPoison == true or enemy3.isPoison == true) Poison();
-				printf("%d\n", opponent.Health);
+				printf("%d\n", batCharacteristics.Health);
 			}
 			else if (choiche == ABILITY) {
 				flag = 1;
@@ -340,16 +355,29 @@ void MenuBattle(SDL_Renderer* ren) {
 					if (amountEnemy == 2) {
 						dstrectBat = { xEnemy1, yEnemy1, 75, 75 };
 						dstrectBat2 = { xEnemy2, yEnemy2, 75, 75 };
-						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+						if (enemy == Bat) {
+							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
+							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+						}
+						if (enemy == Goblin) {
+							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
+							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
+						}
 					}
 					if (amountEnemy == 3) {
 						dstrectBat = { xEnemy1, yEnemy1, 75, 75 };
 						dstrectBat2 = { xEnemy2, yEnemy2, 75, 75 };
 						dstrectBat3 = { xEnemy3, yEnemy3, 75, 75 };
-						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
-						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat3);
+						if (enemy == Bat) {
+							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
+							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat3);
+						}
+						if (enemy == Goblin) {
+							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
+							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
+							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat3);
+						}
 					}
 					if (enemy1.health <= 0) {
 						dstrectDeadEnemy1 = { xDeadEnemy1, yDeadEnemy1, 75, 75 };
@@ -561,8 +589,14 @@ void MenuBattle(SDL_Renderer* ren) {
 						}
 						dstrectBat = { xEnemy1, yEnemy1, 75, 75 };
 						dstrectBat2 = { xEnemy2, yEnemy2, 75, 75 };
-						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+						if (enemy == Bat) {
+							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
+							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+						}
+						if (enemy == Goblin) {
+							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
+							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
+						}
 						if (enemy1.health <= 0) {
 							dstrectDeadEnemy1 = { xDeadEnemy1, yDeadEnemy1, 75, 75 };
 							SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy1);
@@ -625,62 +659,39 @@ void MenuBattle(SDL_Renderer* ren) {
 						//SDL_Delay(150);
 						if (choiceSpell == FIREBOLT) {
 							Fireball();
-							if (enemy1.health > 0) 
-								hero.Health = hero.Health - (enemy1.atk - (enemy1.atk * hero.Defense));
-							else {
-								enemy1.atk = 0;
-								livedEnemies--;
-							}
 						}
 						else if (choiceSpell == LIGHTING) {
 							Lightning();
-							if (enemy1.health > 0)
-								hero.Health = hero.Health - (enemy1.atk - (enemy1.atk * hero.Defense));
-							else {
-								enemy1.atk = 0;
-								livedEnemies--;
-							}
 						}
 						else if (choiceSpell == POISON) {
 							Poison();
-							if (enemy1.health > 0)
-								hero.Health = hero.Health - (enemy1.atk - (enemy1.atk * hero.Defense));
-							else {
-								enemy1.atk = 0;
-								livedEnemies--;
-							}
+						}
+						if (enemy1.health <= 0) {
+							enemy1.atk = 0;
+							livedEnemies -= 1;
 						}
 					}
 					else if (choiceEnemy == 2) {
 						//SDL_Delay(150);
 						if (choiceSpell == FIREBOLT) {
 							Fireball();
-							if (enemy2.health > 0)
-								hero.Health = hero.Health - (enemy2.atk - (enemy2.atk * hero.Defense));
-							else {
-								enemy2.atk = 0;
-								livedEnemies--;
-							}
 						}
 						if (choiceSpell == LIGHTING) {
 							Lightning();
-							if (enemy2.health > 0)
-								hero.Health = hero.Health - (enemy2.atk - (enemy2.atk * hero.Defense));
-							else {
-								enemy2.atk = 0;
-								livedEnemies--;
-							}
 						}
 						if (choiceSpell == POISON) {
 							Poison();
-							if (enemy2.health > 0)
-								hero.Health = hero.Health - (enemy2.atk - (enemy2.atk * hero.Defense));
-							else {
-								enemy2.atk = 0;
-								livedEnemies--;
-							}
+						}
+						if (enemy2.health <= 0) {
+							enemy2.atk = 0;
+							livedEnemies -= 1;
 						}
 					}
+					if (enemy == Bat)
+						enemy_patterns(Bat);
+					if (enemy == Goblin)
+						enemy_patterns(Goblin);
+					stepFight += 1;
 				}
 				if (amountEnemy == 3) {
 					if (enemy2.health > 0) {
@@ -770,9 +781,16 @@ void MenuBattle(SDL_Renderer* ren) {
 
 						dstrectBat = { xEnemy1, yEnemy1, 75, 75 };
 						dstrectBat2 = { xEnemy2, yEnemy2, 75, 75 };
-						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
-						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat3);
+						if (enemy == Bat) {
+							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
+							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat3);
+						}
+						if (enemy == Goblin) {
+							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
+							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
+							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat3);
+						}
 						if (enemy1.health <= 0) {
 							dstrectDeadEnemy1 = { xDeadEnemy1, yDeadEnemy1, 75, 75 };
 							SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy1);
@@ -903,93 +921,63 @@ void MenuBattle(SDL_Renderer* ren) {
 						//SDL_Delay(150);
 						if (choiceSpell == FIREBOLT) {
 							Fireball();
-							if (enemy1.health > 0)
-								hero.Health = hero.Health - (enemy1.atk - (enemy1.atk * hero.Defense));
-							else {
-								enemy1.atk = 0;
-								livedEnemies--;
-							}
+							
 						}
 						if (choiceSpell == LIGHTING) {
 							Lightning();
-							if (enemy1.health > 0)
-								hero.Health = hero.Health - (enemy1.atk - (enemy1.atk * hero.Defense));
-							else {
-								enemy1.atk = 0;
-								livedEnemies--;
-							}
+							
 						}
 						if (choiceSpell == POISON) {
 							Poison();
-							if (enemy1.health > 0)
-								hero.Health = hero.Health - (enemy1.atk - (enemy1.atk * hero.Defense));
-							else {
-								enemy1.atk = 0;
-								livedEnemies--;
-							}
+							
+						}
+						if (enemy1.health <= 0) {
+							enemy1.atk = 0;
+							livedEnemies -= 1;
 						}
 					}
 					if (choiceEnemy == 2) {
 						//SDL_Delay(150);
 						if (choiceSpell == FIREBOLT) {
 							Fireball();
-							if (enemy2.health > 0)
-								hero.Health = hero.Health - (enemy2.atk - (enemy2.atk * hero.Defense));
-							else {
-								enemy1.atk = 0;
-								livedEnemies--;
-							}
+							
 						}
 						if (choiceSpell == LIGHTING) {
 							Lightning();
-							if (enemy2.health > 0)
-								hero.Health = hero.Health - (enemy2.atk - (enemy2.atk * hero.Defense));
-							else {
-								enemy1.atk = 0;
-								livedEnemies--;
-							}
+							
 						}
 						if (choiceSpell == POISON) {
 							Poison();
-							if (enemy2.health > 0)
-								hero.Health = hero.Health - (enemy2.atk - (enemy2.atk * hero.Defense));
-							else {
-								enemy1.atk = 0;
-								livedEnemies--;
-							}
+							
+						}
+						if (enemy2.health <= 0) {
+							enemy2.atk = 0;
+							livedEnemies -= 1;
 						}
 					}
 					if (choiceEnemy == 3) {
 						//SDL_Delay(150);
 						if (choiceSpell == FIREBOLT) {
 							Fireball();
-							if (enemy3.health > 0)
-								hero.Health = hero.Health - (enemy3.atk - (enemy3.atk * hero.Defense));
-
-							else {
-								enemy1.atk = 0;
-								livedEnemies--;
-							}
 						}
 						if (choiceSpell == LIGHTING) {
 							Lightning();
-							if (enemy3.health > 0)
-								hero.Health = hero.Health - (enemy3.atk - (enemy3.atk * hero.Defense));
-							else {
-								enemy1.atk = 0;
-								livedEnemies--;
-							}
+						
 						}
 						if (choiceSpell == POISON) {
 							Poison();
-							if (enemy3.health > 0)
-								hero.Health = hero.Health - (enemy3.atk - (enemy3.atk * hero.Defense));
-							else {
-								enemy1.atk = 0;
-								livedEnemies--;
-							}
+							
+						}
+						if (enemy3.health <= 0) {
+							enemy3.atk = 0;
+							livedEnemies -= 1;
 						}
 					}
+					if (enemy == Bat)
+						enemy_patterns(Bat);
+					if (enemy == Goblin)
+						enemy_patterns(Goblin);
+					stepFight += 1;
 				}
 				if (livedEnemies < 1) {
 					SDL_DestroyTexture(textBat);
@@ -997,6 +985,7 @@ void MenuBattle(SDL_Renderer* ren) {
 					SDL_DestroyTexture(textBattle);
 					SDL_DestroyTexture(textdeadEenemy);
 					SDL_DestroyTexture(textCharacter);
+					SDL_DestroyTexture(textGoblin);
 
 					flag = 1;
 					abilityDamagePoison = 6;
@@ -1023,13 +1012,20 @@ void MenuBattle(SDL_Renderer* ren) {
 					SDL_DestroyTexture(textBattle);
 					SDL_DestroyTexture(textBat);
 					SDL_DestroyTexture(textCharacter);
+					SDL_DestroyTexture(textGoblin);
 
 					return;
 				}
 				else {
 					printf("You failed to escape\n");
-					hero.Health -= opponent.Attack;
-					printf("the enemy has damaged you %d\n", opponent.Attack);
+					if (enemy == Bat) {
+						enemy_patterns(Bat);
+					}
+					if (enemy == Goblin) {
+						enemy_patterns(Goblin);
+					}
+					stepFight += 1;
+					printf("the enemy has damaged you %d\n", batCharacteristics.Attack);
 					if (hero.Health <= 0)
 						exit(1);
 				}
@@ -1041,6 +1037,7 @@ void MenuBattle(SDL_Renderer* ren) {
 	SDL_DestroyTexture(textBat);
 	SDL_DestroyTexture(textEnemyHealthTTF);
 	SDL_DestroyTexture(textCharacter);
+	SDL_DestroyTexture(textGoblin);
 	TTF_CloseFont(enemyTTF);
 
 	if (livedEnemies < 1) {
@@ -1049,9 +1046,10 @@ void MenuBattle(SDL_Renderer* ren) {
 		recovery_character();
 		if (hero.experience >= hero.levelUp)
 			level_up();
-		if (questFlag)
+		if (questFlag and (curQuest == 1 or curQuest == 2) and enemy == Bat)
 			counterKilledEnemies += 1;
-
+		if (questFlag and curQuest == 3 and enemy == Goblin)
+			counterKilledEnemies += 1;
 
 	}
 }
@@ -1094,19 +1092,34 @@ int randomAmountEnemy() {
 	return rand() % (3 - 2 + 1) + 2;
 }
 
-void generateEnemy() {
-	enemy1.atk = opponent.Attack; enemy1.health = opponent.Health; enemy1.gold = opponent.Gold,
-		enemy1.level = opponent.experienceEnemy, enemy1.isPoison = 0, enemy1.maxHealth = opponent.Health;
-	enemy2.atk = opponent.Attack; enemy2.health = opponent.Health; enemy2.gold = opponent.Gold,
-		enemy2.level = opponent.experienceEnemy, enemy2.isPoison = 0, enemy2.maxHealth = opponent.Health;
-	enemy3.atk = opponent.Attack; enemy3.health = opponent.Health; enemy3.gold = opponent.Gold,
-		enemy3.level = opponent.experienceEnemy, enemy3.isPoison = 0, enemy3.maxHealth = opponent.Health;
-	enemy4.atk = opponent.Attack; enemy4.health = opponent.Health; enemy4.gold = opponent.Gold,
-		enemy4.level = opponent.experienceEnemy, enemy4.isPoison = 0, enemy4.maxHealth = opponent.Health;
-
+void generateEnemy(int enemy) {
+	if (enemy == Bat) {
+		batCharacteristics.Health = 100; batCharacteristics.Attack = 20; batCharacteristics.Gold = 50; batCharacteristics.experienceEnemy = 100;
+		batCharacteristics.maxHealth = batCharacteristics.Health;
+		enemy1.atk = batCharacteristics.Attack; enemy1.health = batCharacteristics.Health; enemy1.gold = batCharacteristics.Gold,
+			enemy1.level = batCharacteristics.experienceEnemy, enemy1.isPoison = 0, enemy1.maxHealth = batCharacteristics.Health;
+		enemy2.atk = batCharacteristics.Attack; enemy2.health = batCharacteristics.Health; enemy2.gold = batCharacteristics.Gold,
+			enemy2.level = batCharacteristics.experienceEnemy, enemy2.isPoison = 0, enemy2.maxHealth = batCharacteristics.Health;
+		enemy3.atk = batCharacteristics.Attack; enemy3.health = batCharacteristics.Health; enemy3.gold = batCharacteristics.Gold,
+			enemy3.level = batCharacteristics.experienceEnemy, enemy3.isPoison = 0, enemy3.maxHealth = batCharacteristics.Health;
+		enemy4.atk = batCharacteristics.Attack; enemy4.health = batCharacteristics.Health; enemy4.gold = batCharacteristics.Gold,
+			enemy4.level = batCharacteristics.experienceEnemy, enemy4.isPoison = 0, enemy4.maxHealth = batCharacteristics.Health;
+	}
+	if (enemy == Goblin) {
+		goblinCharacteristics.Health = 75; goblinCharacteristics.Attack = 30; goblinCharacteristics.Gold = 75; goblinCharacteristics.experienceEnemy = 150;
+		goblinCharacteristics.maxHealth = goblinCharacteristics.Health;
+		enemy1.atk = goblinCharacteristics.Attack; enemy1.health = goblinCharacteristics.Health; enemy1.gold = goblinCharacteristics.Gold,
+			enemy1.level = goblinCharacteristics.experienceEnemy, enemy1.isPoison = 0, enemy1.maxHealth = goblinCharacteristics.Health;
+		enemy2.atk = goblinCharacteristics.Attack; enemy2.health = goblinCharacteristics.Health; enemy2.gold = goblinCharacteristics.Gold,
+			enemy2.level = goblinCharacteristics.experienceEnemy, enemy2.isPoison = 0, enemy2.maxHealth = goblinCharacteristics.Health;
+		enemy3.atk = goblinCharacteristics.Attack; enemy3.health = goblinCharacteristics.Health; enemy3.gold = goblinCharacteristics.Gold,
+			enemy3.level = goblinCharacteristics.experienceEnemy, enemy3.isPoison = 0, enemy3.maxHealth = goblinCharacteristics.Health;
+		enemy4.atk = goblinCharacteristics.Attack; enemy4.health = goblinCharacteristics.Health; enemy4.gold = goblinCharacteristics.Gold,
+			enemy4.level = goblinCharacteristics.experienceEnemy, enemy4.isPoison = 0, enemy4.maxHealth = goblinCharacteristics.Health;
+	}
 }
 
-void Battler(SDL_Renderer* ren) {
+void Battler(SDL_Renderer* ren, int enemy) {
 #pragma region Texture
 	//Battle menu
 	SDL_Surface* surfBattle = IMG_Load("sprites\\menu\\battle.png");
@@ -1116,6 +1129,10 @@ void Battler(SDL_Renderer* ren) {
 	SDL_Surface* surfBat = IMG_Load("sprites\\enemy\\bat.png");
 	SDL_Texture* textBat = SDL_CreateTextureFromSurface(ren, surfBat);
 	SDL_FreeSurface(surfBat);
+	//
+	SDL_Surface* surfGoblin = IMG_Load("sprites\\enemy\\goblin.png");
+	SDL_Texture* textGoblin = SDL_CreateTextureFromSurface(ren, surfGoblin);
+	SDL_FreeSurface(surfGoblin);
 	//Arrow
 	SDL_Surface* surfArrow = IMG_Load("sprites\\menu\\arrow.png");
 	SDL_Texture* textArrow = SDL_CreateTextureFromSurface(ren, surfArrow);
@@ -1172,6 +1189,7 @@ void Battler(SDL_Renderer* ren) {
 		SDL_DestroyTexture(textBattle);
 		SDL_DestroyTexture(textdeadEenemy);
 		SDL_DestroyTexture(textCharacter);
+		SDL_DestroyTexture(textGoblin);
 
 		hero.experience += enemy1.level * amountEnemy;
 		if (hero.experience >= hero.levelUp)
@@ -1190,8 +1208,14 @@ void Battler(SDL_Renderer* ren) {
 				SDL_RenderClear(ren);
 				SDL_RenderCopy(ren, textBattle, NULL, NULL);
 				SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
-				SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-				SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+				if (enemy == Bat) {
+					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
+					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+				}
+				if (enemy == Goblin) {
+					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
+					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
+				}
 				if (amountEnemy == 2) {
 					if (enemy1.health <= 0) enemy1.health = 0;
 					if (enemy2.health <= 0) enemy2.health = 0;
@@ -1330,8 +1354,14 @@ void Battler(SDL_Renderer* ren) {
 					SDL_RenderClear(ren);
 					SDL_RenderCopy(ren, textBattle, NULL, NULL);
 					SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
-					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+					if (enemy == Bat) {
+						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
+						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+					}
+					if (enemy == Goblin) {
+						SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
+						SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
+					}
 					SDL_RenderCopy(ren, textAtk, &srcrectAtk, &dstrectAtk);
 					SDL_RenderPresent(ren);
 					SDL_Delay(70);
@@ -1342,10 +1372,12 @@ void Battler(SDL_Renderer* ren) {
 				}
 			}
 
-			hero.Health = hero.Health - (enemy1.atk - (enemy1.atk * hero.Defense));
+			if (enemy == Bat)
+				enemy_patterns(Bat);
+			if (enemy == Goblin)
+				enemy_patterns(Goblin);
 			if (hero.Health <= 0) de_init(1);
-			hero.Health = hero.Health - (enemy2.atk - (enemy2.atk * hero.Defense));
-			if (hero.Health <= 0) de_init(1);
+			stepFight += 1;
 
 			SDL_DestroyTexture(textBat);
 			SDL_DestroyTexture(textArrow);
@@ -1353,6 +1385,7 @@ void Battler(SDL_Renderer* ren) {
 			SDL_DestroyTexture(textdeadEenemy);
 			SDL_DestroyTexture(textEnemyHealthTTF);
 			SDL_DestroyTexture(textAtk);
+			SDL_DestroyTexture(textGoblin);
 			TTF_CloseFont(enemyTTF);
 			SDL_DestroyTexture(textCharacter);
 		}
@@ -1391,9 +1424,16 @@ void Battler(SDL_Renderer* ren) {
 				SDL_RenderClear(ren);
 				SDL_RenderCopy(ren, textBattle, NULL, NULL);
 				SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
-				SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-				SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
-				SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat3);
+				if (enemy == Bat) {
+					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
+					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat3);
+				}
+				if (enemy == Goblin) {
+					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
+					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
+					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat3);
+				}
 				if (amountEnemy == 3) {
 					if (enemy1.health <= 0) enemy1.health = 0;
 					if (enemy2.health <= 0) enemy2.health = 0;
@@ -1628,9 +1668,16 @@ void Battler(SDL_Renderer* ren) {
 					SDL_RenderClear(ren);
 					SDL_RenderCopy(ren, textBattle, NULL, NULL);
 					SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
-					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
-					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat3);
+					if (enemy == Bat) {
+						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
+						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat3);
+					}
+					if (enemy == Goblin) {
+						SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
+						SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
+						SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat3);
+					}
 					SDL_RenderCopy(ren, textAtk, &srcrectAtk, &dstrectAtk);
 					SDL_RenderPresent(ren);
 					SDL_Delay(70);
@@ -1641,12 +1688,12 @@ void Battler(SDL_Renderer* ren) {
 				}
 			}
 
-			hero.Health = hero.Health - (enemy1.atk - (enemy1.atk * hero.Defense));
+			if (enemy == Bat)
+				enemy_patterns(Bat);
+			if (enemy == Goblin)
+				enemy_patterns(Goblin);
 			if (hero.Health <= 0) de_init(1);
-			hero.Health = hero.Health - (enemy2.atk - (enemy2.atk * hero.Defense));
-			if (hero.Health <= 0) de_init(1);
-			hero.Health = hero.Health - (enemy3.atk - (enemy3.atk * hero.Defense));
-			if (hero.Health <= 0) de_init(1);
+			stepFight += 1;
 
 			SDL_DestroyTexture(textBat);
 			SDL_DestroyTexture(textArrow);
@@ -1654,6 +1701,7 @@ void Battler(SDL_Renderer* ren) {
 			SDL_DestroyTexture(textdeadEenemy);
 			SDL_DestroyTexture(textEnemyHealthTTF);
 			SDL_DestroyTexture(textAtk);
+			SDL_DestroyTexture(textGoblin);
 			TTF_CloseFont(enemyTTF);
 			SDL_DestroyTexture(textCharacter);
 		}
@@ -1734,4 +1782,95 @@ void Poison() {
 
 	if (abilityDamagePoison == 0)
 		enemy1.isPoison, enemy2.isPoison, enemy3.isPoison = false;
+}
+
+void enemy_patterns(int enemy) {
+	if (enemy == Bat) {
+		if (stepFight == 3)
+			stepFight = 1;
+		if (stepFight == 1) {//Attack
+			if (amountEnemy == 2) {
+				if (enemy1.health > 0)
+					hero.Health -= (enemy1.atk - (enemy1.atk * hero.Defense));
+				if (enemy2.health > 0)
+					hero.Health -= (enemy2.atk - (enemy2.atk * hero.Defense));
+			}
+			if (amountEnemy == 3) {
+				if (enemy1.health > 0)
+					hero.Health -= (enemy1.atk - (enemy1.atk * hero.Defense));
+				if (enemy2.health > 0)
+					hero.Health -= (enemy2.atk - (enemy2.atk * hero.Defense));
+				if (enemy3.health > 0)
+					hero.Health -= (enemy3.atk - (enemy3.atk * hero.Defense));
+			}
+		}
+		if (stepFight == 2) {//Shield
+			if (amountEnemy == 2) {
+				if (enemy1.health > 0)
+					enemy1.health += 15;
+				if (enemy2.health > 0)
+					enemy2.health += 15;
+			}
+			if (amountEnemy == 3) {
+				if (enemy1.health > 0)
+					enemy1.health += 15;
+				if (enemy2.health > 0)
+					enemy2.health += 15;
+				if (enemy3.health > 0)
+					enemy3.health += 15;
+			}
+		}
+	}
+	if (enemy == Goblin) {
+		if (stepFight == 4)
+			stepFight = 1;
+		if (stepFight == 1) {//Attack
+			if (amountEnemy == 2) {
+				if (enemy1.health > 0)
+					hero.Health -= (enemy1.atk - (enemy1.atk * hero.Defense));
+				if (enemy2.health > 0)
+					hero.Health -= (enemy2.atk - (enemy2.atk * hero.Defense));
+			}
+			if (amountEnemy == 3) {
+				if (enemy1.health > 0)
+					hero.Health -= (enemy1.atk - (enemy1.atk * hero.Defense));
+				if (enemy2.health > 0)
+					hero.Health -= (enemy2.atk - (enemy2.atk * hero.Defense));
+				if (enemy3.health > 0)
+					hero.Health -= (enemy3.atk - (enemy3.atk * hero.Defense));
+			}
+		}
+		if (stepFight == 2) {//Attack
+			if (amountEnemy == 2) {
+				if (enemy1.health > 0)
+					hero.Health -= (enemy1.atk - (enemy1.atk * hero.Defense));
+				if (enemy2.health > 0)
+					hero.Health -= (enemy2.atk - (enemy2.atk * hero.Defense));
+			}
+			if (amountEnemy == 3) {
+				if (enemy1.health > 0)
+					hero.Health -= (enemy1.atk - (enemy1.atk * hero.Defense));
+				if (enemy2.health > 0)
+					hero.Health -= (enemy2.atk - (enemy2.atk * hero.Defense));
+				if (enemy3.health > 0)
+					hero.Health -= (enemy3.atk - (enemy3.atk * hero.Defense));
+			}
+		}
+		if (stepFight == 3) {//Heal
+			if (amountEnemy == 2) {
+				if (enemy1.health < enemy1.maxHealth and enemy1.health > 0)
+					enemy1.health += 20;
+				if (enemy2.health < enemy2.maxHealth and enemy2.health > 0)
+					enemy2.health += 20;
+			}
+			if (amountEnemy == 3) {
+				if (enemy1.health < enemy1.maxHealth and enemy1.health > 0)
+					enemy1.health += 20;
+				if (enemy2.health < enemy2.maxHealth and enemy2.health > 0)
+					enemy2.health += 20;
+				if (enemy3.health < enemy3.maxHealth and enemy3.health > 0)
+					enemy3.health += 20;
+			}
+		}
+	}
 }

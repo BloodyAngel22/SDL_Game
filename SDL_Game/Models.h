@@ -37,13 +37,12 @@ struct ClassMage {
 };
 extern ClassMage mage;
 
-struct Enemy {
-	int Health = 100, Attack = 20, Gold = 50, level = 1, experienceEnemy = 150,
-		maxHealth = 100;
-	float AtSpeed = 0.5;
+struct EnemyCharacteristics {
+	int Health, Attack, Gold, level = 1, experienceEnemy,
+		maxHealth;
 	int coordinationEnemyX, coordinationEnemyY;
 };
-extern Enemy opponent;
+extern EnemyCharacteristics batCharacteristics, goblinCharacteristics;
 
 struct genEnemy {
 	int atk, health, gold, level;

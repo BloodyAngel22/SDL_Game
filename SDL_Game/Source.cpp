@@ -116,12 +116,11 @@ void streing(float& EnemyX, float& EnemyY, int& i, int& flag) {
 	}
 }
 
-void battle(float& EnemyX, float& EnemyY, bool& switcher) {
-	int counter = 0;
+void battle(float& EnemyX, float& EnemyY, bool& switcher, int enemy) {
 	switcher = true;
 	while (switcher == true) {
-		MenuBattle(ren);
-		if (livedEnemies < 1) {
+		MenuBattle(ren, enemy);
+		if (livedEnemies < 1 and switcher) {
 			EnemyX = -300; EnemyY = -300;
 			switcher = false;
 		}
@@ -481,20 +480,25 @@ void wall(SDL_Rect a) {
 int main(int argc, char* argv[]) {
 	init();
 	srand(time(NULL));
-	bool winner = false;
+	bool winnerBat = false;
+	bool winnerGoblin = false;
 	bool isRunning = true;
-	bool switcher = true;
+	bool switcherBat = true;
+	bool switcherGoblin = true;
 	int pause = 0;
 	int i = 0;
+	int i2 = 0;
+	int EnemyCharacteristics = 0;
 	int startRespawn = 0;
 	int endRespawn = 0;
 	int flagEnemy1 = EnemyUp;
 	int flagEnemy2 = EnemyDown;
 	int shiftX = win_width / 2, shiftY = win_height / 2, Xsize = 40, Ysize = 40;
 	Xcoordinate = shiftX - Xsize / 2, Ycoordinate = shiftY - Ysize / 2;
-	float EnemyX = shiftX + 200, EnemyY = shiftY + 100, XsizeEnemy = 40, YsizeEnemy = 40;
-	SDL_FRect enemy = { EnemyX, EnemyY, Xsize, Ysize };
-	SDL_FRect enemy1 = { EnemyX, EnemyY, Xsize, Ysize };
+	float BatX = 850, BatY = 450, XsizeEnemy = 75, YsizeEnemy = 75;
+	float GoblinX = 320, GoblinY = 450;
+	SDL_FRect bat = { BatX, BatY, XsizeEnemy, YsizeEnemy };
+	SDL_FRect goblin = { GoblinX, GoblinY, XsizeEnemy, YsizeEnemy };
 	SDL_Event ev;
 	bool UP, DOWN, RIGHT, LEFT;
 	const Uint8* state = SDL_GetKeyboardState(NULL);
@@ -548,6 +552,10 @@ int main(int argc, char* argv[]) {
 	SDL_Surface* surfBat = IMG_Load("sprites\\enemy\\bat.png");
 	SDL_Texture* textBat = SDL_CreateTextureFromSurface(ren, surfBat);
 	SDL_FreeSurface(surfBat);
+	//Goblin
+	SDL_Surface* surfGoblin = IMG_Load("sprites\\enemy\\goblin.png");
+	SDL_Texture* textGoblin = SDL_CreateTextureFromSurface(ren, surfGoblin);
+	SDL_FreeSurface(surfGoblin);
 	//
 	SDL_Surface* surfRune = IMG_Load("sprites\\runes\\runes.png");
 	SDL_Texture* textRune = SDL_CreateTextureFromSurface(ren, surfRune);
@@ -613,14 +621,16 @@ int main(int argc, char* argv[]) {
 	int	dt = 0;
 	bool animation = false;
 
+	int lastPosXbat, lastPosYbat;
+	int lastPosXgoblin, lastPosYgoblin;
 
 	main_menu();
 	while (isRunning) {
 		UP = DOWN = LEFT = RIGHT = 0;
 		player = { Xcoordinate, Ycoordinate, Xsize, Ysize };
-		enemy = { EnemyX, EnemyY, XsizeEnemy, YsizeEnemy };
-		enemy1 = { EnemyX, EnemyY - 200, XsizeEnemy, YsizeEnemy };
-		bool hitbox = checkCollision(player, enemy);
+		bat = { BatX, BatY, XsizeEnemy, YsizeEnemy };
+		goblin = { GoblinX, GoblinY, XsizeEnemy, YsizeEnemy };
+		bool hitbox = checkCollision(player, bat);
 		while (SDL_PollEvent(&ev) != NULL) {
 		//isPressedEscape = pressedEscape();
 		isPressed = pressedEnter();
@@ -708,45 +718,63 @@ int main(int argc, char* argv[]) {
 		}
 		animation = UP or DOWN or LEFT or RIGHT;
 		
-		if (row == 1 and col == 1)
-			streing(EnemyX, EnemyY, i, flagEnemy1);
+		if (row == 1 and col == 1) {
+			if (!winnerBat)
+				streing(BatX, BatY, i, flagEnemy1);
+			if (!winnerGoblin)
+				streing(GoblinX, GoblinY, i2, flagEnemy2);
+		}
 
 		SDL_Rect srcrectCharacter = { 10, 10, 120, 120 };
 		SDL_Rect dstrectCharacter = { Xcoordinate - 7, Ycoordinate - 5, Xsize+20, Ysize+20};
 		SDL_Rect srcrectBat = { 10, 10, 100, 140 };
-		SDL_Rect dstrectBat = { EnemyX - 19, EnemyY, XsizeEnemy + 25, YsizeEnemy + 25};
+		SDL_Rect dstrectBat = { BatX - 19, BatY, XsizeEnemy, YsizeEnemy};
+		SDL_Rect srcGoblin = { 77, 31, 134, 124 };
+		SDL_Rect dstGoblin = { GoblinX, GoblinY, XsizeEnemy, YsizeEnemy };
 
 
-		if (hitbox == true and row == 1 and col == 1) {
-			battle(EnemyX, EnemyY, switcher);
-			winner = true;
-			//printf("true\n");
-			//system("cls");
+		if (row == 1 and col == 1) {
+			if (checkCollision(player, bat)) {
+				lastPosXbat = BatX, lastPosYbat = BatY;
+				battle(BatX, BatY, switcherBat, Bat);
+				winnerBat = true;
+			}
+			if (checkCollision(player, goblin)) {
+				lastPosXgoblin = GoblinX, lastPosYgoblin = GoblinY;
+				battle(GoblinX, GoblinY, switcherGoblin, Goblin);
+				winnerGoblin = true;
+			}
+
 		}
-		if (winner) {
+		if (winnerBat or winnerGoblin) {
 			startRespawn++;
 		}
 		if (startRespawn >= 250) {
-			EnemyX = shiftX + 200, EnemyY = shiftY + 100;
+			if (winnerBat) {
+				BatX = lastPosXbat, BatY = lastPosYbat;
+				winnerBat = false;
+			}
+			if (winnerGoblin) {
+				GoblinX = lastPosXgoblin, GoblinY = lastPosYgoblin;
+				winnerGoblin = false;
+			}
 			startRespawn = 0;
-			winner = false;
 			recovery_character();
 			printf("Respawned\n");
-			flag = 0;
 		}
 		wall(player);
 
 		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
 		SDL_RenderClear(ren);
 
-		SDL_SetRenderDrawColor(ren, 200, 100, 0, 0);
+		/*SDL_SetRenderDrawColor(ren, 200, 100, 0, 0);
 
 		if (row == 1 and col == 1) {
-			SDL_RenderFillRectF(ren, &enemy);
+			SDL_RenderFillRectF(ren, &bat);
 			SDL_RenderFillRectF(ren, &NPC);
 		}
 		SDL_SetRenderDrawColor(ren, 200, 0, 0, 0);
-		SDL_RenderFillRect(ren, &player);
+		SDL_RenderFillRect(ren, &player);*/
 
 		//отрисовка комнат
 		if (row == 1 and col == 1) {
@@ -921,8 +949,10 @@ int main(int argc, char* argv[]) {
 		}
 		isPressed = 0;
 		isPressedEscape = 0;
-		if (row == 1 and col == 1)
+		if (row == 1 and col == 1) {
 			SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
+			SDL_RenderCopy(ren, textGoblin, &srcGoblin, &dstGoblin);
+		}
 		
 		SDL_RenderPresent(ren);
 		SDL_Delay(17);
@@ -938,6 +968,7 @@ int main(int argc, char* argv[]) {
 	SDL_DestroyTexture(textLampOn);
 	SDL_DestroyTexture(textLockedChest);
 	SDL_DestroyTexture(textOpenChest);
+	SDL_DestroyTexture(textGoblin);
 
 	de_init(0);
 	return 0;
