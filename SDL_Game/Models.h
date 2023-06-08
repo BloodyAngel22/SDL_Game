@@ -42,7 +42,7 @@ struct EnemyCharacteristics {
 		maxHealth;
 	int coordinationEnemyX, coordinationEnemyY;
 };
-extern EnemyCharacteristics batCharacteristics, goblinCharacteristics;
+extern EnemyCharacteristics batCharacteristics, goblinCharacteristics, slimeCharacteristics, werewolfCharacteristics, ratCharacteristics;
 
 struct genEnemy {
 	int atk, health, gold, level;

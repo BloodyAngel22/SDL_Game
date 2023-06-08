@@ -15,6 +15,11 @@
 #define FIREBOLT 1
 #define LIGHTING 2
 #define POISON 3
+#define AttackEnemy 1
+#define ShieldEnemy 2
+#define HealEnemy 3
+#define VampirismEnemy 4
+#define CritEnemy 5
 
 int stepFight = 1;
 int abilityDamageLightning = 48, abilityDamageFireball = 30, abilityDamagePoison = 6;
@@ -23,19 +28,30 @@ extern bool lightingEffect = false;
 extern int choiceEnemy = 0;
 int amountEnemy;
 int livedEnemies = 1;
+int curAction, nextAction, action = 1, flagPattern = 0;
 int ratio;
 bool isEnterPressed = 0, wasEnterPressed = 0, isPressed = 0;
 bool isEscapePressed = 0, wasEscapePressed = 0, isPressedEscape = 0;
 Character hero;
-EnemyCharacteristics batCharacteristics, goblinCharacteristics;
+EnemyCharacteristics batCharacteristics, goblinCharacteristics, slimeCharacteristics, werewolfCharacteristics, ratCharacteristics;
 ClassMage mage;
 ClassWarrior warrior;
 genEnemy enemy1, enemy2, enemy3, enemy4;
 SDL_Rect srcrectDeadEnemy = { 0, 0, 100, 140 };
 SDL_Rect srcrectBat = { 0, 0, 100, 140 };
 SDL_Rect srcrectGoblin = { 71, 25, 141, 127 };
+SDL_Rect srcrectWerewolf = { 106, 89, 162, 155 };
+SDL_Rect srcRat = { 52, 34, 114, 88 };
 SDL_Rect dstrectDeadEnemy1; SDL_Rect dstrectDeadEnemy2; SDL_Rect dstrectDeadEnemy3; SDL_Rect dstrectDeadEnemy4;
-SDL_Rect dstrectBat; SDL_Rect dstrectBat2; SDL_Rect dstrectBat3; SDL_Rect dstrectBat4;
+SDL_Rect dstrect; SDL_Rect dstrect2; SDL_Rect dstrect3;
+//Icons
+SDL_Rect AtkIcon = { 655, 285, 49, 49 };
+SDL_Rect HealIcon = { 522, 231, 49, 49 };
+SDL_Rect ShieldIcon = { 415, 285, 49, 49 };
+SDL_Rect VampirismIcon = { 337,66,49,49 };
+SDL_Rect CritIcon = { 654,66,49,49 };
+SDL_Rect positionIcon = { 0,0, 45, 45 };
+//
 int xEnemy1 = 500, yEnemy1 = 100;
 int xEnemy2 = 700, yEnemy2 = 100;
 int xEnemy3 = 900, yEnemy3 = 100;
@@ -84,7 +100,7 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 		SDL_FreeSurface(surfArrow);
 		//
 		SDL_Surface* surfdeadEnemy = IMG_Load("sprites\\enemy\\deadEnemy.png");
-		SDL_Texture* textdeadEenemy = SDL_CreateTextureFromSurface(ren, surfdeadEnemy);
+		SDL_Texture* textdeadEnemy = SDL_CreateTextureFromSurface(ren, surfdeadEnemy);
 		SDL_FreeSurface(surfdeadEnemy);
 		//
 		SDL_Surface* surfBat = IMG_Load("sprites\\enemy\\bat.png");
@@ -94,6 +110,18 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 		SDL_Surface* surfGoblin = IMG_Load("sprites\\enemy\\goblin.png");
 		SDL_Texture* textGoblin = SDL_CreateTextureFromSurface(ren, surfGoblin);
 		SDL_FreeSurface(surfGoblin);
+		//
+		SDL_Surface* surfSlime = IMG_Load("sprites\\enemy\\red_slime.png");
+		SDL_Texture* textSlime = SDL_CreateTextureFromSurface(ren, surfSlime);
+		SDL_FreeSurface(surfSlime);
+		//
+		SDL_Surface* surfWerewolf = IMG_Load("sprites\\enemy\\werewolf.png");
+		SDL_Texture* textWerewolf = SDL_CreateTextureFromSurface(ren, surfWerewolf);
+		SDL_FreeSurface(surfWerewolf);
+		//Rat
+		SDL_Surface* surfRat = IMG_Load("sprites\\enemy\\rat.png");
+		SDL_Texture* textRat = SDL_CreateTextureFromSurface(ren, surfRat);
+		SDL_FreeSurface(surfRat);
 		//
 		TTF_Font* enemyTTF = TTF_OpenFont("fonts\\BAUHS93.TTF", 75);
 		char enemyHealth[100] = "Points";
@@ -110,6 +138,10 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 		int xCharacter = 130, yCharacter = 90;
 		SDL_Rect srcrectCharacter = { 10, 10, 100, 140 };
 		SDL_Rect dstrectCharacter = {xCharacter, yCharacter, 75, 75};
+		//Icons
+		SDL_Surface* surfIcons = IMG_Load("sprites\\enemy\\icons.jpg");
+		SDL_Texture* textIcons = SDL_CreateTextureFromSurface(ren, surfIcons);
+		SDL_FreeSurface(surfIcons);
 		#pragma endregion
 
 	SDL_Event ev;
@@ -117,11 +149,18 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 	StartBattle();
 	
 	stepFight = 1;
+	action = 1;
 
 	if (enemy == Bat)
 		generateEnemy(Bat);
 	if (enemy == Goblin)
 		generateEnemy(Goblin);
+	if (enemy == Slime)
+		generateEnemy(Slime);
+	if (enemy == Werewolf)
+		generateEnemy(Werewolf);
+	if (enemy == Rat)
+		generateEnemy(Rat);
 	amountEnemy = randomAmountEnemy();
 	livedEnemies = amountEnemy;
 
@@ -141,46 +180,34 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 		while (choiche == 0) {
 			dstrectArrow = { xArrow, yArrow, 75, 75 };
 			SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
-			if (amountEnemy == 2) {
-				dstrectBat = { xEnemy1, yEnemy1, 75, 75 };
-				dstrectBat2 = { xEnemy2, yEnemy2, 75, 75 };
-				if (enemy == Bat) {
-					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
-				}
-				if (enemy == Goblin) {
-					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
-					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
-				}
+			if (enemy == Bat) {
+				render_enemy(Bat, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 			}
-			if (amountEnemy == 3) {
-				dstrectBat = { xEnemy1, yEnemy1, 75, 75 };
-				dstrectBat2 = { xEnemy2, yEnemy2, 75, 75 };
-				dstrectBat3 = { xEnemy3, yEnemy3, 75, 75 };
-				if (enemy == Bat) {
-					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
-					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat3);
-				}
-				if (enemy == Goblin) {
-					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
-					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
-					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat3);
-				}
+			if (enemy == Goblin) {
+				render_enemy(Goblin, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 			}
-			if (enemy1.health <= 0) {
-				dstrectDeadEnemy1 = { xDeadEnemy1, yDeadEnemy1, 75, 75 };
-				SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy1);
+			if (enemy == Slime) {
+				render_enemy(Slime, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 			}
-			if (enemy2.health <= 0) {
-				dstrectDeadEnemy2 = { xDeadEnemy2, yDeadEnemy2, 75, 75 };
-				SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy2);
+			if (enemy == Werewolf) {
+				render_enemy(Werewolf, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 			}
-			if (enemy3.health <= 0) {
-				dstrectDeadEnemy3 = { xDeadEnemy3, yDeadEnemy3, 75, 75 };
-				SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy3);
+			if (enemy == Rat) {
+				render_enemy(Rat, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 			}
-			
+			render_dead_enemy(ren, textdeadEnemy);
+			flagPattern = 0;
+			if (enemy == Bat)
+				enemy_patterns(Bat);
+			if (enemy == Goblin)
+				enemy_patterns(Goblin);
+			if (enemy == Slime)
+				enemy_patterns(Slime);
+			if (enemy == Werewolf)
+				enemy_patterns(Werewolf);
+			if (enemy == Rat)
+				enemy_patterns(Rat);
+			check_pattern(ren, textIcons);
 
 			SDL_RenderPresent(ren);
 			while (SDL_PollEvent(&ev) != NULL) {
@@ -335,6 +362,29 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 					Battler(ren, Bat);
 				if (enemy == Goblin)
 					Battler(ren, Goblin);
+				if (enemy == Slime) {
+					Battler(ren, Slime);
+				}
+				if (enemy == Werewolf)
+					Battler(ren, Werewolf);
+				if (enemy == Rat)
+					Battler(ren, Rat);
+				if (hero.Health <= 0) {
+					SDL_DestroyTexture(textdeadEnemy);
+					SDL_DestroyTexture(textArrow);
+					SDL_DestroyTexture(textBattle);
+					SDL_DestroyTexture(textBat);
+					SDL_DestroyTexture(textEnemyHealthTTF);
+					SDL_DestroyTexture(textCharacter);
+					SDL_DestroyTexture(textGoblin);
+					SDL_DestroyTexture(textSlime);
+					SDL_DestroyTexture(textWerewolf);
+					SDL_DestroyTexture(textRat);
+					TTF_CloseFont(enemyTTF);
+					SDL_DestroyTexture(textIcons);
+					livedEnemies = 0;
+					return;
+				}
 				if (enemy1.isPoison == true or enemy2.isPoison == true or enemy3.isPoison == true) Poison();
 				printf("%d\n", batCharacteristics.Health);
 			}
@@ -352,45 +402,36 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 					SDL_RenderClear(ren);
 					SDL_RenderCopy(ren, textBattle, NULL, NULL);
 					SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
-					if (amountEnemy == 2) {
-						dstrectBat = { xEnemy1, yEnemy1, 75, 75 };
-						dstrectBat2 = { xEnemy2, yEnemy2, 75, 75 };
-						if (enemy == Bat) {
-							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
-						}
-						if (enemy == Goblin) {
-							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
-							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
-						}
+					if (enemy == Bat) {
+						render_enemy(Bat, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 					}
-					if (amountEnemy == 3) {
-						dstrectBat = { xEnemy1, yEnemy1, 75, 75 };
-						dstrectBat2 = { xEnemy2, yEnemy2, 75, 75 };
-						dstrectBat3 = { xEnemy3, yEnemy3, 75, 75 };
-						if (enemy == Bat) {
-							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
-							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat3);
-						}
-						if (enemy == Goblin) {
-							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
-							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
-							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat3);
-						}
+					if (enemy == Goblin) {
+						render_enemy(Goblin, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 					}
-					if (enemy1.health <= 0) {
-						dstrectDeadEnemy1 = { xDeadEnemy1, yDeadEnemy1, 75, 75 };
-						SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy1);
+					if (enemy == Slime) {
+						render_enemy(Slime, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 					}
-					if (enemy2.health <= 0) {
-						dstrectDeadEnemy2 = { xDeadEnemy2, yDeadEnemy2, 75, 75 };
-						SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy2);
+					if (enemy == Werewolf) {
+						render_enemy(Werewolf, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 					}
-					if (enemy3.health <= 0) {
-						dstrectDeadEnemy3 = { xDeadEnemy3, yDeadEnemy3, 75, 75 };
-						SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy3);
+					if (enemy == Rat) {
+						render_enemy(Rat, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 					}
+					render_dead_enemy(ren, textdeadEnemy);
+
+					flagPattern = 0;
+					if (enemy == Bat)
+						enemy_patterns(Bat);
+					if (enemy == Goblin)
+						enemy_patterns(Goblin);
+					if (enemy == Slime)
+						enemy_patterns(Slime);
+					if (enemy == Werewolf)
+						enemy_patterns(Werewolf);
+					if (enemy == Rat)
+						enemy_patterns(Rat);
+					check_pattern(ren, textIcons);
+
 					SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 					if (amountEnemy == 2) {
 						if (enemy1.health <= 0) enemy1.health = 0;
@@ -587,26 +628,36 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 							SDL_FreeSurface(surfEnemyHealthTTF);
 							SDL_DestroyTexture(textEnemyHealthTTF);
 						}
-						dstrectBat = { xEnemy1, yEnemy1, 75, 75 };
-						dstrectBat2 = { xEnemy2, yEnemy2, 75, 75 };
 						if (enemy == Bat) {
-							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+							render_enemy(Bat, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 						}
 						if (enemy == Goblin) {
-							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
-							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
+							render_enemy(Goblin, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 						}
-						if (enemy1.health <= 0) {
-							dstrectDeadEnemy1 = { xDeadEnemy1, yDeadEnemy1, 75, 75 };
-							SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy1);
-							
+						if (enemy == Slime) {
+							render_enemy(Slime, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 						}
-						if (enemy2.health <= 0) {
-							dstrectDeadEnemy2 = { xDeadEnemy2, yDeadEnemy2, 75, 75 };
-							SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy2);
-							
+						if (enemy == Werewolf) {
+							render_enemy(Werewolf, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 						}
+						if (enemy == Rat) {
+							render_enemy(Rat, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
+						}
+						render_dead_enemy(ren, textdeadEnemy);
+
+						flagPattern = 0;
+						if (enemy == Bat)
+							enemy_patterns(Bat);
+						if (enemy == Goblin)
+							enemy_patterns(Goblin);
+						if (enemy == Slime)
+							enemy_patterns(Slime);
+						if (enemy == Werewolf)
+							enemy_patterns(Werewolf);
+						if (enemy == Rat)
+							enemy_patterns(Rat);
+						check_pattern(ren, textIcons);
+
 						if (enemy1.health <= 0) {
 							pointer = 2;
 							xArrow = 650, yArrow = 100;
@@ -687,11 +738,19 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 							livedEnemies -= 1;
 						}
 					}
+					flagPattern = 1;
 					if (enemy == Bat)
 						enemy_patterns(Bat);
 					if (enemy == Goblin)
 						enemy_patterns(Goblin);
+					if (enemy == Slime)
+						enemy_patterns(Slime);
+					if (enemy == Werewolf)
+						enemy_patterns(Werewolf);
+					if (enemy == Rat)
+						enemy_patterns(Rat);
 					stepFight += 1;
+					action += 1;
 				}
 				if (amountEnemy == 3) {
 					if (enemy2.health > 0) {
@@ -779,33 +838,36 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 							SDL_DestroyTexture(textEnemyHealthTTF);
 						}
 
-						dstrectBat = { xEnemy1, yEnemy1, 75, 75 };
-						dstrectBat2 = { xEnemy2, yEnemy2, 75, 75 };
 						if (enemy == Bat) {
-							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
-							SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat3);
+							render_enemy(Bat, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 						}
 						if (enemy == Goblin) {
-							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
-							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
-							SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat3);
+							render_enemy(Goblin, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 						}
-						if (enemy1.health <= 0) {
-							dstrectDeadEnemy1 = { xDeadEnemy1, yDeadEnemy1, 75, 75 };
-							SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy1);
-							
+						if (enemy == Slime) {
+							render_enemy(Slime, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 						}
-						if (enemy2.health <= 0) {
-							dstrectDeadEnemy2 = { xDeadEnemy2, yDeadEnemy2, 75, 75 };
-							SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy2);
-							
+						if (enemy == Werewolf) {
+							render_enemy(Werewolf, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 						}
-						if (enemy3.health <= 0) {
-							dstrectDeadEnemy3 = { xDeadEnemy3, yDeadEnemy3, 75, 75 };
-							SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy3);
-							
+						if (enemy == Rat) {
+							render_enemy(Rat, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 						}
+						render_dead_enemy(ren, textdeadEnemy);
+
+						flagPattern = 0;
+						if (enemy == Bat)
+							enemy_patterns(Bat);
+						if (enemy == Goblin)
+							enemy_patterns(Goblin);
+						if (enemy == Slime)
+							enemy_patterns(Slime);
+						if (enemy == Werewolf)
+							enemy_patterns(Werewolf);
+						if (enemy == Rat)
+							enemy_patterns(Rat);
+						check_pattern(ren, textIcons);
+
 						SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 						SDL_RenderPresent(ren);
 						while (SDL_PollEvent(&ev) != NULL) {
@@ -973,19 +1035,33 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 							livedEnemies -= 1;
 						}
 					}
+					flagPattern = 1;
 					if (enemy == Bat)
 						enemy_patterns(Bat);
 					if (enemy == Goblin)
 						enemy_patterns(Goblin);
+					if (enemy == Slime)
+						enemy_patterns(Slime);
+					if (enemy == Werewolf)
+						enemy_patterns(Werewolf);
+					if (enemy == Rat)
+						enemy_patterns(Rat);
 					stepFight += 1;
+					action += 1;
 				}
+
 				if (livedEnemies < 1) {
 					SDL_DestroyTexture(textBat);
 					SDL_DestroyTexture(textArrow);
 					SDL_DestroyTexture(textBattle);
-					SDL_DestroyTexture(textdeadEenemy);
+					SDL_DestroyTexture(textdeadEnemy);
 					SDL_DestroyTexture(textCharacter);
 					SDL_DestroyTexture(textGoblin);
+					SDL_DestroyTexture(textSlime);
+					SDL_DestroyTexture(textWerewolf);
+					SDL_DestroyTexture(textRat);
+					SDL_DestroyTexture(textEnemyHealthTTF);
+					SDL_DestroyTexture(textIcons);
 
 					flag = 1;
 					abilityDamagePoison = 6;
@@ -1007,12 +1083,17 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 				if (ChanceEscape >= storageEscape) {
 					printf("You managed to escape\n");
 					livedEnemies = 0;
-					SDL_DestroyTexture(textdeadEenemy);
+					SDL_DestroyTexture(textdeadEnemy);
 					SDL_DestroyTexture(textArrow);
 					SDL_DestroyTexture(textBattle);
 					SDL_DestroyTexture(textBat);
 					SDL_DestroyTexture(textCharacter);
 					SDL_DestroyTexture(textGoblin);
+					SDL_DestroyTexture(textSlime);
+					SDL_DestroyTexture(textWerewolf);
+					SDL_DestroyTexture(textRat);
+					SDL_DestroyTexture(textEnemyHealthTTF);
+					SDL_DestroyTexture(textIcons);
 
 					return;
 				}
@@ -1024,21 +1105,45 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 					if (enemy == Goblin) {
 						enemy_patterns(Goblin);
 					}
+					if (enemy == Slime) {
+						enemy_patterns(Slime);
+					}
+					if (enemy == Werewolf)
+						enemy_patterns(Werewolf);
 					stepFight += 1;
 					printf("the enemy has damaged you %d\n", batCharacteristics.Attack);
-					if (hero.Health <= 0)
-						exit(1);
+					if (hero.Health <= 0) {
+						SDL_DestroyTexture(textdeadEnemy);
+						SDL_DestroyTexture(textArrow);
+						SDL_DestroyTexture(textBattle);
+						SDL_DestroyTexture(textBat);
+						SDL_DestroyTexture(textEnemyHealthTTF);
+						SDL_DestroyTexture(textCharacter);
+						SDL_DestroyTexture(textGoblin);
+						SDL_DestroyTexture(textSlime);
+						SDL_DestroyTexture(textWerewolf);
+						SDL_DestroyTexture(textRat);
+						TTF_CloseFont(enemyTTF);
+						SDL_DestroyTexture(textIcons);
+						livedEnemies = 0;
+						return;
+					}
+						
 				}
 			}
 	}
-	SDL_DestroyTexture(textdeadEenemy);
+	SDL_DestroyTexture(textdeadEnemy);
 	SDL_DestroyTexture(textArrow);
 	SDL_DestroyTexture(textBattle);
 	SDL_DestroyTexture(textBat);
 	SDL_DestroyTexture(textEnemyHealthTTF);
 	SDL_DestroyTexture(textCharacter);
 	SDL_DestroyTexture(textGoblin);
+	SDL_DestroyTexture(textSlime);
+	SDL_DestroyTexture(textWerewolf);
+	SDL_DestroyTexture(textRat);
 	TTF_CloseFont(enemyTTF);
+	SDL_DestroyTexture(textIcons);
 
 	if (livedEnemies < 1) {
 		abilityDamagePoison = 6;
@@ -1051,71 +1156,6 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 		if (questFlag and curQuest == 3 and enemy == Goblin)
 			counterKilledEnemies += 1;
 
-	}
-}
-
-void StartBattle() {
-	/*printf("Fast attack\n");
-	ratio = hero.AtSpeed / opponent.AtSpeed;
-	if (hero.AtSpeed > opponent.AtSpeed) {
-		if (ratio >= 2)
-			opponent.Health -= hero.Attack * ratio;
-		else if (ratio == 1)
-			opponent.Health -= hero.Attack;
-		printf("Health Enemy %d\n", opponent.Health);
-		if (opponent.Health <= 0) {
-			printf("%d\n", opponent.Health);
-			hero.experience += opponent.experienceEnemy;
-			if (hero.experience >= hero.levelUp)
-				level_up();
-		}
-	}
-	if (hero.AtSpeed < opponent.AtSpeed) {
-		if (ratio >= 2)
-			hero.Health -= opponent.Attack * ratio;
-		else if (ratio == 1)
-			hero.Health -= opponent.Attack;
-	}*/
-
-}
-
-void recovery_character() {
-	hero.Health = hero.maxHealth;
-	hero.Mana = hero.maxMana;
-}
-
-int escape() {
-	return rand() % 100;
-}
-
-int randomAmountEnemy() {
-	return rand() % (3 - 2 + 1) + 2;
-}
-
-void generateEnemy(int enemy) {
-	if (enemy == Bat) {
-		batCharacteristics.Health = 100; batCharacteristics.Attack = 20; batCharacteristics.Gold = 50; batCharacteristics.experienceEnemy = 100;
-		batCharacteristics.maxHealth = batCharacteristics.Health;
-		enemy1.atk = batCharacteristics.Attack; enemy1.health = batCharacteristics.Health; enemy1.gold = batCharacteristics.Gold,
-			enemy1.level = batCharacteristics.experienceEnemy, enemy1.isPoison = 0, enemy1.maxHealth = batCharacteristics.Health;
-		enemy2.atk = batCharacteristics.Attack; enemy2.health = batCharacteristics.Health; enemy2.gold = batCharacteristics.Gold,
-			enemy2.level = batCharacteristics.experienceEnemy, enemy2.isPoison = 0, enemy2.maxHealth = batCharacteristics.Health;
-		enemy3.atk = batCharacteristics.Attack; enemy3.health = batCharacteristics.Health; enemy3.gold = batCharacteristics.Gold,
-			enemy3.level = batCharacteristics.experienceEnemy, enemy3.isPoison = 0, enemy3.maxHealth = batCharacteristics.Health;
-		enemy4.atk = batCharacteristics.Attack; enemy4.health = batCharacteristics.Health; enemy4.gold = batCharacteristics.Gold,
-			enemy4.level = batCharacteristics.experienceEnemy, enemy4.isPoison = 0, enemy4.maxHealth = batCharacteristics.Health;
-	}
-	if (enemy == Goblin) {
-		goblinCharacteristics.Health = 75; goblinCharacteristics.Attack = 30; goblinCharacteristics.Gold = 75; goblinCharacteristics.experienceEnemy = 150;
-		goblinCharacteristics.maxHealth = goblinCharacteristics.Health;
-		enemy1.atk = goblinCharacteristics.Attack; enemy1.health = goblinCharacteristics.Health; enemy1.gold = goblinCharacteristics.Gold,
-			enemy1.level = goblinCharacteristics.experienceEnemy, enemy1.isPoison = 0, enemy1.maxHealth = goblinCharacteristics.Health;
-		enemy2.atk = goblinCharacteristics.Attack; enemy2.health = goblinCharacteristics.Health; enemy2.gold = goblinCharacteristics.Gold,
-			enemy2.level = goblinCharacteristics.experienceEnemy, enemy2.isPoison = 0, enemy2.maxHealth = goblinCharacteristics.Health;
-		enemy3.atk = goblinCharacteristics.Attack; enemy3.health = goblinCharacteristics.Health; enemy3.gold = goblinCharacteristics.Gold,
-			enemy3.level = goblinCharacteristics.experienceEnemy, enemy3.isPoison = 0, enemy3.maxHealth = goblinCharacteristics.Health;
-		enemy4.atk = goblinCharacteristics.Attack; enemy4.health = goblinCharacteristics.Health; enemy4.gold = goblinCharacteristics.Gold,
-			enemy4.level = goblinCharacteristics.experienceEnemy, enemy4.isPoison = 0, enemy4.maxHealth = goblinCharacteristics.Health;
 	}
 }
 
@@ -1133,6 +1173,18 @@ void Battler(SDL_Renderer* ren, int enemy) {
 	SDL_Surface* surfGoblin = IMG_Load("sprites\\enemy\\goblin.png");
 	SDL_Texture* textGoblin = SDL_CreateTextureFromSurface(ren, surfGoblin);
 	SDL_FreeSurface(surfGoblin);
+	//
+	SDL_Surface* surfSlime = IMG_Load("sprites\\enemy\\red_slime.png");
+	SDL_Texture* textSlime = SDL_CreateTextureFromSurface(ren, surfSlime);
+	SDL_FreeSurface(surfSlime);
+	//
+	SDL_Surface* surfWerewolf = IMG_Load("sprites\\enemy\\werewolf.png");
+	SDL_Texture* textWerewolf = SDL_CreateTextureFromSurface(ren, surfWerewolf);
+	SDL_FreeSurface(surfWerewolf);
+	//Rat
+	SDL_Surface* surfRat = IMG_Load("sprites\\enemy\\rat.png");
+	SDL_Texture* textRat = SDL_CreateTextureFromSurface(ren, surfRat);
+	SDL_FreeSurface(surfRat);
 	//Arrow
 	SDL_Surface* surfArrow = IMG_Load("sprites\\menu\\arrow.png");
 	SDL_Texture* textArrow = SDL_CreateTextureFromSurface(ren, surfArrow);
@@ -1161,6 +1213,10 @@ void Battler(SDL_Renderer* ren, int enemy) {
 	int xCharacter = 130, yCharacter = 90;
 	SDL_Rect srcrectCharacter = { 10, 10, 100, 140 };
 	SDL_Rect dstrectCharacter = { xCharacter, yCharacter, 75, 75 };
+	//Icons
+	SDL_Surface* surfIcons = IMG_Load("sprites\\enemy\\icons.jpg");
+	SDL_Texture* textIcons = SDL_CreateTextureFromSurface(ren, surfIcons);
+	SDL_FreeSurface(surfIcons);
 #pragma endregion
 	SDL_Event ev;
 	SDL_PollEvent(&ev);
@@ -1190,6 +1246,12 @@ void Battler(SDL_Renderer* ren, int enemy) {
 		SDL_DestroyTexture(textdeadEenemy);
 		SDL_DestroyTexture(textCharacter);
 		SDL_DestroyTexture(textGoblin);
+		SDL_DestroyTexture(textSlime);
+		SDL_DestroyTexture(textWerewolf);
+		SDL_DestroyTexture(textRat);
+		SDL_DestroyTexture(textAtk);
+		SDL_DestroyTexture(textEnemyHealthTTF);
+		SDL_DestroyTexture(textIcons);
 
 		hero.experience += enemy1.level * amountEnemy;
 		if (hero.experience >= hero.levelUp)
@@ -1202,19 +1264,24 @@ void Battler(SDL_Renderer* ren, int enemy) {
 			int hitEnemy = 0;
 			while (hitEnemy == 0) {
 				dstrectArrow = { xArrow, yArrow, 75, 75 };
-				dstrectBat = { xEnemy1, yEnemy1, 75, 75 };
-				dstrectBat2 = { xEnemy2, yEnemy2, 75, 75 };
 				SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
 				SDL_RenderClear(ren);
 				SDL_RenderCopy(ren, textBattle, NULL, NULL);
 				SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
 				if (enemy == Bat) {
-					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+					render_enemy(Bat, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 				}
 				if (enemy == Goblin) {
-					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
-					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
+					render_enemy(Goblin, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
+				}
+				if (enemy == Slime) {
+					render_enemy(Slime, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
+				}
+				if (enemy == Werewolf) {
+					render_enemy(Werewolf, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
+				}
+				if (enemy == Rat) {
+					render_enemy(Rat, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 				}
 				if (amountEnemy == 2) {
 					if (enemy1.health <= 0) enemy1.health = 0;
@@ -1273,6 +1340,19 @@ void Battler(SDL_Renderer* ren, int enemy) {
 					pointer = 1;
 					xArrow = 450, yArrow = 100;
 				}
+				flagPattern = 0;
+				if (enemy == Bat)
+					enemy_patterns(Bat);
+				if (enemy == Goblin)
+					enemy_patterns(Goblin);
+				if (enemy == Slime)
+					enemy_patterns(Slime);
+				if (enemy == Werewolf)
+					enemy_patterns(Werewolf);
+				if (enemy == Rat)
+					enemy_patterns(Rat);
+				check_pattern(ren, textIcons);
+
 
 				SDL_RenderPresent(ren);
 				SDL_DestroyTexture(textEnemyHealthTTF);
@@ -1355,12 +1435,19 @@ void Battler(SDL_Renderer* ren, int enemy) {
 					SDL_RenderCopy(ren, textBattle, NULL, NULL);
 					SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
 					if (enemy == Bat) {
-						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
+						render_enemy(Bat, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 					}
 					if (enemy == Goblin) {
-						SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
-						SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
+						render_enemy(Goblin, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
+					}
+					if (enemy == Slime) {
+						render_enemy(Slime, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
+					}
+					if (enemy == Werewolf) {
+						render_enemy(Werewolf, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
+					}
+					if (enemy == Rat) {
+						render_enemy(Rat, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 					}
 					SDL_RenderCopy(ren, textAtk, &srcrectAtk, &dstrectAtk);
 					SDL_RenderPresent(ren);
@@ -1371,13 +1458,35 @@ void Battler(SDL_Renderer* ren, int enemy) {
 					frameFlag = 0;
 				}
 			}
-
+			flagPattern = 1;
 			if (enemy == Bat)
 				enemy_patterns(Bat);
 			if (enemy == Goblin)
 				enemy_patterns(Goblin);
-			if (hero.Health <= 0) de_init(1);
+			if (enemy == Slime)
+				enemy_patterns(Slime);
+			if (enemy == Werewolf)
+				enemy_patterns(Werewolf);
+			if (enemy == Rat)
+				enemy_patterns(Rat);
+			if (hero.Health <= 0) {
+				SDL_DestroyTexture(textdeadEenemy);
+				SDL_DestroyTexture(textArrow);
+				SDL_DestroyTexture(textBattle);
+				SDL_DestroyTexture(textBat);
+				SDL_DestroyTexture(textEnemyHealthTTF);
+				SDL_DestroyTexture(textCharacter);
+				SDL_DestroyTexture(textGoblin);
+				SDL_DestroyTexture(textSlime);
+				SDL_DestroyTexture(textWerewolf);
+				SDL_DestroyTexture(textRat);
+				TTF_CloseFont(enemyTTF);
+				SDL_DestroyTexture(textIcons);
+				livedEnemies = 0;
+				return;
+			}
 			stepFight += 1;
+			action += 1;
 
 			SDL_DestroyTexture(textBat);
 			SDL_DestroyTexture(textArrow);
@@ -1386,8 +1495,12 @@ void Battler(SDL_Renderer* ren, int enemy) {
 			SDL_DestroyTexture(textEnemyHealthTTF);
 			SDL_DestroyTexture(textAtk);
 			SDL_DestroyTexture(textGoblin);
-			TTF_CloseFont(enemyTTF);
+			SDL_DestroyTexture(textSlime);
+			SDL_DestroyTexture(textWerewolf);
+			SDL_DestroyTexture(textRat);
 			SDL_DestroyTexture(textCharacter);
+			SDL_DestroyTexture(textIcons);
+			TTF_CloseFont(enemyTTF);
 		}
 
 	if (amountEnemy == 3 and livedEnemies >= 1 and hero.Health > 0) {
@@ -1417,22 +1530,24 @@ void Battler(SDL_Renderer* ren, int enemy) {
 
 			while (hitEnemy == 0) {
 				dstrectArrow = { xArrow, yArrow, 75, 75 };
-				dstrectBat = { xEnemy1, yEnemy1, 75, 75 };
-				dstrectBat2 = { xEnemy2, yEnemy2, 75, 75 };
-				dstrectBat3 = { xEnemy3, yEnemy3, 75, 75 };
 				SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
 				SDL_RenderClear(ren);
 				SDL_RenderCopy(ren, textBattle, NULL, NULL);
 				SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
 				if (enemy == Bat) {
-					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
-					SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat3);
+					render_enemy(Bat, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 				}
 				if (enemy == Goblin) {
-					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
-					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
-					SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat3);
+					render_enemy(Goblin, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
+				}
+				if (enemy == Slime) {
+					render_enemy(Slime, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
+				}
+				if (enemy == Werewolf) {
+					render_enemy(Werewolf, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
+				}
+				if (enemy == Rat) {
+					render_enemy(Rat, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 				}
 				if (amountEnemy == 3) {
 					if (enemy1.health <= 0) enemy1.health = 0;
@@ -1506,6 +1621,19 @@ void Battler(SDL_Renderer* ren, int enemy) {
 					SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy3);
 					
 				}
+				flagPattern = 0;
+				if (enemy == Bat)
+					enemy_patterns(Bat);
+				if (enemy == Goblin)
+					enemy_patterns(Goblin);
+				if (enemy == Slime)
+					enemy_patterns(Slime);
+				if (enemy == Werewolf)
+					enemy_patterns(Werewolf);
+				if (enemy == Rat)
+					enemy_patterns(Rat);
+				check_pattern(ren, textIcons);
+
 
 				SDL_RenderPresent(ren);
 				SDL_DestroyTexture(textEnemyHealthTTF);
@@ -1669,14 +1797,19 @@ void Battler(SDL_Renderer* ren, int enemy) {
 					SDL_RenderCopy(ren, textBattle, NULL, NULL);
 					SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
 					if (enemy == Bat) {
-						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
-						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat2);
-						SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat3);
+						render_enemy(Bat, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 					}
 					if (enemy == Goblin) {
-						SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat);
-						SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat2);
-						SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrectBat3);
+						render_enemy(Goblin, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
+					}
+					if (enemy == Slime) {
+						render_enemy(Slime, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
+					}
+					if (enemy == Werewolf) {
+						render_enemy(Werewolf, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
+					}
+					if (enemy == Rat) {
+						render_enemy(Rat, ren, textBat, textGoblin, textSlime, textWerewolf, textRat);
 					}
 					SDL_RenderCopy(ren, textAtk, &srcrectAtk, &dstrectAtk);
 					SDL_RenderPresent(ren);
@@ -1688,12 +1821,35 @@ void Battler(SDL_Renderer* ren, int enemy) {
 				}
 			}
 
+			flagPattern = 1;
 			if (enemy == Bat)
 				enemy_patterns(Bat);
 			if (enemy == Goblin)
 				enemy_patterns(Goblin);
-			if (hero.Health <= 0) de_init(1);
+			if (enemy == Slime)
+				enemy_patterns(Slime);
+			if (enemy == Werewolf)
+				enemy_patterns(Werewolf);
+			if (enemy == Rat)
+				enemy_patterns(Rat);
+			if (hero.Health <= 0) {
+				SDL_DestroyTexture(textdeadEenemy);
+				SDL_DestroyTexture(textArrow);
+				SDL_DestroyTexture(textBattle);
+				SDL_DestroyTexture(textBat);
+				SDL_DestroyTexture(textEnemyHealthTTF);
+				SDL_DestroyTexture(textCharacter);
+				SDL_DestroyTexture(textGoblin);
+				SDL_DestroyTexture(textSlime);
+				SDL_DestroyTexture(textWerewolf);
+				SDL_DestroyTexture(textRat);
+				TTF_CloseFont(enemyTTF);
+				SDL_DestroyTexture(textIcons);
+				livedEnemies = 0;
+				return;
+			}
 			stepFight += 1;
+			action += 1;
 
 			SDL_DestroyTexture(textBat);
 			SDL_DestroyTexture(textArrow);
@@ -1702,15 +1858,108 @@ void Battler(SDL_Renderer* ren, int enemy) {
 			SDL_DestroyTexture(textEnemyHealthTTF);
 			SDL_DestroyTexture(textAtk);
 			SDL_DestroyTexture(textGoblin);
-			TTF_CloseFont(enemyTTF);
+			SDL_DestroyTexture(textSlime);
+			SDL_DestroyTexture(textWerewolf);
+			SDL_DestroyTexture(textRat);
 			SDL_DestroyTexture(textCharacter);
+			SDL_DestroyTexture(textIcons);
+			TTF_CloseFont(enemyTTF);
 		}
-
-
-	
 
 	flag = 1;
 }
+
+void StartBattle() {
+	/*printf("Fast attack\n");
+	ratio = hero.AtSpeed / opponent.AtSpeed;
+	if (hero.AtSpeed > opponent.AtSpeed) {
+		if (ratio >= 2)
+			opponent.Health -= hero.Attack * ratio;
+		else if (ratio == 1)
+			opponent.Health -= hero.Attack;
+		printf("Health Enemy %d\n", opponent.Health);
+		if (opponent.Health <= 0) {
+			printf("%d\n", opponent.Health);
+			hero.experience += opponent.experienceEnemy;
+			if (hero.experience >= hero.levelUp)
+				level_up();
+		}
+	}
+	if (hero.AtSpeed < opponent.AtSpeed) {
+		if (ratio >= 2)
+			hero.Health -= opponent.Attack * ratio;
+		else if (ratio == 1)
+			hero.Health -= opponent.Attack;
+	}*/
+
+}
+
+void recovery_character() {
+	hero.Health = hero.maxHealth;
+	hero.Mana = hero.maxMana;
+}
+
+int escape() {
+	return rand() % 100;
+}
+
+int randomAmountEnemy() {
+	return rand() % (3 - 2 + 1) + 2;
+}
+
+void generateEnemy(int enemy) {
+	if (enemy == Bat) {
+		batCharacteristics.Health = 100; batCharacteristics.Attack = 20; batCharacteristics.Gold = 50; batCharacteristics.experienceEnemy = 100;
+		batCharacteristics.maxHealth = batCharacteristics.Health;
+		enemy1.atk = batCharacteristics.Attack; enemy1.health = batCharacteristics.Health; enemy1.gold = batCharacteristics.Gold,
+			enemy1.level = batCharacteristics.experienceEnemy, enemy1.isPoison = 0, enemy1.maxHealth = batCharacteristics.Health;
+		enemy2.atk = batCharacteristics.Attack; enemy2.health = batCharacteristics.Health; enemy2.gold = batCharacteristics.Gold,
+			enemy2.level = batCharacteristics.experienceEnemy, enemy2.isPoison = 0, enemy2.maxHealth = batCharacteristics.Health;
+		enemy3.atk = batCharacteristics.Attack; enemy3.health = batCharacteristics.Health; enemy3.gold = batCharacteristics.Gold,
+			enemy3.level = batCharacteristics.experienceEnemy, enemy3.isPoison = 0, enemy3.maxHealth = batCharacteristics.Health;
+	}
+	if (enemy == Goblin) {
+		goblinCharacteristics.Health = 75; goblinCharacteristics.Attack = 30; goblinCharacteristics.Gold = 75; goblinCharacteristics.experienceEnemy = 150;
+		goblinCharacteristics.maxHealth = goblinCharacteristics.Health;
+		enemy1.atk = goblinCharacteristics.Attack; enemy1.health = goblinCharacteristics.Health; enemy1.gold = goblinCharacteristics.Gold,
+			enemy1.level = goblinCharacteristics.experienceEnemy, enemy1.isPoison = 0, enemy1.maxHealth = goblinCharacteristics.Health;
+		enemy2.atk = goblinCharacteristics.Attack; enemy2.health = goblinCharacteristics.Health; enemy2.gold = goblinCharacteristics.Gold,
+			enemy2.level = goblinCharacteristics.experienceEnemy, enemy2.isPoison = 0, enemy2.maxHealth = goblinCharacteristics.Health;
+		enemy3.atk = goblinCharacteristics.Attack; enemy3.health = goblinCharacteristics.Health; enemy3.gold = goblinCharacteristics.Gold,
+			enemy3.level = goblinCharacteristics.experienceEnemy, enemy3.isPoison = 0, enemy3.maxHealth = goblinCharacteristics.Health;
+	}
+	if (enemy == Slime) {
+		slimeCharacteristics.Health = 60; slimeCharacteristics.Attack = 0; slimeCharacteristics.Gold = 10; slimeCharacteristics.experienceEnemy = 20;
+		slimeCharacteristics.maxHealth = slimeCharacteristics.Health;
+		enemy1.atk = slimeCharacteristics.Attack; enemy1.health = slimeCharacteristics.Health; enemy1.gold = slimeCharacteristics.Gold,
+			enemy1.level = slimeCharacteristics.experienceEnemy, enemy1.isPoison = 0, enemy1.maxHealth = slimeCharacteristics.Health;
+		enemy2.atk = slimeCharacteristics.Attack; enemy2.health = slimeCharacteristics.Health; enemy2.gold = slimeCharacteristics.Gold,
+			enemy2.level = slimeCharacteristics.experienceEnemy, enemy2.isPoison = 0, enemy2.maxHealth = slimeCharacteristics.Health;
+		enemy3.atk = slimeCharacteristics.Attack; enemy3.health = slimeCharacteristics.Health; enemy3.gold = slimeCharacteristics.Gold,
+			enemy3.level = slimeCharacteristics.experienceEnemy, enemy3.isPoison = 0, enemy3.maxHealth = slimeCharacteristics.Health;
+	}
+	if (enemy == Werewolf) {
+		werewolfCharacteristics.Health = 70; werewolfCharacteristics.Attack = 30; werewolfCharacteristics.Gold = 80; werewolfCharacteristics.experienceEnemy = 150;
+		werewolfCharacteristics.maxHealth = werewolfCharacteristics.Health;
+		enemy1.atk = werewolfCharacteristics.Attack; enemy1.health = werewolfCharacteristics.Health; enemy1.gold = werewolfCharacteristics.Gold,
+			enemy1.level = werewolfCharacteristics.experienceEnemy, enemy1.isPoison = 0, enemy1.maxHealth = werewolfCharacteristics.Health;
+		enemy2.atk = werewolfCharacteristics.Attack; enemy2.health = werewolfCharacteristics.Health; enemy2.gold = werewolfCharacteristics.Gold,
+			enemy2.level = werewolfCharacteristics.experienceEnemy, enemy2.isPoison = 0, enemy2.maxHealth = werewolfCharacteristics.Health;
+		enemy3.atk = werewolfCharacteristics.Attack; enemy3.health = werewolfCharacteristics.Health; enemy3.gold = werewolfCharacteristics.Gold,
+			enemy3.level = werewolfCharacteristics.experienceEnemy, enemy3.isPoison = 0, enemy3.maxHealth = werewolfCharacteristics.Health;
+	}
+	if (enemy == Rat) {
+		ratCharacteristics.Health = 65; ratCharacteristics.Attack = 15; ratCharacteristics.Gold = 60; ratCharacteristics.experienceEnemy = 100;
+		ratCharacteristics.maxHealth = ratCharacteristics.Health;
+		enemy1.atk = ratCharacteristics.Attack; enemy1.health = ratCharacteristics.Health; enemy1.gold = ratCharacteristics.Gold,
+			enemy1.level = ratCharacteristics.experienceEnemy, enemy1.isPoison = 0, enemy1.maxHealth = ratCharacteristics.Health;
+		enemy2.atk = ratCharacteristics.Attack; enemy2.health = ratCharacteristics.Health; enemy2.gold = ratCharacteristics.Gold,
+			enemy2.level = ratCharacteristics.experienceEnemy, enemy2.isPoison = 0, enemy2.maxHealth = ratCharacteristics.Health;
+		enemy3.atk = ratCharacteristics.Attack; enemy3.health = ratCharacteristics.Health; enemy3.gold = ratCharacteristics.Gold,
+			enemy3.level = ratCharacteristics.experienceEnemy, enemy3.isPoison = 0, enemy3.maxHealth = ratCharacteristics.Health;
+	}
+}
+
 
 void Fireball() {
 	abilityDamageFireball;
@@ -1780,15 +2029,27 @@ void Poison() {
 		abilityDamagePoison--;
 	}
 
-	if (abilityDamagePoison == 0)
+	if (abilityDamagePoison == 0) {
 		enemy1.isPoison, enemy2.isPoison, enemy3.isPoison = false;
+		abilityDamagePoison = 6;
+	}
 }
 
 void enemy_patterns(int enemy) {
 	if (enemy == Bat) {
+		if (action == 3)
+			action = 1;
+		if (stepFight == 1 and action == 1) {
+			curAction = AttackEnemy;
+			nextAction = ShieldEnemy;
+		}
+		if (stepFight == 2 and action == 2) {
+			curAction = ShieldEnemy;
+			nextAction = AttackEnemy;
+		}
 		if (stepFight == 3)
 			stepFight = 1;
-		if (stepFight == 1) {//Attack
+		if (stepFight == 1 and flagPattern == 1) {//Attack
 			if (amountEnemy == 2) {
 				if (enemy1.health > 0)
 					hero.Health -= (enemy1.atk - (enemy1.atk * hero.Defense));
@@ -1804,7 +2065,7 @@ void enemy_patterns(int enemy) {
 					hero.Health -= (enemy3.atk - (enemy3.atk * hero.Defense));
 			}
 		}
-		if (stepFight == 2) {//Shield
+		if (stepFight == 2 and flagPattern == 1) {//Shield
 			if (amountEnemy == 2) {
 				if (enemy1.health > 0)
 					enemy1.health += 15;
@@ -1824,7 +2085,22 @@ void enemy_patterns(int enemy) {
 	if (enemy == Goblin) {
 		if (stepFight == 4)
 			stepFight = 1;
-		if (stepFight == 1) {//Attack
+		if (action == 4)
+			action = 1;
+		if (stepFight == 1 and action == 1) {
+			curAction = AttackEnemy;
+			nextAction = AttackEnemy;
+		}
+		if (stepFight == 2 and action == 2) {
+			curAction = AttackEnemy;
+			nextAction = HealEnemy;
+		}
+		if (stepFight == 3 and action == 3) {
+			curAction = HealEnemy;
+			nextAction = AttackEnemy;
+		}
+		if (stepFight == 1 and flagPattern == 1) {//Attack
+			
 			if (amountEnemy == 2) {
 				if (enemy1.health > 0)
 					hero.Health -= (enemy1.atk - (enemy1.atk * hero.Defense));
@@ -1840,7 +2116,8 @@ void enemy_patterns(int enemy) {
 					hero.Health -= (enemy3.atk - (enemy3.atk * hero.Defense));
 			}
 		}
-		if (stepFight == 2) {//Attack
+		if (stepFight == 2 and flagPattern == 1) {//Attack
+			
 			if (amountEnemy == 2) {
 				if (enemy1.health > 0)
 					hero.Health -= (enemy1.atk - (enemy1.atk * hero.Defense));
@@ -1856,7 +2133,8 @@ void enemy_patterns(int enemy) {
 					hero.Health -= (enemy3.atk - (enemy3.atk * hero.Defense));
 			}
 		}
-		if (stepFight == 3) {//Heal
+		if (stepFight == 3 and flagPattern == 1) {//Heal
+			
 			if (amountEnemy == 2) {
 				if (enemy1.health < enemy1.maxHealth and enemy1.health > 0)
 					enemy1.health += 20;
@@ -1871,6 +2149,372 @@ void enemy_patterns(int enemy) {
 				if (enemy3.health < enemy3.maxHealth and enemy3.health > 0)
 					enemy3.health += 20;
 			}
+		}
+	}
+	if (enemy == Slime) {
+		if (stepFight == 4)
+			stepFight = 1;
+		if (action == 4)
+			action = 1;
+		if (stepFight == 1 and action == 1) {
+			curAction = ShieldEnemy;
+			nextAction = ShieldEnemy;
+		}
+		if (stepFight == 2 and action == 2) {
+			curAction = ShieldEnemy;
+			nextAction = HealEnemy;
+		}
+		if (stepFight == 3 and action == 3) {
+			curAction = HealEnemy;
+			nextAction = ShieldEnemy;
+		}
+		if (stepFight == 1 and flagPattern == 1) {//Shield
+			
+			if (amountEnemy == 2) {
+				if (enemy1.health > 0)
+					enemy1.health += 20;
+				if (enemy2.health > 0)
+					enemy2.health += 20;
+			}
+			if (amountEnemy == 3) {
+				if (enemy1.health > 0)
+					enemy1.health += 20;
+				if (enemy2.health > 0)
+					enemy2.health += 20;
+				if (enemy3.health > 0)
+					enemy3.health += 20;
+			}
+		}
+		if (stepFight == 2 and flagPattern == 1) {//Shield
+			
+			if (amountEnemy == 2) {
+				if (enemy1.health > 0)
+					enemy1.health += 40;
+				if (enemy2.health > 0)
+					enemy2.health += 40;
+			}
+			if (amountEnemy == 3) {
+				if (enemy1.health > 0)
+					enemy1.health += 40;
+				if (enemy2.health > 0)
+					enemy2.health += 40;
+				if (enemy3.health > 0)
+					enemy3.health += 40;
+			}
+		}
+		if (stepFight == 3 and flagPattern == 1) {//Heal
+			
+			if (amountEnemy == 2) {
+				if (enemy1.health > 0 and enemy1.health < enemy1.maxHealth)
+					enemy1.health = enemy1.maxHealth;
+				if (enemy2.health > 0 and enemy2.health < enemy2.maxHealth)
+					enemy2.health = enemy2.maxHealth;
+			}
+			if (amountEnemy == 3) {
+				if (enemy1.health > 0 and enemy1.health < enemy1.maxHealth)
+					enemy1.health = enemy1.maxHealth;
+				if (enemy2.health > 0 and enemy2.health < enemy2.maxHealth)
+					enemy2.health = enemy2.maxHealth;
+				if (enemy3.health > 0 and enemy3.health < enemy3.maxHealth)
+					enemy3.health = enemy3.maxHealth;
+			}
+		}
+	}
+	if (enemy == Werewolf) {
+		if (stepFight == 4)
+			stepFight = 1;
+		if (action == 4)
+			action = 1;
+		if (stepFight == 1 and action == 1) {
+			curAction = AttackEnemy;
+			nextAction = VampirismEnemy;
+		}
+		if (stepFight == 2 and action == 2) {
+			curAction = VampirismEnemy;
+			nextAction = ShieldEnemy;
+		}
+		if (stepFight == 3 and action == 3) {
+			curAction = ShieldEnemy;
+			nextAction = AttackEnemy;
+		}
+		if (stepFight == 1 and flagPattern == 1) {//Attack
+			if (amountEnemy == 2) {
+				if (enemy1.health > 0)
+					hero.Health -= (enemy1.atk - (enemy1.atk * hero.Defense));
+				if (enemy2.health > 0)
+					hero.Health -= (enemy2.atk - (enemy2.atk * hero.Defense));
+			}
+			if (amountEnemy == 3) {
+				if (enemy1.health > 0)
+					hero.Health -= (enemy1.atk - (enemy1.atk * hero.Defense));
+				if (enemy2.health > 0)
+					hero.Health -= (enemy2.atk - (enemy2.atk * hero.Defense));
+				if (enemy3.health > 0)
+					hero.Health -= (enemy3.atk - (enemy3.atk * hero.Defense));
+			}
+		}
+		if (stepFight == 2 and flagPattern == 1) {//Vampirism
+			if (amountEnemy == 2) {
+				if (enemy1.health > 0) {
+					hero.Health -= (enemy1.atk - (enemy1.atk * hero.Defense));
+					enemy1.health += (enemy1.atk - (enemy1.atk * hero.Defense));
+				}
+				if (enemy2.health > 0) {
+					hero.Health -= (enemy2.atk - (enemy2.atk * hero.Defense));
+					enemy2.health += (enemy2.atk - (enemy2.atk * hero.Defense));
+				}
+			}
+			if (amountEnemy == 3) {
+				if (enemy1.health > 0) {
+					hero.Health -= (enemy1.atk - (enemy1.atk * hero.Defense));
+					enemy1.health += (enemy1.atk - (enemy1.atk * hero.Defense));
+				}
+				if (enemy2.health > 0) {
+					hero.Health -= (enemy2.atk - (enemy2.atk * hero.Defense));
+					enemy2.health += (enemy2.atk - (enemy2.atk * hero.Defense));
+				}
+				if (enemy3.health > 0) {
+					hero.Health -= (enemy3.atk - (enemy3.atk * hero.Defense));
+					enemy3.health += (enemy3.atk - (enemy3.atk * hero.Defense));
+				}
+			}
+		}
+		if (stepFight == 3 and flagPattern == 1) {//Shield
+			if (amountEnemy == 2) {
+				if (enemy1.health > 0)
+					enemy1.health += 25;
+				if (enemy2.health > 0)
+					enemy2.health += 25;
+			}
+			if (amountEnemy == 3) {
+				if (enemy1.health > 0)
+					enemy1.health += 25;
+				if (enemy2.health > 0)
+					enemy2.health += 25;
+				if (enemy3.health > 0)
+					enemy3.health += 25;
+			}
+		}
+	}
+	if (enemy == Rat) {
+		if (stepFight == 4)
+			stepFight = 1;
+		if (action == 4)
+			action = 1;
+		if (stepFight == 1 and action == 1) {
+			curAction = AttackEnemy;
+			nextAction = AttackEnemy;
+		}
+		if (stepFight == 2 and action == 2) {
+			curAction = AttackEnemy;
+			nextAction = CritEnemy;
+		}
+		if (stepFight == 3 and action == 3) {
+			curAction = CritEnemy;
+			nextAction = AttackEnemy;
+		}
+		if (stepFight == 1 and flagPattern == 1) {//Attack
+			if (amountEnemy == 2) {
+				if (enemy1.health > 0)
+					hero.Health -= (enemy1.atk - (enemy1.atk * hero.Defense));
+				if (enemy2.health > 0)
+					hero.Health -= (enemy2.atk - (enemy2.atk * hero.Defense));
+			}
+			if (amountEnemy == 3) {
+				if (enemy1.health > 0)
+					hero.Health -= (enemy1.atk - (enemy1.atk * hero.Defense));
+				if (enemy2.health > 0)
+					hero.Health -= (enemy2.atk - (enemy2.atk * hero.Defense));
+				if (enemy3.health > 0)
+					hero.Health -= (enemy3.atk - (enemy3.atk * hero.Defense));
+			}
+		}
+		if (stepFight == 2 and flagPattern == 1) {//Attack
+			if (amountEnemy == 2) {
+				if (enemy1.health > 0)
+					hero.Health -= (enemy1.atk - (enemy1.atk * hero.Defense));
+				if (enemy2.health > 0)
+					hero.Health -= (enemy2.atk - (enemy2.atk * hero.Defense));
+			}
+			if (amountEnemy == 3) {
+				if (enemy1.health > 0)
+					hero.Health -= (enemy1.atk - (enemy1.atk * hero.Defense));
+				if (enemy2.health > 0)
+					hero.Health -= (enemy2.atk - (enemy2.atk * hero.Defense));
+				if (enemy3.health > 0)
+					hero.Health -= (enemy3.atk - (enemy3.atk * hero.Defense));
+			}
+		}
+		if (stepFight == 3 and flagPattern == 1) {//Crit (Double Damage)
+			if (amountEnemy == 2) {
+				if (enemy1.health > 0)
+					hero.Health -= ((enemy1.atk - (enemy1.atk * hero.Defense)) * 2);
+				if (enemy2.health > 0)
+					hero.Health -= ((enemy2.atk - (enemy2.atk * hero.Defense)) * 2);
+			}
+			if (amountEnemy == 3) {
+				if (enemy1.health > 0)
+					hero.Health -= ((enemy1.atk - (enemy1.atk * hero.Defense)) * 2);
+				if (enemy2.health > 0)
+					hero.Health -= ((enemy2.atk - (enemy2.atk * hero.Defense)) * 2);
+				if (enemy3.health > 0)
+					hero.Health -= ((enemy3.atk - (enemy3.atk * hero.Defense)) * 2);
+			}
+		}
+	}
+}
+
+
+void render_enemy(int enemy, SDL_Renderer* ren, SDL_Texture* textBat, SDL_Texture* textGoblin, SDL_Texture* textSlime, SDL_Texture* textWerewolf, SDL_Texture* textRat){
+	if (amountEnemy == 2) {
+		dstrect = { xEnemy1, yEnemy1, 75, 75 };
+		dstrect2 = { xEnemy2, yEnemy2, 75, 75 };
+		if (enemy == Bat) {
+			SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrect);
+			SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrect2);
+		}
+		if (enemy == Goblin) {
+			SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrect);
+			SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrect2);
+		}
+		if (enemy == Slime) {
+			SDL_RenderCopy(ren, textSlime, NULL, &dstrect);
+			SDL_RenderCopy(ren, textSlime, NULL, &dstrect2);
+		}
+		if (enemy == Werewolf) {
+			SDL_RenderCopy(ren, textWerewolf, &srcrectWerewolf, &dstrect);
+			SDL_RenderCopy(ren, textWerewolf, &srcrectWerewolf, &dstrect2);
+		}
+		if (enemy == Rat) {
+			SDL_RenderCopy(ren, textRat, &srcRat, &dstrect);
+			SDL_RenderCopy(ren, textRat, &srcRat, &dstrect2);
+		}
+	}
+	if (amountEnemy == 3) {
+		dstrect = { xEnemy1, yEnemy1, 75, 75 };
+		dstrect2 = { xEnemy2, yEnemy2, 75, 75 };
+		dstrect3 = { xEnemy3, yEnemy3, 75, 75 };
+		if (enemy == Bat) {
+			SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrect);
+			SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrect2);
+			SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrect3);
+		}
+		if (enemy == Goblin) {
+			SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrect);
+			SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrect2);
+			SDL_RenderCopy(ren, textGoblin, &srcrectGoblin, &dstrect3);
+		}
+		if (enemy == Slime) {
+			SDL_RenderCopy(ren, textSlime, NULL, &dstrect);
+			SDL_RenderCopy(ren, textSlime, NULL, &dstrect2);
+			SDL_RenderCopy(ren, textSlime, NULL, &dstrect3);
+		}
+		if (enemy == Werewolf) {
+			SDL_RenderCopy(ren, textWerewolf, &srcrectWerewolf, &dstrect);
+			SDL_RenderCopy(ren, textWerewolf, &srcrectWerewolf, &dstrect2);
+			SDL_RenderCopy(ren, textWerewolf, &srcrectWerewolf, &dstrect3);
+		}
+		if (enemy == Rat) {
+			SDL_RenderCopy(ren, textRat, &srcRat, &dstrect);
+			SDL_RenderCopy(ren, textRat, &srcRat, &dstrect2);
+			SDL_RenderCopy(ren, textRat, &srcRat, &dstrect3);
+		}
+	}
+}
+
+void check_pattern(SDL_Renderer* ren, SDL_Texture* textIcons) {
+	if (enemy1.health > 0) {
+		positionIcon.x = 500, positionIcon.y = 175;
+		if (curAction == AttackEnemy)
+			SDL_RenderCopy(ren, textIcons, &AtkIcon, &positionIcon);
+		if (curAction == HealEnemy)
+			SDL_RenderCopy(ren, textIcons, &HealIcon, &positionIcon);
+		if (curAction == ShieldEnemy)
+			SDL_RenderCopy(ren, textIcons, &ShieldIcon, &positionIcon);
+		if (curAction == VampirismEnemy)
+			SDL_RenderCopy(ren, textIcons, &VampirismIcon, &positionIcon);
+		if (curAction == CritEnemy)
+			SDL_RenderCopy(ren, textIcons, &CritIcon, &positionIcon);
+
+		positionIcon.x = 580;
+		if (nextAction == AttackEnemy)
+			SDL_RenderCopy(ren, textIcons, &AtkIcon, &positionIcon);
+		if (nextAction == HealEnemy)
+			SDL_RenderCopy(ren, textIcons, &HealIcon, &positionIcon);
+		if (nextAction == ShieldEnemy)
+			SDL_RenderCopy(ren, textIcons, &ShieldIcon, &positionIcon);
+		if (nextAction == VampirismEnemy)
+			SDL_RenderCopy(ren, textIcons, &VampirismIcon, &positionIcon);
+		if (nextAction == CritEnemy)
+			SDL_RenderCopy(ren, textIcons, &CritIcon, &positionIcon);
+	}
+	if (enemy2.health > 0) {
+		positionIcon.x = 700, positionIcon.y = 175;
+		if (curAction == AttackEnemy)
+			SDL_RenderCopy(ren, textIcons, &AtkIcon, &positionIcon);
+		if (curAction == HealEnemy)
+			SDL_RenderCopy(ren, textIcons, &HealIcon, &positionIcon);
+		if (curAction == ShieldEnemy)
+			SDL_RenderCopy(ren, textIcons, &ShieldIcon, &positionIcon);
+		if (curAction == VampirismEnemy)
+			SDL_RenderCopy(ren, textIcons, &VampirismIcon, &positionIcon);
+		if (curAction == CritEnemy)
+			SDL_RenderCopy(ren, textIcons, &CritIcon, &positionIcon);
+
+		positionIcon.x = 780;
+		if (nextAction == AttackEnemy)
+			SDL_RenderCopy(ren, textIcons, &AtkIcon, &positionIcon);
+		if (nextAction == HealEnemy)
+			SDL_RenderCopy(ren, textIcons, &HealIcon, &positionIcon);
+		if (nextAction == ShieldEnemy)
+			SDL_RenderCopy(ren, textIcons, &ShieldIcon, &positionIcon);
+		if (nextAction == VampirismEnemy)
+			SDL_RenderCopy(ren, textIcons, &VampirismIcon, &positionIcon);
+		if (nextAction == CritEnemy)
+			SDL_RenderCopy(ren, textIcons, &CritIcon, &positionIcon);
+	}
+	if (amountEnemy == 3) {
+		if (enemy3.health > 0) {
+			positionIcon.x = 900, positionIcon.y = 175;
+			if (curAction == AttackEnemy)
+				SDL_RenderCopy(ren, textIcons, &AtkIcon, &positionIcon);
+			if (curAction == HealEnemy)
+				SDL_RenderCopy(ren, textIcons, &HealIcon, &positionIcon);
+			if (curAction == ShieldEnemy)
+				SDL_RenderCopy(ren, textIcons, &ShieldIcon, &positionIcon);
+			if (curAction == VampirismEnemy)
+				SDL_RenderCopy(ren, textIcons, &VampirismIcon, &positionIcon);
+			if (curAction == CritEnemy)
+				SDL_RenderCopy(ren, textIcons, &CritIcon, &positionIcon);
+
+			positionIcon.x = 980;
+			if (nextAction == AttackEnemy)
+				SDL_RenderCopy(ren, textIcons, &AtkIcon, &positionIcon);
+			if (nextAction == HealEnemy)
+				SDL_RenderCopy(ren, textIcons, &HealIcon, &positionIcon);
+			if (nextAction == ShieldEnemy)
+				SDL_RenderCopy(ren, textIcons, &ShieldIcon, &positionIcon);
+			if (nextAction == VampirismEnemy)
+				SDL_RenderCopy(ren, textIcons, &VampirismIcon, &positionIcon);
+			if (nextAction == CritEnemy)
+				SDL_RenderCopy(ren, textIcons, &CritIcon, &positionIcon);
+		}
+	}
+}
+
+void render_dead_enemy(SDL_Renderer* ren, SDL_Texture* textdeadEenemy) {
+	if (enemy1.health <= 0) {
+		dstrectDeadEnemy1 = { xDeadEnemy1, yDeadEnemy1, 75, 75 };
+		SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy1);
+	}
+	if (enemy2.health <= 0) {
+		dstrectDeadEnemy2 = { xDeadEnemy2, yDeadEnemy2, 75, 75 };
+		SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy2);
+	}
+	if (amountEnemy == 3) {
+		if (enemy3.health <= 0) {
+			dstrectDeadEnemy3 = { xDeadEnemy3, yDeadEnemy3, 75, 75 };
+			SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy3);
 		}
 	}
 }

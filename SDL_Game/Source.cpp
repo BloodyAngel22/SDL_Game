@@ -482,23 +482,39 @@ int main(int argc, char* argv[]) {
 	srand(time(NULL));
 	bool winnerBat = false;
 	bool winnerGoblin = false;
+	bool winnerSlime = false;
+	bool winnerWerewolf = false;
+	bool winnerRat = false;
 	bool isRunning = true;
 	bool switcherBat = true;
 	bool switcherGoblin = true;
+	bool switcherSlime = true;
+	bool switcherWerewolf = true;
+	bool switcherRat = true;
 	int pause = 0;
-	int i = 0;
-	int i2 = 0;
+	int i = 0; int i2 = 0; int i3 = 0; int i4 = 0; int i5 = 0;
 	int EnemyCharacteristics = 0;
 	int startRespawn = 0;
 	int endRespawn = 0;
 	int flagEnemy1 = EnemyUp;
 	int flagEnemy2 = EnemyDown;
+	int flagEnemy3 = EnemyRight;
+	int flagEnemy4 = EnemyLeft;
+	int flagEnemy5 = EnemyRight;
 	int shiftX = win_width / 2, shiftY = win_height / 2, Xsize = 40, Ysize = 40;
 	Xcoordinate = shiftX - Xsize / 2, Ycoordinate = shiftY - Ysize / 2;
-	float BatX = 850, BatY = 450, XsizeEnemy = 75, YsizeEnemy = 75;
+	//Position Enemy and FRects
+	float BatX = 850, BatY = 550, XsizeEnemy = 75, YsizeEnemy = 75;
 	float GoblinX = 320, GoblinY = 450;
+	float SlimeX = 950, SlimeY = 100;
+	float WerewolfX = 950, WerewolfY = 100;
+	float RatX = 200, RatY = 450;
 	SDL_FRect bat = { BatX, BatY, XsizeEnemy, YsizeEnemy };
 	SDL_FRect goblin = { GoblinX, GoblinY, XsizeEnemy, YsizeEnemy };
+	SDL_FRect slime = { SlimeX, SlimeY, XsizeEnemy, YsizeEnemy };
+	SDL_FRect werewolf = { WerewolfX, WerewolfY, XsizeEnemy, YsizeEnemy };
+	SDL_FRect rat = { RatX, RatY, XsizeEnemy, YsizeEnemy };
+	//
 	SDL_Event ev;
 	bool UP, DOWN, RIGHT, LEFT;
 	const Uint8* state = SDL_GetKeyboardState(NULL);
@@ -556,6 +572,18 @@ int main(int argc, char* argv[]) {
 	SDL_Surface* surfGoblin = IMG_Load("sprites\\enemy\\goblin.png");
 	SDL_Texture* textGoblin = SDL_CreateTextureFromSurface(ren, surfGoblin);
 	SDL_FreeSurface(surfGoblin);
+	//Slime
+	SDL_Surface* surfSlime = IMG_Load("sprites\\enemy\\red_slime.png");
+	SDL_Texture* textSlime = SDL_CreateTextureFromSurface(ren, surfSlime);
+	SDL_FreeSurface(surfSlime);
+	//Werewolf
+	SDL_Surface* surfWerewolf = IMG_Load("sprites\\enemy\\werewolf.png");
+	SDL_Texture* textWerewolf = SDL_CreateTextureFromSurface(ren, surfWerewolf);
+	SDL_FreeSurface(surfWerewolf);
+	//Rat
+	SDL_Surface* surfRat = IMG_Load("sprites\\enemy\\rat.png");
+	SDL_Texture* textRat = SDL_CreateTextureFromSurface(ren, surfRat);
+	SDL_FreeSurface(surfRat);
 	//
 	SDL_Surface* surfRune = IMG_Load("sprites\\runes\\runes.png");
 	SDL_Texture* textRune = SDL_CreateTextureFromSurface(ren, surfRune);
@@ -584,7 +612,7 @@ int main(int argc, char* argv[]) {
 	SDL_Texture* textNPC = SDL_CreateTextureFromSurface(ren, surfNPC);
 	SDL_FreeSurface(surfNPC);
 	SDL_Rect srcNPC = { 232, 40, 99, 118 };
-	SDL_Rect dstNPC = { 200, 200, sizeNPC, sizeNPC };
+	SDL_Rect dstNPC = { 200, 135, sizeNPC, sizeNPC };
 	SDL_FRect NPC = { dstNPC.x, dstNPC.y, sizeNPC, sizeNPC };
 	//Locked Chest
 	SDL_FRect chest = { 200, 82, 70, 70 };
@@ -621,8 +649,11 @@ int main(int argc, char* argv[]) {
 	int	dt = 0;
 	bool animation = false;
 
-	int lastPosXbat, lastPosYbat;
-	int lastPosXgoblin, lastPosYgoblin;
+	int lastPosXbat = 0, lastPosYbat = 0;
+	int lastPosXgoblin = 0, lastPosYgoblin = 0;
+	int lastPosXSlime = 0, lastPosYSlime = 0;
+	int lastPosXWerewolf = 0, lastPosYWerewolf = 0;
+	int lastPosXRat = 0, lastPosYRat = 0;
 
 	main_menu();
 	while (isRunning) {
@@ -630,7 +661,9 @@ int main(int argc, char* argv[]) {
 		player = { Xcoordinate, Ycoordinate, Xsize, Ysize };
 		bat = { BatX, BatY, XsizeEnemy, YsizeEnemy };
 		goblin = { GoblinX, GoblinY, XsizeEnemy, YsizeEnemy };
-		bool hitbox = checkCollision(player, bat);
+		slime = { SlimeX, SlimeY, XsizeEnemy, YsizeEnemy };
+		werewolf = { WerewolfX, WerewolfY, XsizeEnemy, YsizeEnemy };
+		rat = { RatX, RatY, XsizeEnemy, YsizeEnemy };
 		while (SDL_PollEvent(&ev) != NULL) {
 		//isPressedEscape = pressedEscape();
 		isPressed = pressedEnter();
@@ -720,33 +753,61 @@ int main(int argc, char* argv[]) {
 		
 		if (row == 1 and col == 1) {
 			if (!winnerBat)
-				streing(BatX, BatY, i, flagEnemy1);
+				streing(BatX, BatY, i, flagEnemy1);			
+			if (!winnerSlime)
+				streing(SlimeX, SlimeY, i3, flagEnemy3);			
+			if (!winnerRat)
+				streing(RatX, RatY, i5, flagEnemy5);
+		}
+		if (row == 2 and col == 2) {
 			if (!winnerGoblin)
 				streing(GoblinX, GoblinY, i2, flagEnemy2);
+			if (!winnerWerewolf)
+				streing(WerewolfX, WerewolfY, i4, flagEnemy4);
 		}
 
 		SDL_Rect srcrectCharacter = { 10, 10, 120, 120 };
 		SDL_Rect dstrectCharacter = { Xcoordinate - 7, Ycoordinate - 5, Xsize+20, Ysize+20};
 		SDL_Rect srcrectBat = { 10, 10, 100, 140 };
-		SDL_Rect dstrectBat = { BatX - 19, BatY, XsizeEnemy, YsizeEnemy};
+		SDL_Rect dstrect = { BatX - 19, BatY, XsizeEnemy, YsizeEnemy};
 		SDL_Rect srcGoblin = { 77, 31, 134, 124 };
 		SDL_Rect dstGoblin = { GoblinX, GoblinY, XsizeEnemy, YsizeEnemy };
-
+		SDL_Rect dstSlime = { SlimeX, SlimeY, XsizeEnemy, YsizeEnemy };
+		SDL_Rect dstWerewolf = { WerewolfX, WerewolfY, XsizeEnemy, YsizeEnemy };
+		SDL_Rect srcWerewolf = { 106, 89, 162, 155 };
+		SDL_Rect dstRat = { RatX, RatY, XsizeEnemy, YsizeEnemy };
+		SDL_Rect srcRat = { 52, 34, 114, 88 };
 
 		if (row == 1 and col == 1) {
 			if (checkCollision(player, bat)) {
 				lastPosXbat = BatX, lastPosYbat = BatY;
 				battle(BatX, BatY, switcherBat, Bat);
 				winnerBat = true;
+			}			
+			if (checkCollision(player, slime)) {
+				lastPosXSlime = SlimeX, lastPosYSlime = SlimeY;
+				battle(SlimeX, SlimeY, switcherSlime, Slime);
+				winnerSlime = true;
+			}			
+			if (checkCollision(player, rat)) {
+				lastPosXRat = RatX; lastPosYRat = RatY;
+				battle(RatX, RatY, switcherRat, Rat);
+				winnerRat = true;
 			}
+		}
+		if (row == 2 and col == 2) {
 			if (checkCollision(player, goblin)) {
 				lastPosXgoblin = GoblinX, lastPosYgoblin = GoblinY;
 				battle(GoblinX, GoblinY, switcherGoblin, Goblin);
 				winnerGoblin = true;
 			}
-
+			if (checkCollision(player, werewolf)) {
+				lastPosXWerewolf = WerewolfX; lastPosYWerewolf = WerewolfY;
+				battle(WerewolfX, WerewolfY, switcherWerewolf, Werewolf);
+				winnerWerewolf = true;
+			}
 		}
-		if (winnerBat or winnerGoblin) {
+		if (winnerBat or winnerGoblin or winnerSlime or winnerWerewolf or winnerRat) {
 			startRespawn++;
 		}
 		if (startRespawn >= 250) {
@@ -757,6 +818,18 @@ int main(int argc, char* argv[]) {
 			if (winnerGoblin) {
 				GoblinX = lastPosXgoblin, GoblinY = lastPosYgoblin;
 				winnerGoblin = false;
+			}
+			if (winnerSlime) {
+				SlimeX = lastPosXSlime, SlimeY = lastPosYSlime;
+				winnerSlime = false;
+			}
+			if (winnerWerewolf) {
+				WerewolfX = lastPosXWerewolf, WerewolfY = lastPosYWerewolf;
+				winnerWerewolf = false;
+			}
+			if (winnerRat) {
+				RatX = lastPosXRat, RatY = lastPosYRat;
+				winnerRat = false;
 			}
 			startRespawn = 0;
 			recovery_character();
@@ -779,7 +852,6 @@ int main(int argc, char* argv[]) {
 		//отрисовка комнат
 		if (row == 1 and col == 1) {
 			SDL_RenderCopy(ren, textRoom1, NULL, NULL);
-			SDL_RenderCopy(ren, textNPC, &srcNPC, &dstNPC);
 			SDL_FRect Plate2 = { 86,274,39,41 };
 			if (checkCollision(player, Plate2) and state[SDL_SCANCODE_RETURN] and isPressed) {
 				hint(ren);
@@ -818,6 +890,7 @@ int main(int argc, char* argv[]) {
 		}
 		if (row == 1 and col == 2) {
 			SDL_RenderCopy(ren, textRoom3, NULL, NULL);
+			SDL_RenderCopy(ren, textNPC, &srcNPC, &dstNPC);
 			//1144 274 40 42
 			SDL_FRect NamePlate = { 1144,274,40,42 };
 			if (checkCollision(player, NamePlate) and state[SDL_SCANCODE_RETURN] and isPressed)
@@ -899,7 +972,7 @@ int main(int argc, char* argv[]) {
 			SDL_RenderCopy(ren, textPortal, &srcPortal, &dstPortal4);//нижний
 
 		//NPC
-		if (checkCollision(player, NPC) and state[SDL_SCANCODE_RETURN] and isPressed) {
+		if (checkCollision(player, NPC) and state[SDL_SCANCODE_RETURN] and isPressed and row == 1 and col == 2) {
 			questFlag = 1;
 			quest(ren);
 		}
@@ -950,7 +1023,12 @@ int main(int argc, char* argv[]) {
 		isPressed = 0;
 		isPressedEscape = 0;
 		if (row == 1 and col == 1) {
-			SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrectBat);
+			SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrect);			
+			SDL_RenderCopy(ren, textSlime, NULL, &dstSlime);		
+			SDL_RenderCopy(ren, textRat, &srcRat, &dstRat);
+		}
+		if (row == 2 and col == 2) {
+			SDL_RenderCopy(ren, textWerewolf, &srcWerewolf, &dstWerewolf);
 			SDL_RenderCopy(ren, textGoblin, &srcGoblin, &dstGoblin);
 		}
 		
@@ -969,6 +1047,9 @@ int main(int argc, char* argv[]) {
 	SDL_DestroyTexture(textLockedChest);
 	SDL_DestroyTexture(textOpenChest);
 	SDL_DestroyTexture(textGoblin);
+	SDL_DestroyTexture(textSlime);
+	SDL_DestroyTexture(textWerewolf);
+	SDL_DestroyTexture(textRat);
 
 	de_init(0);
 	return 0;
