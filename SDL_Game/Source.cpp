@@ -13,6 +13,7 @@
 #include "Save.h"
 #include "Quest.h"
 #include "Puzzle.h"
+#include "Minigames.h"
 #define  EnemyUp 1
 #define  EnemyRight 2
 #define  EnemyDown 3
@@ -614,6 +615,10 @@ int main(int argc, char* argv[]) {
 	SDL_Rect srcNPC = { 232, 40, 99, 118 };
 	SDL_Rect dstNPC = { 200, 135, sizeNPC, sizeNPC };
 	SDL_FRect NPC = { dstNPC.x, dstNPC.y, sizeNPC, sizeNPC };
+
+	SDL_Rect srcNPC2 = { 459, 22, 69, 126 };
+	SDL_Rect dstNPC2 = { 1000, 560, 60, 100 };
+	SDL_FRect NPC2 = { dstNPC2.x, dstNPC2.y, dstNPC2.w, dstNPC2.h };
 	//Locked Chest
 	SDL_FRect chest = { 200, 82, 70, 70 };
 	SDL_Surface* surfLockedChest = IMG_Load("sprites\\puzzles\\lockedChest.png");
@@ -752,14 +757,16 @@ int main(int argc, char* argv[]) {
 		animation = UP or DOWN or LEFT or RIGHT;
 		
 		if (row == 1 and col == 1) {
-			if (!winnerBat)
-				streing(BatX, BatY, i, flagEnemy1);			
+			if (keyCheckBat == 1) {
+				if (!winnerBat)
+					streing(BatX, BatY, i, flagEnemy1);
+			}
 			if (!winnerSlime)
 				streing(SlimeX, SlimeY, i3, flagEnemy3);			
 			if (!winnerRat)
 				streing(RatX, RatY, i5, flagEnemy5);
 		}
-		if (row == 2 and col == 2) {
+		if (row == 2 and col == 2 and keyCheckGoblin) {
 			if (!winnerGoblin)
 				streing(GoblinX, GoblinY, i2, flagEnemy2);
 			if (!winnerWerewolf)
@@ -779,10 +786,12 @@ int main(int argc, char* argv[]) {
 		SDL_Rect srcRat = { 52, 34, 114, 88 };
 
 		if (row == 1 and col == 1) {
-			if (checkCollision(player, bat)) {
-				lastPosXbat = BatX, lastPosYbat = BatY;
-				battle(BatX, BatY, switcherBat, Bat);
-				winnerBat = true;
+			if (keyCheckBat == 1){
+				if (checkCollision(player, bat)) {
+					lastPosXbat = BatX, lastPosYbat = BatY;
+					battle(BatX, BatY, switcherBat, Bat);
+					winnerBat = true;
+				}
 			}			
 			if (checkCollision(player, slime)) {
 				lastPosXSlime = SlimeX, lastPosYSlime = SlimeY;
@@ -795,7 +804,7 @@ int main(int argc, char* argv[]) {
 				winnerRat = true;
 			}
 		}
-		if (row == 2 and col == 2) {
+		if (row == 2 and col == 2 and keyCheckGoblin) {
 			if (checkCollision(player, goblin)) {
 				lastPosXgoblin = GoblinX, lastPosYgoblin = GoblinY;
 				battle(GoblinX, GoblinY, switcherGoblin, Goblin);
@@ -891,6 +900,8 @@ int main(int argc, char* argv[]) {
 		if (row == 1 and col == 2) {
 			SDL_RenderCopy(ren, textRoom3, NULL, NULL);
 			SDL_RenderCopy(ren, textNPC, &srcNPC, &dstNPC);
+			SDL_RenderCopy(ren, textNPC, &srcNPC2, &dstNPC2);
+
 			//1144 274 40 42
 			SDL_FRect NamePlate = { 1144,274,40,42 };
 			if (checkCollision(player, NamePlate) and state[SDL_SCANCODE_RETURN] and isPressed)
@@ -976,6 +987,9 @@ int main(int argc, char* argv[]) {
 			questFlag = 1;
 			quest(ren);
 		}
+		if (checkCollision(player, NPC2) and state[SDL_SCANCODE_RETURN] and isPressed and row == 1 and col == 2) {
+			rock_scissors_paper_menu(ren);
+		}
 		//Порталы
 		if (checkCollision(player, Portal1) and state[SDL_SCANCODE_RETURN] and isPressed) {//Левый портал
 			if (row != 1) {
@@ -1023,11 +1037,12 @@ int main(int argc, char* argv[]) {
 		isPressed = 0;
 		isPressedEscape = 0;
 		if (row == 1 and col == 1) {
-			SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrect);			
+			if (keyCheckBat == 1)
+				SDL_RenderCopy(ren, textBat, &srcrectBat, &dstrect);			
 			SDL_RenderCopy(ren, textSlime, NULL, &dstSlime);		
 			SDL_RenderCopy(ren, textRat, &srcRat, &dstRat);
 		}
-		if (row == 2 and col == 2) {
+		if (row == 2 and col == 2 and keyCheckGoblin) {
 			SDL_RenderCopy(ren, textWerewolf, &srcWerewolf, &dstWerewolf);
 			SDL_RenderCopy(ren, textGoblin, &srcGoblin, &dstGoblin);
 		}

@@ -1909,7 +1909,10 @@ int randomAmountEnemy() {
 
 void generateEnemy(int enemy) {
 	if (enemy == Bat) {
-		batCharacteristics.Health = 100; batCharacteristics.Attack = 20; batCharacteristics.Gold = 50; batCharacteristics.experienceEnemy = 100;
+		batCharacteristics.Health = 130; batCharacteristics.Attack = 35; batCharacteristics.Gold = 90; batCharacteristics.experienceEnemy = 130;
+		if (curQuest == 1) {
+			batCharacteristics.Health = 100; batCharacteristics.Attack = 20; batCharacteristics.Gold = 50; batCharacteristics.experienceEnemy = 100;
+		}
 		batCharacteristics.maxHealth = batCharacteristics.Health;
 		enemy1.atk = batCharacteristics.Attack; enemy1.health = batCharacteristics.Health; enemy1.gold = batCharacteristics.Gold,
 			enemy1.level = batCharacteristics.experienceEnemy, enemy1.isPoison = 0, enemy1.maxHealth = batCharacteristics.Health;
@@ -1919,7 +1922,7 @@ void generateEnemy(int enemy) {
 			enemy3.level = batCharacteristics.experienceEnemy, enemy3.isPoison = 0, enemy3.maxHealth = batCharacteristics.Health;
 	}
 	if (enemy == Goblin) {
-		goblinCharacteristics.Health = 75; goblinCharacteristics.Attack = 30; goblinCharacteristics.Gold = 75; goblinCharacteristics.experienceEnemy = 150;
+		goblinCharacteristics.Health = 175; goblinCharacteristics.Attack = 50; goblinCharacteristics.Gold = 75; goblinCharacteristics.experienceEnemy = 175;
 		goblinCharacteristics.maxHealth = goblinCharacteristics.Health;
 		enemy1.atk = goblinCharacteristics.Attack; enemy1.health = goblinCharacteristics.Health; enemy1.gold = goblinCharacteristics.Gold,
 			enemy1.level = goblinCharacteristics.experienceEnemy, enemy1.isPoison = 0, enemy1.maxHealth = goblinCharacteristics.Health;
@@ -1939,7 +1942,7 @@ void generateEnemy(int enemy) {
 			enemy3.level = slimeCharacteristics.experienceEnemy, enemy3.isPoison = 0, enemy3.maxHealth = slimeCharacteristics.Health;
 	}
 	if (enemy == Werewolf) {
-		werewolfCharacteristics.Health = 70; werewolfCharacteristics.Attack = 30; werewolfCharacteristics.Gold = 80; werewolfCharacteristics.experienceEnemy = 150;
+		werewolfCharacteristics.Health = 150; werewolfCharacteristics.Attack = 40; werewolfCharacteristics.Gold = 80; werewolfCharacteristics.experienceEnemy = 150;
 		werewolfCharacteristics.maxHealth = werewolfCharacteristics.Health;
 		enemy1.atk = werewolfCharacteristics.Attack; enemy1.health = werewolfCharacteristics.Health; enemy1.gold = werewolfCharacteristics.Gold,
 			enemy1.level = werewolfCharacteristics.experienceEnemy, enemy1.isPoison = 0, enemy1.maxHealth = werewolfCharacteristics.Health;

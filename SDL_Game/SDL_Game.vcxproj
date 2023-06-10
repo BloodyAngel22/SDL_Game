@@ -23,7 +23,7 @@
     <ClCompile Include="Battle.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Leveling.cpp" />
-    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Minigames.cpp" />
     <ClCompile Include="Puzzle.cpp" />
     <ClCompile Include="Quest.cpp" />
     <ClCompile Include="Save.cpp" />
@@ -36,6 +36,7 @@
     <ClInclude Include="Battle.h" />
     <ClInclude Include="Items.h" />
     <ClInclude Include="Leveling.h" />
+    <ClInclude Include="Minigames.h" />
     <ClInclude Include="Models.h" />
     <ClInclude Include="Puzzle.h" />
     <ClInclude Include="Quest.h" />

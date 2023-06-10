@@ -5,3 +5,5 @@ extern int curQuest;
 void quest(SDL_Renderer* ren);
 void complete_the_quest(SDL_Renderer* ren);
 extern int questFlag;
+extern int keyCheckBat;
+extern int keyCheckGoblin;

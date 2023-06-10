@@ -6,6 +6,8 @@
 extern int counterKilledEnemies = 0;
 extern int curQuest = 1;
 extern int questFlag = 0;
+extern int keyCheckBat = 0;
+extern int keyCheckGoblin = 0;
 void quest(SDL_Renderer* ren) {//Взять квест
 
 #pragma region Texture
@@ -43,12 +45,14 @@ void quest(SDL_Renderer* ren) {//Взять квест
 
 	if (curQuest == 1 and counterKilledEnemies < 5 and questFlag) {
 		SDL_RenderCopy(ren, textQuest1, NULL, &dstQuest);
+		keyCheckBat = 1;
 	}
 	if (curQuest == 2 and counterKilledEnemies < 5 and questFlag) {
 		SDL_RenderCopy(ren, textQuest2, NULL, &dstQuest);
 	}
 	if (curQuest == 3 and counterKilledEnemies < 7 and questFlag) {
 		SDL_RenderCopy(ren, textQuest3, NULL, &dstQuest);
+		keyCheckGoblin = 1;
 	}
 	if (curQuest == 4 and questFlag) {
 		SDL_RenderCopy(ren, textFinalDialogue, NULL, &dstQuest);
@@ -154,7 +158,7 @@ void complete_the_quest(SDL_Renderer* ren) {//Прогресс квестов и отображение
 			textQuestTTF = SDL_CreateTextureFromSurface(ren, surfQuestTTF);
 			SDL_RenderCopy(ren, textQuestTTF, &size, &pointsTTF);
 			SDL_FreeSurface(surfQuestTTF);
-			SDL_DestroyTexture(textQuestTTF);
+			SDL_DestroyTexture(textQuestTTF);			
 		}
 		if (state[SDL_SCANCODE_ESCAPE] and isPressed) {
 			SDL_DestroyTexture(textQuest);
