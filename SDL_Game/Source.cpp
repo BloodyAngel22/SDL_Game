@@ -130,24 +130,21 @@ void battle(float& EnemyX, float& EnemyY, bool& switcher, int enemy) {
 
 bool checkCollision(SDL_Rect a, SDL_FRect b)
 {
-	//The sides of the rectangles
 	int leftA, leftB;
 	int rightA, rightB;
 	int topA, topB;
 	int bottomA, bottomB;
 
-	//Calculate the sides of rect A
 	leftA = a.x;
 	rightA = a.x + a.w;
 	topA = a.y;
 	bottomA = a.y + a.h;
 
-	//Calculate the sides of rect B
 	leftB = b.x;
 	rightB = b.x + b.w;
 	topB = b.y;
 	bottomB = b.y + b.h;
-	//If any of the sides from A are outside of B
+
 	if (bottomA <= topB) {
 		return false;
 	}
@@ -161,7 +158,6 @@ bool checkCollision(SDL_Rect a, SDL_FRect b)
 		return false;
 	}
 
-	//If none of the sides from A are outside B
 	return true;
 }
 
@@ -501,7 +497,8 @@ int main(int argc, char* argv[]) {
 	int flagEnemy2 = EnemyDown;
 	int flagEnemy3 = EnemyRight;
 	int flagEnemy4 = EnemyLeft;
-	int flagEnemy5 = EnemyRight;
+	int flagEnemy5 = EnemyDown;
+	int flagCollision = 0;
 	int shiftX = win_width / 2, shiftY = win_height / 2, Xsize = 40, Ysize = 40;
 	Xcoordinate = shiftX - Xsize / 2, Ycoordinate = shiftY - Ysize / 2;
 	//Position Enemy and FRects
@@ -545,14 +542,26 @@ int main(int argc, char* argv[]) {
 	SDL_Surface* surfRoom = IMG_Load("sprites\\background\\part1.png");
 	SDL_Texture* textRoom1 = SDL_CreateTextureFromSurface(ren, surfRoom);
 	SDL_FreeSurface(surfRoom);
+
+	SDL_Surface* surfRoom1Collision = IMG_Load("sprites\\background\\part1Collision.png");
+	SDL_Texture* textRoom1Collision = SDL_CreateTextureFromSurface(ren, surfRoom1Collision);
+	SDL_FreeSurface(surfRoom1Collision);
 	//room2
 	SDL_Surface* surfRoom2 = IMG_Load("sprites\\background\\part2.png");
 	SDL_Texture* textRoom2 = SDL_CreateTextureFromSurface(ren, surfRoom2);
 	SDL_FreeSurface(surfRoom2);
+
+	SDL_Surface* surfRoom2Collision = IMG_Load("sprites\\background\\part2collision.png");
+	SDL_Texture* textRoom2Collision = SDL_CreateTextureFromSurface(ren, surfRoom2Collision);
+	SDL_FreeSurface(surfRoom2Collision);
 	//room3
 	SDL_Surface* surfRoom3 = IMG_Load("sprites\\background\\part3.png");
 	SDL_Texture* textRoom3 = SDL_CreateTextureFromSurface(ren, surfRoom3);
 	SDL_FreeSurface(surfRoom3);
+
+	SDL_Surface* surfRoom3Collision = IMG_Load("sprites\\background\\part3Collision.png");
+	SDL_Texture* textRoom3Collision = SDL_CreateTextureFromSurface(ren, surfRoom3Collision);
+	SDL_FreeSurface(surfRoom3Collision);
 	//room4
 	SDL_Surface* surfRoom4 = IMG_Load("sprites\\background\\part4.png");
 	SDL_Texture* textRoom4 = SDL_CreateTextureFromSurface(ren, surfRoom4);
@@ -563,6 +572,7 @@ int main(int argc, char* argv[]) {
 	SDL_Surface* surfCharacter = IMG_Load("sprites\\character\\character.png");
 	SDL_Texture* textCharacter = SDL_CreateTextureFromSurface(ren, surfCharacter);
 	SDL_Rect player = { Xcoordinate, Ycoordinate, Xsize, Ysize };
+	SDL_Rect legs = { Xcoordinate, Ycoordinate + 30, Xsize, 10 };
 	player.w = player.h;
 	SDL_FreeSurface(surfCharacter);
 	//Bat
@@ -649,6 +659,28 @@ int main(int argc, char* argv[]) {
 	SDL_Rect srcRunesRect = { 0 , 34, 182, 147};
 #pragma endregion
 
+	//Rect
+	//Trees
+	SDL_FRect rect1 = { 728, 195, 12, 37 };
+	SDL_FRect rect2 = { 272, 99, 15, 47 };
+	SDL_FRect rect3 = { 445, 586, 15, 42 };
+	//Columns
+	SDL_FRect rect4 = { 275, 45, 45, 48 };
+	SDL_FRect rect5 = { 274, 144, 43, 45 };
+	SDL_FRect rect6 = { 150, 145, 42, 42 };
+	SDL_FRect rect7 = { 149, 145, 42, 44 };
+	SDL_FRect rect8 = { 363, 259, 42, 46 };
+	SDL_FRect rect9 = { 362, 368, 44, 45 };
+	SDL_FRect rect10 = { 539, 196, 42, 44 };
+	SDL_FRect rect11 = { 653, 196, 45, 46 };
+	SDL_FRect rect12 = { 655, 410, 44, 50 };
+	SDL_FRect rect13 = { 915, 511, 27, 60 };
+	SDL_FRect rect14 = { 255, 600, 70, 62 };
+	SDL_FRect rect16 = { 802, 137, 32, 43 };
+	SDL_FRect rect17 = { 876, 126, 34, 55 };
+	SDL_FRect rect18 = { 947, 126, 34, 55 };
+	SDL_FRect rect19 = { 1015, 133, 33, 47 };
+
 	int frame = 0, frame_count = 10, cur_frametime = 0, max_frametime = 1000/120;
 	int lasttime = SDL_GetTicks(); int newtime = SDL_GetTicks();
 	int	dt = 0;
@@ -659,11 +691,12 @@ int main(int argc, char* argv[]) {
 	int lastPosXSlime = 0, lastPosYSlime = 0;
 	int lastPosXWerewolf = 0, lastPosYWerewolf = 0;
 	int lastPosXRat = 0, lastPosYRat = 0;
-
+	int lastPosXPlayer = 0, lastPosYPlayer = 0;
 	main_menu();
 	while (isRunning) {
 		UP = DOWN = LEFT = RIGHT = 0;
 		player = { Xcoordinate, Ycoordinate, Xsize, Ysize };
+		legs = { Xcoordinate, Ycoordinate + 30, Xsize, 10 };
 		bat = { BatX, BatY, XsizeEnemy, YsizeEnemy };
 		goblin = { GoblinX, GoblinY, XsizeEnemy, YsizeEnemy };
 		slime = { SlimeX, SlimeY, XsizeEnemy, YsizeEnemy };
@@ -727,34 +760,60 @@ int main(int argc, char* argv[]) {
 		lasttime = newtime;
 
 		if ((state[SDL_SCANCODE_UP] or state[SDL_SCANCODE_W]) and (!state[SDL_SCANCODE_DOWN] or !state[SDL_SCANCODE_S])) {
+			if (!checkCollision(legs, rect8))
+				lastPosXPlayer = Xcoordinate, lastPosYPlayer = Ycoordinate + 4;
 			UP = 1;
 			if (UP) {
 				DOWN = 0, LEFT = 0, RIGHT = 0;
-			}
-			Ycoordinate -= 4;
+				Ycoordinate -= 4;
+			}			
 		}
-		if ((state[SDL_SCANCODE_DOWN] or state[SDL_SCANCODE_S]) and (!state[SDL_SCANCODE_UP] or !state[SDL_SCANCODE_W])) {
+		else if ((state[SDL_SCANCODE_DOWN] or state[SDL_SCANCODE_S]) and (!state[SDL_SCANCODE_UP] or !state[SDL_SCANCODE_W])) {
 			DOWN = 1;
+			if (!checkCollision(legs, rect8))
+				lastPosXPlayer = Xcoordinate, lastPosYPlayer = Ycoordinate - 4;
 			if (DOWN) {
 				UP = 0, LEFT = 0, RIGHT = 0;
+				Ycoordinate += 4;
 			}
-			Ycoordinate += 4;
 		}
-		if ((state[SDL_SCANCODE_LEFT] or state[SDL_SCANCODE_A]) and (!state[SDL_SCANCODE_RIGHT] or !state[SDL_SCANCODE_D])) {
+		else if ((state[SDL_SCANCODE_LEFT] or state[SDL_SCANCODE_A]) and (!state[SDL_SCANCODE_RIGHT] or !state[SDL_SCANCODE_D])) {
 			LEFT = 1;
+			if (!checkCollision(legs, rect8))
+				lastPosXPlayer = Xcoordinate + 4, lastPosYPlayer = Ycoordinate;
 			if (LEFT) {
 				UP = 0, RIGHT = 0, DOWN = 0;
-			}
-			Xcoordinate -= 4;
+				Xcoordinate -= 4;
+			}			
 		}
-		if ((state[SDL_SCANCODE_RIGHT] or state[SDL_SCANCODE_D]) and (!state[SDL_SCANCODE_LEFT] or !state[SDL_SCANCODE_A])) {
+		else if ((state[SDL_SCANCODE_RIGHT] or state[SDL_SCANCODE_D]) and (!state[SDL_SCANCODE_LEFT] or !state[SDL_SCANCODE_A])) {
 			RIGHT = 1;
+			if (!checkCollision(legs, rect8))
+				lastPosXPlayer = Xcoordinate - 4, lastPosYPlayer = Ycoordinate;
 			if (RIGHT) {
 				UP = 0, LEFT = 0, DOWN = 0;
-			}
-			Xcoordinate += 4;
+				Xcoordinate += 4;
+			}			
 		}
 		animation = UP or DOWN or LEFT or RIGHT;
+		if (row == 1 and col == 1) {
+			if (checkCollision(legs, rect1) or checkCollision(legs, rect2) or checkCollision(legs, rect3)) {
+				Xcoordinate = lastPosXPlayer, Ycoordinate = lastPosYPlayer;
+			}
+		}
+		if (row == 1 and col == 2) {
+			if (checkCollision(legs, rect2)) {
+				Xcoordinate = lastPosXPlayer, Ycoordinate = lastPosYPlayer;
+			}
+		}
+		if (row == 2 and col == 1) {
+			if (checkCollision(legs, rect4) or checkCollision(legs, rect5) or checkCollision(legs, rect6) or checkCollision(legs, rect7)
+				or checkCollision(legs, rect8) or checkCollision(legs, rect9) or checkCollision(legs, rect10) or checkCollision(legs, rect11)
+				or checkCollision(legs, rect12) or checkCollision(legs, rect13) or checkCollision(legs, rect14)	or checkCollision(legs, rect16) 
+				or checkCollision(legs, rect17) or checkCollision(legs, rect18) or checkCollision(legs, rect19)) {
+				Xcoordinate = lastPosXPlayer, Ycoordinate = lastPosYPlayer;
+			}
+		}
 		
 		if (row == 1 and col == 1) {
 			if (keyCheckBat == 1) {
@@ -865,10 +924,6 @@ int main(int argc, char* argv[]) {
 			if (checkCollision(player, Plate2) and state[SDL_SCANCODE_RETURN] and isPressed) {
 				hint(ren);
 			}
-			/*SDL_Rect Hitbox1 = { 727,191,15,53 };
-			SDL_RenderFillRect(ren, &Hitbox1);
-			if (object_collision(player, Hitbox1)) {
-			}*/
 		}
 		if (row == 2 and col == 1) {
 			SDL_RenderCopy(ren, textRoom2, NULL, NULL);
@@ -900,7 +955,8 @@ int main(int argc, char* argv[]) {
 		if (row == 1 and col == 2) {
 			SDL_RenderCopy(ren, textRoom3, NULL, NULL);
 			SDL_RenderCopy(ren, textNPC, &srcNPC, &dstNPC);
-			SDL_RenderCopy(ren, textNPC, &srcNPC2, &dstNPC2);
+			if (curQuest == 2)
+				SDL_RenderCopy(ren, textNPC, &srcNPC2, &dstNPC2);
 
 			//1144 274 40 42
 			SDL_FRect NamePlate = { 1144,274,40,42 };
@@ -920,13 +976,14 @@ int main(int argc, char* argv[]) {
 			}
 		}
 		if (row == 2 and col == 2) {//отрисовка рун и головоломка
-			//Water
-			SDL_RenderCopy(ren, textRune, &srcrune, &dstrune);
-			//Fire
-			SDL_RenderCopy(ren, textRune, &srcrune2, &dstrune2);
-			//Earth
-			SDL_RenderCopy(ren, textRune, &srcrune3, &dstrune3);
-
+			if (curQuest == 2) {
+				//Water
+				SDL_RenderCopy(ren, textRune, &srcrune, &dstrune);
+				//Fire
+				SDL_RenderCopy(ren, textRune, &srcrune2, &dstrune2);
+				//Earth
+				SDL_RenderCopy(ren, textRune, &srcrune3, &dstrune3);
+			}
 			//SDL_RenderFillRectF(ren, &RunesRect);
 			if (flagRunes == 1)
 				SDL_RenderCopy(ren, textRunesPuzzle, &srcRunesRect, &dstRunesRect);
@@ -949,7 +1006,7 @@ int main(int argc, char* argv[]) {
 				}
 			}
 		}
-		if (row == 2 and col == 2) {//коллизия рун
+		if (row == 2 and col == 2 and curQuest == 2) {//коллизия рун
 			if (checkCollision(player, rune) and state[SDL_SCANCODE_RETURN]) {//Water
 				rune.x = -100, rune.y = -100;
 				dstrune.x = dstrune.y = -100;
@@ -987,8 +1044,8 @@ int main(int argc, char* argv[]) {
 			questFlag = 1;
 			quest(ren);
 		}
-		if (checkCollision(player, NPC2) and state[SDL_SCANCODE_RETURN] and isPressed and row == 1 and col == 2) {
-			rock_scissors_paper_menu(ren);
+		if (checkCollision(player, NPC2) and state[SDL_SCANCODE_RETURN] and isPressed and row == 1 and col == 2 and curQuest == 2) {
+			dialogue(ren);
 		}
 		//Порталы
 		if (checkCollision(player, Portal1) and state[SDL_SCANCODE_RETURN] and isPressed) {//Левый портал
@@ -1015,7 +1072,41 @@ int main(int argc, char* argv[]) {
 				col -= 1;
 			}
 		}
-
+		
+		/*if (row == 1 and col == 1) {
+			if (!checkCollision(legs, rect1) or !checkCollision(legs, rect2) or !checkCollision(legs, rect3)) {
+				Xcoordinate = lastPosXPlayer, Ycoordinate = lastPosYPlayer;
+			}
+		}
+		if (row == 2 and col == 1) {
+			if (!checkCollision(legs, rect4) or !checkCollision(legs, rect5) or !checkCollision(legs, rect6) or !checkCollision(legs, rect7)
+				or !checkCollision(legs, rect8) or !checkCollision(legs, rect9) or !checkCollision(legs, rect10) or !checkCollision(legs, rect11)
+				or !checkCollision(legs, rect12) or !checkCollision(legs, rect13) or !checkCollision(legs, rect14) or !checkCollision(legs, rect15)
+				or !checkCollision(legs, rect16) or !checkCollision(legs, rect17) or !checkCollision(legs, rect18) or !checkCollision(legs, rect19)) {
+				Xcoordinate = lastPosXPlayer, Ycoordinate = lastPosYPlayer;
+			}
+		}*/
+		if (row == 1 and col == 1) {
+			if (checkCollision(player, rect1) or checkCollision(player, rect2) or checkCollision(player, rect3)) {
+				SDL_RenderCopy(ren, textRoom1Collision, NULL, NULL);
+				flagCollision = 1;
+			}
+		}
+		if (row == 1 and col == 2) {
+			if (checkCollision(player, rect2)) {
+				SDL_RenderCopy(ren, textRoom3Collision, NULL, NULL);
+				flagCollision = 1;
+			}
+		}
+		if (row == 2 and col == 1) {
+			if (checkCollision(player, rect4) or checkCollision(player, rect5) or checkCollision(player, rect6) or checkCollision(player, rect7)
+				or checkCollision(player, rect8) or checkCollision(player, rect9) or checkCollision(player, rect10) or checkCollision(player, rect11)
+				or checkCollision(player, rect12) or checkCollision(player, rect13) or checkCollision(player, rect14) or checkCollision(player, rect16) 
+				or checkCollision(player, rect17) or checkCollision(player, rect18) or checkCollision(player, rect19)) {
+				SDL_RenderCopy(ren, textRoom2Collision, NULL, NULL);
+				flagCollision = 1;
+			}
+		}
 		if (!animation)
 			SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
 		if (animation and RIGHT and !UP and !DOWN ) {
@@ -1034,6 +1125,15 @@ int main(int argc, char* argv[]) {
 			srcrectCharacter.x, srcrectCharacter.y = 530, srcrectCharacter.w = 120, srcrectCharacter.h = 120;
 			SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
 		}
+		if (row == 1 and col == 1 and flagCollision == 0) {
+			SDL_RenderCopy(ren, textRoom1Collision, NULL, NULL);
+		}
+		if (row == 1 and col == 2 and flagCollision == 0) {
+			SDL_RenderCopy(ren, textRoom3Collision, NULL, NULL);
+		}
+		if (row == 2 and col == 1 and flagCollision == 0) {
+			SDL_RenderCopy(ren, textRoom2Collision, NULL, NULL);
+		}
 		isPressed = 0;
 		isPressedEscape = 0;
 		if (row == 1 and col == 1) {
@@ -1049,9 +1149,15 @@ int main(int argc, char* argv[]) {
 		
 		SDL_RenderPresent(ren);
 		SDL_Delay(17);
-
+		flagCollision = 0;
 	}
 	SDL_DestroyTexture(textRoom1);
+	SDL_DestroyTexture(textRoom1Collision);
+	SDL_DestroyTexture(textRoom2);
+	SDL_DestroyTexture(textRoom2Collision);
+	SDL_DestroyTexture(textRoom3);
+	SDL_DestroyTexture(textRoom3Collision);
+	SDL_DestroyTexture(textRoom4);
 	SDL_DestroyTexture(textCharacter);
 	SDL_DestroyTexture(textBat);
 	SDL_DestroyTexture(textRune);

@@ -3,10 +3,13 @@
 #define Paper 3
 #include "Minigames.h"
 #include "Battle.h"
+#include "Models.h"
+#include <iostream>
 
 int player;
 int bot;
 int draw, win, defeat;
+extern int winningStreak = 0;
 
 SDL_Rect srcRock = { 19, 25, 189, 222 };
 SDL_Rect srcScissors = { 559, 15, 145, 224 };
@@ -33,12 +36,18 @@ void rock_scissors_paper_menu(SDL_Renderer* ren) {
 	SDL_Texture* textBackground = SDL_CreateTextureFromSurface(ren, surfBackground);
 	SDL_FreeSurface(surfBackground);
 	//
+	TTF_Font* winStreakTTF = TTF_OpenFont("fonts\\Ubuntu-Regular.ttf", 75);
+	char winStreak[100] = "Points";
+	SDL_Surface* surftWinStreakTTF = TTF_RenderText_Blended(winStreakTTF, winStreak, { 255, 255, 255, 255 });
+	SDL_Texture* textWinStreakTTF = SDL_CreateTextureFromSurface(ren, surftWinStreakTTF);
+	SDL_Rect size = { 0, 0, surftWinStreakTTF->w, surftWinStreakTTF->h };
+	int xPoint = 1100, yPoint = 20;
+	SDL_Rect pointsTTF = { xPoint, yPoint, 120, 60 };
 
 	SDL_Rect position = { 0, 0, 150, 150 };
 	SDL_Rect arrowPosition = { 0, 0, 200, 100 };
 
 	int running = 1;
-	int winningStreak = 0;
 
 	SDL_Event ev;
 	SDL_PollEvent(&ev);
@@ -62,6 +71,16 @@ void rock_scissors_paper_menu(SDL_Renderer* ren) {
 		SDL_RenderCopy(ren, textRockScissorsPaper, &srcScissors, &position);
 		position.x = 900, position.y = 280;
 		SDL_RenderCopy(ren, textRockScissorsPaper, &srcPaper, &position);
+
+		xPoint = 40, yPoint = 40;
+		sprintf_s(winStreak, "Win Streak %d", winningStreak);
+		surftWinStreakTTF = TTF_RenderText_Blended(winStreakTTF, winStreak, { 255, 255, 255, 255 });
+		pointsTTF = { xPoint, yPoint, 200, 80 };
+		size = { 0, 0, surftWinStreakTTF->w, surftWinStreakTTF->h };
+		textWinStreakTTF = SDL_CreateTextureFromSurface(ren, surftWinStreakTTF);
+		SDL_RenderCopy(ren, textWinStreakTTF, &size, &pointsTTF);
+		SDL_FreeSurface(surftWinStreakTTF);
+		SDL_DestroyTexture(textWinStreakTTF);
 
 		if (pointer == 1) {
 			arrowPosition.x = 300 - 15, arrowPosition.y = 430;
@@ -117,7 +136,8 @@ void rock_scissors_paper_menu(SDL_Renderer* ren) {
 				draw = 1;
 
 			if (win == 1) {
-				winningStreak += 1;
+				if (winningStreak < 10)
+					winningStreak += 1;
 				while (running == 1) {
 					SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
 					SDL_RenderClear(ren);
@@ -139,6 +159,8 @@ void rock_scissors_paper_menu(SDL_Renderer* ren) {
 					SDL_RenderPresent(ren);
 					SDL_Delay(17);
 				}
+				if (winningStreak >= 1)
+					hero.Gold += 20 * winningStreak;
 			}
 			if (draw == 1) {
 				while (running == 1) {
@@ -198,6 +220,8 @@ void rock_scissors_paper_menu(SDL_Renderer* ren) {
 		SDL_DestroyTexture(textBackground);
 		SDL_DestroyTexture(textRockScissorsPaper);
 		SDL_DestroyTexture(textWinDefeatDraw);
+		SDL_DestroyTexture(textWinStreakTTF);
+		TTF_CloseFont(winStreakTTF);
 	}
 }
 
@@ -238,4 +262,48 @@ void render_result(SDL_Renderer* ren) {
 
 int random() {
 	return rand() % (3 - 1 + 1) + 1;
+}
+
+void dialogue(SDL_Renderer* ren) {
+	SDL_Surface* surfDialogue = IMG_Load("sprites\\minigames\\dialogue.png");
+	SDL_Texture* textDialogue = SDL_CreateTextureFromSurface(ren, surfDialogue);
+	SDL_FreeSurface(surfDialogue);
+
+	SDL_Surface* surfArrowUp = IMG_Load("sprites\\puzzles\\arrowUp.png");
+	SDL_Texture* textArrowUp = SDL_CreateTextureFromSurface(ren, surfArrowUp);
+	SDL_FreeSurface(surfArrowUp);
+
+	SDL_Rect position = { 310, 270, 150, 150 };
+
+	SDL_Event ev;
+	SDL_PollEvent(&ev);
+	const Uint8* State = SDL_GetKeyboardState(NULL);
+
+	int running = 1;
+
+	while (running == 1) {
+		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+		SDL_RenderClear(ren);
+		SDL_RenderCopy(ren, textDialogue, NULL, NULL);
+		SDL_RenderCopyEx(ren, textArrowUp, NULL, &position, 90, 0, SDL_FLIP_NONE);
+
+		while (SDL_PollEvent(&ev) != NULL) {
+			SDL_PollEvent(&ev);
+			isPressed = pressedEnter();
+
+			if (State[SDL_SCANCODE_RETURN] and isPressed) {
+				rock_scissors_paper_menu(ren);
+			}
+			if (State[SDL_SCANCODE_ESCAPE])
+				running = 0;
+		}
+
+		SDL_RenderPresent(ren);
+		SDL_Delay(20);
+		isPressed = 0;
+	}
+	if (running == 0) {
+		SDL_DestroyTexture(textArrowUp);
+		SDL_DestroyTexture(textDialogue);
+	}
 }
