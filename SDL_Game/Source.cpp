@@ -474,6 +474,220 @@ void wall(SDL_Rect a) {
 		Ycoordinate+=4;
 }
 
+void parameters(SDL_Renderer* ren) {
+	//Texture
+	SDL_Surface* surfParametersHero = IMG_Load("sprites\\menu\\parameters.png");
+	SDL_Texture* textParametersHero = SDL_CreateTextureFromSurface(ren, surfParametersHero);
+	SDL_FreeSurface(surfParametersHero);
+
+	TTF_Font* parametersFont = TTF_OpenFont("fonts\\Ubuntu-Regular.ttf", 75);
+	char parametersStr[100] = "parameters";
+	SDL_Surface* surfParameters = TTF_RenderText_Blended(parametersFont, parametersStr, { 255, 255, 255, 255 });
+	SDL_Texture* textParameters = SDL_CreateTextureFromSurface(ren, surfParameters);
+	SDL_Rect size = { 0, 0, surfParameters->w, surfParameters->h };
+	int xPoint = 100, yPoint = 50;
+	SDL_Rect statsRect = { xPoint, yPoint, 55, 60 };
+	SDL_FreeSurface(surfParameters);
+
+	SDL_Event ev;
+	SDL_PollEvent(&ev);
+	const Uint8* state = SDL_GetKeyboardState(NULL);
+
+	while (true) {
+
+		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+		SDL_RenderClear(ren);
+		SDL_RenderCopy(ren, textParametersHero, NULL, NULL);
+
+		xPoint = 65, yPoint = 120;
+		statsRect = { xPoint, yPoint, 320, 60 };
+		sprintf_s(parametersStr, "General parameters");
+		surfParameters = TTF_RenderText_Blended(parametersFont, parametersStr, { 255, 255, 255, 255 });
+		size = { 0, 0, surfParameters->w, surfParameters->h };
+		textParameters = SDL_CreateTextureFromSurface(ren, surfParameters);
+		SDL_RenderCopy(ren, textParameters, &size, &statsRect);
+		SDL_FreeSurface(surfParameters);
+		SDL_DestroyTexture(textParameters);
+
+		xPoint = 130, yPoint = 190;
+		statsRect = { xPoint, yPoint, 160, 60 };
+		sprintf_s(parametersStr, "Health %d", hero.maxHealth);
+		surfParameters = TTF_RenderText_Blended(parametersFont, parametersStr, { 255, 255, 255, 255 });
+		size = { 0, 0, surfParameters->w, surfParameters->h };
+		textParameters = SDL_CreateTextureFromSurface(ren, surfParameters);
+		SDL_RenderCopy(ren, textParameters, &size, &statsRect);
+		SDL_FreeSurface(surfParameters);
+		SDL_DestroyTexture(textParameters);
+
+		xPoint = 130, yPoint = 260;
+		statsRect = { xPoint, yPoint, 160, 60 };
+		sprintf_s(parametersStr, "Attack %d", hero.Attack);
+		surfParameters = TTF_RenderText_Blended(parametersFont, parametersStr, { 255, 255, 255, 255 });
+		size = { 0, 0, surfParameters->w, surfParameters->h };
+		textParameters = SDL_CreateTextureFromSurface(ren, surfParameters);
+		SDL_RenderCopy(ren, textParameters, &size, &statsRect);
+		SDL_FreeSurface(surfParameters);
+		SDL_DestroyTexture(textParameters);
+
+		xPoint = 130, yPoint = 330;
+		statsRect = { xPoint, yPoint, 220, 60 };
+		sprintf_s(parametersStr, "Defense %.3f", hero.Defense);
+		surfParameters = TTF_RenderText_Blended(parametersFont, parametersStr, { 255, 255, 255, 255 });
+		size = { 0, 0, surfParameters->w, surfParameters->h };
+		textParameters = SDL_CreateTextureFromSurface(ren, surfParameters);
+		SDL_RenderCopy(ren, textParameters, &size, &statsRect);
+		SDL_FreeSurface(surfParameters);
+
+		SDL_DestroyTexture(textParameters);
+		xPoint = 130, yPoint = 400;
+		statsRect = { xPoint, yPoint, 160, 60 };
+		sprintf_s(parametersStr, "Mana %d", hero.maxMana);
+		surfParameters = TTF_RenderText_Blended(parametersFont, parametersStr, { 255, 255, 255, 255 });
+		size = { 0, 0, surfParameters->w, surfParameters->h };
+		textParameters = SDL_CreateTextureFromSurface(ren, surfParameters);
+		SDL_RenderCopy(ren, textParameters, &size, &statsRect);
+		SDL_FreeSurface(surfParameters);
+		SDL_DestroyTexture(textParameters);
+
+		SDL_DestroyTexture(textParameters);
+		xPoint = 130, yPoint = 470;
+		statsRect = { xPoint, yPoint, 200, 60 };
+		sprintf_s(parametersStr, "Fireball %d", abilityDamageFireball);
+		surfParameters = TTF_RenderText_Blended(parametersFont, parametersStr, { 255, 255, 255, 255 });
+		size = { 0, 0, surfParameters->w, surfParameters->h };
+		textParameters = SDL_CreateTextureFromSurface(ren, surfParameters);
+		SDL_RenderCopy(ren, textParameters, &size, &statsRect);
+		SDL_FreeSurface(surfParameters);
+		SDL_DestroyTexture(textParameters);
+
+		SDL_DestroyTexture(textParameters);
+		xPoint = 130, yPoint = 540;
+		statsRect = { xPoint, yPoint, 220, 60 };
+		sprintf_s(parametersStr, "Lightning %d", abilityDamageLightning);
+		surfParameters = TTF_RenderText_Blended(parametersFont, parametersStr, { 255, 255, 255, 255 });
+		size = { 0, 0, surfParameters->w, surfParameters->h };
+		textParameters = SDL_CreateTextureFromSurface(ren, surfParameters);
+		SDL_RenderCopy(ren, textParameters, &size, &statsRect);
+		SDL_FreeSurface(surfParameters);
+		SDL_DestroyTexture(textParameters);
+
+		SDL_DestroyTexture(textParameters);
+		xPoint = 130, yPoint = 610;
+		statsRect = { xPoint, yPoint, 160, 60 };
+		sprintf_s(parametersStr, "Poison %d", abilityDamagePoison);
+		surfParameters = TTF_RenderText_Blended(parametersFont, parametersStr, { 255, 255, 255, 255 });
+		size = { 0, 0, surfParameters->w, surfParameters->h };
+		textParameters = SDL_CreateTextureFromSurface(ren, surfParameters);
+		SDL_RenderCopy(ren, textParameters, &size, &statsRect);
+		SDL_FreeSurface(surfParameters);
+		SDL_DestroyTexture(textParameters);
+
+		xPoint = 870, yPoint = 120;
+		statsRect = { xPoint, yPoint, 160, 60 };
+		sprintf_s(parametersStr, "Gold %d", hero.Gold);
+		surfParameters = TTF_RenderText_Blended(parametersFont, parametersStr, { 255, 255, 255, 255 });
+		size = { 0, 0, surfParameters->w, surfParameters->h };
+		textParameters = SDL_CreateTextureFromSurface(ren, surfParameters);
+		SDL_RenderCopy(ren, textParameters, &size, &statsRect);
+		SDL_FreeSurface(surfParameters);
+		SDL_DestroyTexture(textParameters);
+
+		xPoint = 870, yPoint = 190;
+		statsRect = { xPoint, yPoint, 280, 60 };
+		sprintf_s(parametersStr, "Experience %d/%d", hero.experience, hero.levelUp);
+		surfParameters = TTF_RenderText_Blended(parametersFont, parametersStr, { 255, 255, 255, 255 });
+		size = { 0, 0, surfParameters->w, surfParameters->h };
+		textParameters = SDL_CreateTextureFromSurface(ren, surfParameters);
+		SDL_RenderCopy(ren, textParameters, &size, &statsRect);
+		SDL_FreeSurface(surfParameters);
+		SDL_DestroyTexture(textParameters);
+
+		xPoint = 870, yPoint = 260;
+		statsRect = { xPoint, yPoint, 200, 60 };
+		sprintf_s(parametersStr, "Level %d/%d",hero.level, hero.maxLevel);
+		surfParameters = TTF_RenderText_Blended(parametersFont, parametersStr, { 255, 255, 255, 255 });
+		size = { 0, 0, surfParameters->w, surfParameters->h };
+		textParameters = SDL_CreateTextureFromSurface(ren, surfParameters);
+		SDL_RenderCopy(ren, textParameters, &size, &statsRect);
+		SDL_FreeSurface(surfParameters);
+		SDL_DestroyTexture(textParameters);
+
+		xPoint = 870, yPoint = 330;
+		statsRect = { xPoint, yPoint, 160, 60 };
+		sprintf_s(parametersStr, "Points %d", hero.pointsLevel);
+		surfParameters = TTF_RenderText_Blended(parametersFont, parametersStr, { 255, 255, 255, 255 });
+		size = { 0, 0, surfParameters->w, surfParameters->h };
+		textParameters = SDL_CreateTextureFromSurface(ren, surfParameters);
+		SDL_RenderCopy(ren, textParameters, &size, &statsRect);
+		SDL_FreeSurface(surfParameters);
+		SDL_DestroyTexture(textParameters);
+
+		xPoint = 440, yPoint = 120;
+		statsRect = { xPoint, yPoint, 280, 60 };
+		sprintf_s(parametersStr, "Items parameters");
+		surfParameters = TTF_RenderText_Blended(parametersFont, parametersStr, { 255, 255, 255, 255 });
+		size = { 0, 0, surfParameters->w, surfParameters->h };
+		textParameters = SDL_CreateTextureFromSurface(ren, surfParameters);
+		SDL_RenderCopy(ren, textParameters, &size, &statsRect);
+		SDL_FreeSurface(surfParameters);
+		SDL_DestroyTexture(textParameters);
+
+		xPoint = 440, yPoint = 190;
+		statsRect = { xPoint, yPoint, 280, 60 };
+		sprintf_s(parametersStr, "Armor health %d", hero.armorHealth);
+		surfParameters = TTF_RenderText_Blended(parametersFont, parametersStr, { 255, 255, 255, 255 });
+		size = { 0, 0, surfParameters->w, surfParameters->h };
+		textParameters = SDL_CreateTextureFromSurface(ren, surfParameters);
+		SDL_RenderCopy(ren, textParameters, &size, &statsRect);
+		SDL_FreeSurface(surfParameters);
+		SDL_DestroyTexture(textParameters);
+
+		xPoint = 440, yPoint = 260;
+		statsRect = { xPoint, yPoint, 160, 60 };
+		sprintf_s(parametersStr, "Sword %d", hero.weapon);
+		surfParameters = TTF_RenderText_Blended(parametersFont, parametersStr, { 255, 255, 255, 255 });
+		size = { 0, 0, surfParameters->w, surfParameters->h };
+		textParameters = SDL_CreateTextureFromSurface(ren, surfParameters);
+		SDL_RenderCopy(ren, textParameters, &size, &statsRect);
+		SDL_FreeSurface(surfParameters);
+		SDL_DestroyTexture(textParameters);
+
+		xPoint = 440, yPoint = 330;
+		statsRect = { xPoint, yPoint, 320, 60 };
+		sprintf_s(parametersStr, "Armor defense %.3f", hero.armorDefense);
+		surfParameters = TTF_RenderText_Blended(parametersFont, parametersStr, { 255, 255, 255, 255 });
+		size = { 0, 0, surfParameters->w, surfParameters->h };
+		textParameters = SDL_CreateTextureFromSurface(ren, surfParameters);
+		SDL_RenderCopy(ren, textParameters, &size, &statsRect);
+		SDL_FreeSurface(surfParameters);
+		SDL_DestroyTexture(textParameters);
+
+		xPoint = 440, yPoint = 400;
+		statsRect = { xPoint, yPoint, 320, 60 };
+		sprintf_s(parametersStr, "Mana necklace %d", hero.necklace);
+		surfParameters = TTF_RenderText_Blended(parametersFont, parametersStr, { 255, 255, 255, 255 });
+		size = { 0, 0, surfParameters->w, surfParameters->h };
+		textParameters = SDL_CreateTextureFromSurface(ren, surfParameters);
+		SDL_RenderCopy(ren, textParameters, &size, &statsRect);
+		SDL_FreeSurface(surfParameters);
+		SDL_DestroyTexture(textParameters);
+
+		while (SDL_PollEvent(&ev) != NULL) {
+			SDL_PollEvent(&ev);
+
+			if (state[SDL_SCANCODE_ESCAPE]) {
+				SDL_DestroyTexture(textParameters);
+				SDL_DestroyTexture(textParametersHero);
+				TTF_CloseFont(parametersFont);
+				return;
+			}
+		}
+
+		SDL_RenderPresent(ren);
+		SDL_Delay(20);
+	}
+}
+
 int main(int argc, char* argv[]) {
 	init();
 	srand(time(NULL));
@@ -703,10 +917,12 @@ int main(int argc, char* argv[]) {
 		werewolf = { WerewolfX, WerewolfY, XsizeEnemy, YsizeEnemy };
 		rat = { RatX, RatY, XsizeEnemy, YsizeEnemy };
 		while (SDL_PollEvent(&ev) != NULL) {
-		//isPressedEscape = pressedEscape();
 		isPressed = pressedEnter();
 			if (state[SDL_SCANCODE_ESCAPE]) {
 				menu();
+			}
+			if (state[SDL_SCANCODE_P]) {
+				parameters(ren);
 			}
 			switch (ev.type) {
 			case SDL_QUIT:
@@ -715,10 +931,6 @@ int main(int argc, char* argv[]) {
 
 			case SDL_KEYDOWN:
 				switch (ev.key.keysym.scancode) {
-				/*case SDL_SCANCODE_ESCAPE: {
-					menu(); 
-					break;
-				}*/
 				case SDL_SCANCODE_Q:
 					complete_the_quest(ren);
 					break;
@@ -908,15 +1120,6 @@ int main(int argc, char* argv[]) {
 		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
 		SDL_RenderClear(ren);
 
-		/*SDL_SetRenderDrawColor(ren, 200, 100, 0, 0);
-
-		if (row == 1 and col == 1) {
-			SDL_RenderFillRectF(ren, &bat);
-			SDL_RenderFillRectF(ren, &NPC);
-		}
-		SDL_SetRenderDrawColor(ren, 200, 0, 0, 0);
-		SDL_RenderFillRect(ren, &player);*/
-
 		//отрисовка комнат
 		if (row == 1 and col == 1) {
 			SDL_RenderCopy(ren, textRoom1, NULL, NULL);
@@ -984,7 +1187,6 @@ int main(int argc, char* argv[]) {
 				//Earth
 				SDL_RenderCopy(ren, textRune, &srcrune3, &dstrune3);
 			}
-			//SDL_RenderFillRectF(ren, &RunesRect);
 			if (flagRunes == 1)
 				SDL_RenderCopy(ren, textRunesPuzzle, &srcRunesRect, &dstRunesRect);
 
@@ -1073,19 +1275,6 @@ int main(int argc, char* argv[]) {
 			}
 		}
 		
-		/*if (row == 1 and col == 1) {
-			if (!checkCollision(legs, rect1) or !checkCollision(legs, rect2) or !checkCollision(legs, rect3)) {
-				Xcoordinate = lastPosXPlayer, Ycoordinate = lastPosYPlayer;
-			}
-		}
-		if (row == 2 and col == 1) {
-			if (!checkCollision(legs, rect4) or !checkCollision(legs, rect5) or !checkCollision(legs, rect6) or !checkCollision(legs, rect7)
-				or !checkCollision(legs, rect8) or !checkCollision(legs, rect9) or !checkCollision(legs, rect10) or !checkCollision(legs, rect11)
-				or !checkCollision(legs, rect12) or !checkCollision(legs, rect13) or !checkCollision(legs, rect14) or !checkCollision(legs, rect15)
-				or !checkCollision(legs, rect16) or !checkCollision(legs, rect17) or !checkCollision(legs, rect18) or !checkCollision(legs, rect19)) {
-				Xcoordinate = lastPosXPlayer, Ycoordinate = lastPosYPlayer;
-			}
-		}*/
 		if (row == 1 and col == 1) {
 			if (checkCollision(player, rect1) or checkCollision(player, rect2) or checkCollision(player, rect3)) {
 				SDL_RenderCopy(ren, textRoom1Collision, NULL, NULL);

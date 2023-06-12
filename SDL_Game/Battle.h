@@ -16,6 +16,7 @@ void enemy_patterns(int enemy);
 void render_enemy(int enemy, SDL_Renderer* ren, SDL_Texture* textBat, SDL_Texture* textGoblin, SDL_Texture* textSlime, SDL_Texture* textWerewolf, SDL_Texture* textRat);
 void check_pattern(SDL_Renderer* ren, SDL_Texture* textIcons);
 void render_dead_enemy(SDL_Renderer* ren, SDL_Texture* textdeadEenemy);
+void reward(SDL_Renderer* ren, int escape);
 
 #define Bat 1
 #define Goblin 2
@@ -26,3 +27,5 @@ void render_dead_enemy(SDL_Renderer* ren, SDL_Texture* textdeadEenemy);
 extern int flag;
 extern int livedEnemies;
 extern int counterKilledEnemies;
+extern int abilityDamageLightning, abilityDamageFireball, abilityDamagePoison;
+extern int poisonDamage;

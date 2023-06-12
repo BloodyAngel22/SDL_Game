@@ -22,10 +22,11 @@
 #define CritEnemy 5
 
 int stepFight = 1;
-int abilityDamageLightning = 48, abilityDamageFireball = 30, abilityDamagePoison = 6;
+extern int abilityDamageLightning = 48, abilityDamageFireball = 30, abilityDamagePoison = 6;
 extern bool posionEffect = false;
 extern bool lightingEffect = false;
 extern int choiceEnemy = 0;
+extern int poisonDamage = abilityDamagePoison;
 int amountEnemy;
 int livedEnemies = 1;
 int curAction, nextAction, action = 1, flagPattern = 0;
@@ -383,6 +384,7 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 					TTF_CloseFont(enemyTTF);
 					SDL_DestroyTexture(textIcons);
 					livedEnemies = 0;
+					reward(ren, 1);
 					return;
 				}
 				if (enemy1.isPoison == true or enemy2.isPoison == true or enemy3.isPoison == true) Poison();
@@ -720,6 +722,7 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 						if (enemy1.health <= 0) {
 							enemy1.atk = 0;
 							livedEnemies -= 1;
+							hero.Gold += enemy1.gold;
 						}
 					}
 					else if (choiceEnemy == 2) {
@@ -736,6 +739,7 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 						if (enemy2.health <= 0) {
 							enemy2.atk = 0;
 							livedEnemies -= 1;
+							hero.Gold += enemy2.gold;
 						}
 					}
 					flagPattern = 1;
@@ -749,6 +753,23 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 						enemy_patterns(Werewolf);
 					if (enemy == Rat)
 						enemy_patterns(Rat);
+					if (hero.Health <= 0) {
+						SDL_DestroyTexture(textdeadEnemy);
+						SDL_DestroyTexture(textArrow);
+						SDL_DestroyTexture(textBattle);
+						SDL_DestroyTexture(textBat);
+						SDL_DestroyTexture(textEnemyHealthTTF);
+						SDL_DestroyTexture(textCharacter);
+						SDL_DestroyTexture(textGoblin);
+						SDL_DestroyTexture(textSlime);
+						SDL_DestroyTexture(textWerewolf);
+						SDL_DestroyTexture(textRat);
+						TTF_CloseFont(enemyTTF);
+						SDL_DestroyTexture(textIcons);
+						livedEnemies = 0;
+						reward(ren, 1);
+						return;
+					}
 					stepFight += 1;
 					action += 1;
 				}
@@ -996,6 +1017,7 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 						if (enemy1.health <= 0) {
 							enemy1.atk = 0;
 							livedEnemies -= 1;
+							hero.Gold += enemy1.gold;
 						}
 					}
 					if (choiceEnemy == 2) {
@@ -1015,6 +1037,7 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 						if (enemy2.health <= 0) {
 							enemy2.atk = 0;
 							livedEnemies -= 1;
+							hero.Gold += enemy2.gold;
 						}
 					}
 					if (choiceEnemy == 3) {
@@ -1033,6 +1056,7 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 						if (enemy3.health <= 0) {
 							enemy3.atk = 0;
 							livedEnemies -= 1;
+							hero.Gold += enemy3.gold;
 						}
 					}
 					flagPattern = 1;
@@ -1046,35 +1070,27 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 						enemy_patterns(Werewolf);
 					if (enemy == Rat)
 						enemy_patterns(Rat);
+					if (hero.Health <= 0) {
+						SDL_DestroyTexture(textdeadEnemy);
+						SDL_DestroyTexture(textArrow);
+						SDL_DestroyTexture(textBattle);
+						SDL_DestroyTexture(textBat);
+						SDL_DestroyTexture(textEnemyHealthTTF);
+						SDL_DestroyTexture(textCharacter);
+						SDL_DestroyTexture(textGoblin);
+						SDL_DestroyTexture(textSlime);
+						SDL_DestroyTexture(textWerewolf);
+						SDL_DestroyTexture(textRat);
+						TTF_CloseFont(enemyTTF);
+						SDL_DestroyTexture(textIcons);
+						livedEnemies = 0;
+						reward(ren, 1);
+						return;
+					}
 					stepFight += 1;
 					action += 1;
 				}
 
-				if (livedEnemies < 1) {
-					SDL_DestroyTexture(textBat);
-					SDL_DestroyTexture(textArrow);
-					SDL_DestroyTexture(textBattle);
-					SDL_DestroyTexture(textdeadEnemy);
-					SDL_DestroyTexture(textCharacter);
-					SDL_DestroyTexture(textGoblin);
-					SDL_DestroyTexture(textSlime);
-					SDL_DestroyTexture(textWerewolf);
-					SDL_DestroyTexture(textRat);
-					SDL_DestroyTexture(textEnemyHealthTTF);
-					SDL_DestroyTexture(textIcons);
-
-					flag = 1;
-					abilityDamagePoison = 6;
-					hero.experience += (enemy1.level * amountEnemy);
-					recovery_character();
-					if (hero.experience >= hero.levelUp)
-						level_up();
-					if (questFlag)
-						counterKilledEnemies += 1;
-
-
-					return;
-				}
 				
 			}
 			else if (choiche == ESCAPE) {
@@ -1095,6 +1111,7 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 					SDL_DestroyTexture(textEnemyHealthTTF);
 					SDL_DestroyTexture(textIcons);
 
+					reward(ren, storageEscape);
 					return;
 				}
 				else {
@@ -1126,6 +1143,7 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 						TTF_CloseFont(enemyTTF);
 						SDL_DestroyTexture(textIcons);
 						livedEnemies = 0;
+						reward(ren, 1);
 						return;
 					}
 						
@@ -1146,7 +1164,7 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 	SDL_DestroyTexture(textIcons);
 
 	if (livedEnemies < 1) {
-		abilityDamagePoison = 6;
+		abilityDamagePoison = poisonDamage;
 		hero.experience += (enemy1.level * amountEnemy);
 		recovery_character();
 		if (hero.experience >= hero.levelUp)
@@ -1155,7 +1173,7 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 			counterKilledEnemies += 1;
 		if (questFlag and curQuest == 3 and enemy == Goblin)
 			counterKilledEnemies += 1;
-
+		reward(ren, 0);
 	}
 }
 
@@ -1239,7 +1257,7 @@ void Battler(SDL_Renderer* ren, int enemy) {
 	SDL_Rect srcrectAtk = { 200,200,0,0 };
 	SDL_Rect dstrectAtk = { 120, 50, 200, 160 };
 
-	if (livedEnemies < 1) {
+	/*if (livedEnemies < 1) {
 		SDL_DestroyTexture(textBat);
 		SDL_DestroyTexture(textArrow);
 		SDL_DestroyTexture(textBattle);
@@ -1258,7 +1276,7 @@ void Battler(SDL_Renderer* ren, int enemy) {
 			level_up();
 		flag = 1;
 		return;
-	}
+	}*/
 
 	if (amountEnemy == 2 and livedEnemies >= 1 and hero.Health > 0) {
 			int hitEnemy = 0;
@@ -1403,7 +1421,6 @@ void Battler(SDL_Renderer* ren, int enemy) {
 					enemy1.atk = 0;
 					livedEnemies -= 1;
 					hero.Gold += enemy1.gold;
-					hero.experience += enemy1.level;
 				}
 			}
 			if (hitEnemy == 2 and enemy2.health > 0) {
@@ -1413,7 +1430,6 @@ void Battler(SDL_Renderer* ren, int enemy) {
 					enemy2.atk = 0;
 					livedEnemies -= 1;
 					hero.Gold += enemy2.gold;
-					hero.experience += enemy2.level;
 				}
 			}
 
@@ -1483,6 +1499,7 @@ void Battler(SDL_Renderer* ren, int enemy) {
 				TTF_CloseFont(enemyTTF);
 				SDL_DestroyTexture(textIcons);
 				livedEnemies = 0;
+				reward(ren, 1);
 				return;
 			}
 			stepFight += 1;
@@ -1755,7 +1772,6 @@ void Battler(SDL_Renderer* ren, int enemy) {
 					enemy1.atk = 0;
 					livedEnemies -= 1;
 					hero.Gold += enemy1.gold;
-					hero.experience += enemy1.level;
 				}
 			}
 			if (hitEnemy == 2 and enemy2.health > 0) {
@@ -1765,7 +1781,6 @@ void Battler(SDL_Renderer* ren, int enemy) {
 					enemy2.atk = 0;
 					livedEnemies -= 1;
 					hero.Gold += enemy2.gold;
-					hero.experience += enemy2.level;
 				}
 			}
 			if (hitEnemy == 3 and enemy3.health > 0) {
@@ -1775,7 +1790,6 @@ void Battler(SDL_Renderer* ren, int enemy) {
 					enemy3.atk = 0;
 					livedEnemies -= 1;
 					hero.Gold += enemy3.gold;
-					hero.experience += enemy3.level;
 				}
 			}
 
@@ -1846,6 +1860,7 @@ void Battler(SDL_Renderer* ren, int enemy) {
 				TTF_CloseFont(enemyTTF);
 				SDL_DestroyTexture(textIcons);
 				livedEnemies = 0;
+				reward(ren, 1);
 				return;
 			}
 			stepFight += 1;
@@ -1952,7 +1967,7 @@ void generateEnemy(int enemy) {
 			enemy3.level = werewolfCharacteristics.experienceEnemy, enemy3.isPoison = 0, enemy3.maxHealth = werewolfCharacteristics.Health;
 	}
 	if (enemy == Rat) {
-		ratCharacteristics.Health = 65; ratCharacteristics.Attack = 15; ratCharacteristics.Gold = 60; ratCharacteristics.experienceEnemy = 100;
+		ratCharacteristics.Health = 65; ratCharacteristics.Attack = 15; ratCharacteristics.Gold = 25; ratCharacteristics.experienceEnemy = 40;
 		ratCharacteristics.maxHealth = ratCharacteristics.Health;
 		enemy1.atk = ratCharacteristics.Attack; enemy1.health = ratCharacteristics.Health; enemy1.gold = ratCharacteristics.Gold,
 			enemy1.level = ratCharacteristics.experienceEnemy, enemy1.isPoison = 0, enemy1.maxHealth = ratCharacteristics.Health;
@@ -2034,7 +2049,7 @@ void Poison() {
 
 	if (abilityDamagePoison == 0) {
 		enemy1.isPoison, enemy2.isPoison, enemy3.isPoison = false;
-		abilityDamagePoison = 6;
+		abilityDamagePoison = poisonDamage;
 	}
 }
 
@@ -2519,5 +2534,110 @@ void render_dead_enemy(SDL_Renderer* ren, SDL_Texture* textdeadEenemy) {
 			dstrectDeadEnemy3 = { xDeadEnemy3, yDeadEnemy3, 75, 75 };
 			SDL_RenderCopy(ren, textdeadEenemy, &srcrectDeadEnemy, &dstrectDeadEnemy3);
 		}
+	}
+}
+
+void reward(SDL_Renderer* ren, int escape) {
+	//Texture
+	SDL_Surface* surfReward = IMG_Load("sprites\\menu\\reward.png");
+	SDL_Texture* textReward = SDL_CreateTextureFromSurface(ren, surfReward);
+	SDL_FreeSurface(surfReward);
+
+	TTF_Font* rewardFont = TTF_OpenFont("fonts\\Ubuntu-Regular.ttf", 75);
+	char rewardStr[100] = "parameters";
+	SDL_Surface* surfRewardTTF = TTF_RenderText_Blended(rewardFont, rewardStr, { 255, 255, 255, 255 });
+	SDL_Texture* textRewardTTF = SDL_CreateTextureFromSurface(ren, surfRewardTTF);
+	SDL_Rect size = { 0, 0, surfRewardTTF->w, surfRewardTTF->h };
+	int xPoint = 100, yPoint = 50;
+	SDL_Rect statsRect = { xPoint, yPoint, 55, 60 };
+	SDL_FreeSurface(surfRewardTTF);
+
+	SDL_Event ev;
+	SDL_PollEvent(&ev);
+	const Uint8* state = SDL_GetKeyboardState(NULL);
+
+	while (true) {
+
+		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+		SDL_RenderClear(ren);
+		SDL_RenderCopy(ren, textReward, NULL, NULL);
+
+		if (escape != 0) {
+			xPoint = 460, yPoint = 200;
+			statsRect = { xPoint, yPoint, 320, 60 };
+			sprintf_s(rewardStr, "Experience 0");
+			surfRewardTTF = TTF_RenderText_Blended(rewardFont, rewardStr, { 255, 255, 255, 255 });
+			size = { 0, 0, surfRewardTTF->w, surfRewardTTF->h };
+			textRewardTTF = SDL_CreateTextureFromSurface(ren, surfRewardTTF);
+			SDL_RenderCopy(ren, textRewardTTF, &size, &statsRect);
+			SDL_FreeSurface(surfRewardTTF);
+			SDL_DestroyTexture(textRewardTTF);
+
+			xPoint = 460, yPoint = 280;
+			statsRect = { xPoint, yPoint, 200, 60 };
+			sprintf_s(rewardStr, "Gold 0");
+			surfRewardTTF = TTF_RenderText_Blended(rewardFont, rewardStr, { 255, 255, 255, 255 });
+			size = { 0, 0, surfRewardTTF->w, surfRewardTTF->h };
+			textRewardTTF = SDL_CreateTextureFromSurface(ren, surfRewardTTF);
+			SDL_RenderCopy(ren, textRewardTTF, &size, &statsRect);
+			SDL_FreeSurface(surfRewardTTF);
+			SDL_DestroyTexture(textRewardTTF);
+		}
+		if (amountEnemy == 2 and escape == 0) {
+			xPoint = 460, yPoint = 200;
+			statsRect = { xPoint, yPoint, 320, 60 };
+			sprintf_s(rewardStr, "Experience %d", enemy1.level + enemy2.level);
+			surfRewardTTF = TTF_RenderText_Blended(rewardFont, rewardStr, { 255, 255, 255, 255 });
+			size = { 0, 0, surfRewardTTF->w, surfRewardTTF->h };
+			textRewardTTF = SDL_CreateTextureFromSurface(ren, surfRewardTTF);
+			SDL_RenderCopy(ren, textRewardTTF, &size, &statsRect);
+			SDL_FreeSurface(surfRewardTTF);
+			SDL_DestroyTexture(textRewardTTF);
+
+			xPoint = 460, yPoint = 280;
+			statsRect = { xPoint, yPoint, 200, 60 };
+			sprintf_s(rewardStr, "Gold %d", enemy1.gold + enemy2.gold);
+			surfRewardTTF = TTF_RenderText_Blended(rewardFont, rewardStr, { 255, 255, 255, 255 });
+			size = { 0, 0, surfRewardTTF->w, surfRewardTTF->h };
+			textRewardTTF = SDL_CreateTextureFromSurface(ren, surfRewardTTF);
+			SDL_RenderCopy(ren, textRewardTTF, &size, &statsRect);
+			SDL_FreeSurface(surfRewardTTF);
+			SDL_DestroyTexture(textRewardTTF);
+		}
+		if (amountEnemy == 3 and escape == 0) {
+			xPoint = 460, yPoint = 200;
+			statsRect = { xPoint, yPoint, 320, 60 };
+			sprintf_s(rewardStr, "Experience %d", enemy1.level + enemy2.level + enemy3.level);
+			surfRewardTTF = TTF_RenderText_Blended(rewardFont, rewardStr, { 255, 255, 255, 255 });
+			size = { 0, 0, surfRewardTTF->w, surfRewardTTF->h };
+			textRewardTTF = SDL_CreateTextureFromSurface(ren, surfRewardTTF);
+			SDL_RenderCopy(ren, textRewardTTF, &size, &statsRect);
+			SDL_FreeSurface(surfRewardTTF);
+			SDL_DestroyTexture(textRewardTTF);
+
+			xPoint = 460, yPoint = 280;
+			statsRect = { xPoint, yPoint, 200, 60 };
+			sprintf_s(rewardStr, "Gold %d", enemy1.gold + enemy2.gold + enemy3.gold);
+			surfRewardTTF = TTF_RenderText_Blended(rewardFont, rewardStr, { 255, 255, 255, 255 });
+			size = { 0, 0, surfRewardTTF->w, surfRewardTTF->h };
+			textRewardTTF = SDL_CreateTextureFromSurface(ren, surfRewardTTF);
+			SDL_RenderCopy(ren, textRewardTTF, &size, &statsRect);
+			SDL_FreeSurface(surfRewardTTF);
+			SDL_DestroyTexture(textRewardTTF);
+		}
+
+		while (SDL_PollEvent(&ev) != NULL) {
+			SDL_PollEvent(&ev);
+
+			if (state[SDL_SCANCODE_RETURN]) {
+				SDL_DestroyTexture(textReward);
+				SDL_DestroyTexture(textRewardTTF);
+				TTF_CloseFont(rewardFont);
+				return;
+			}
+		}
+
+		SDL_RenderPresent(ren);
+		SDL_Delay(20);
 	}
 }

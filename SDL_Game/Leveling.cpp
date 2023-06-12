@@ -5,6 +5,7 @@
 #define EXIT 5
 #include "Models.h"
 #include "Ability.h"
+#include "Battle.h"
 #include "Runes.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -238,6 +239,7 @@ void character_leveling(SDL_Renderer* ren) {
 		abilityDamageFireball *= 1.3;
 		abilityDamageLightning *= 1.15;
 		abilityDamagePoison += 1;
+		poisonDamage = abilityDamagePoison;
 		system("cls");
 		hero.pointsLevel--;
 	}
