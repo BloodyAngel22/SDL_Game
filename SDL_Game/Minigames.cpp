@@ -35,13 +35,21 @@ void rock_scissors_paper_menu(SDL_Renderer* ren) {
 	SDL_Surface* surfBackground = IMG_Load("sprites\\puzzles\\background.png");
 	SDL_Texture* textBackground = SDL_CreateTextureFromSurface(ren, surfBackground);
 	SDL_FreeSurface(surfBackground);
+
+	TTF_Font* nameFont = TTF_OpenFont("fonts\\Ubuntu-Regular.ttf", 75);
+	char nameStr[100] = "Gold";
+	SDL_Surface* surfName = TTF_RenderText_Blended(nameFont, nameStr, { 255, 255, 255, 255 });
+	SDL_Texture* textName = SDL_CreateTextureFromSurface(ren, surfName);
+	SDL_Rect size = { 0, 0, surfName->w, surfName->h };
+	int xPoint = 100, yPoint = 50;
+	SDL_Rect nameRect = { xPoint, yPoint, 55, 60 };
+	SDL_FreeSurface(surfName);
 	//
 	TTF_Font* winStreakTTF = TTF_OpenFont("fonts\\Ubuntu-Regular.ttf", 75);
 	char winStreak[100] = "Points";
 	SDL_Surface* surftWinStreakTTF = TTF_RenderText_Blended(winStreakTTF, winStreak, { 255, 255, 255, 255 });
 	SDL_Texture* textWinStreakTTF = SDL_CreateTextureFromSurface(ren, surftWinStreakTTF);
-	SDL_Rect size = { 0, 0, surftWinStreakTTF->w, surftWinStreakTTF->h };
-	int xPoint = 1100, yPoint = 20;
+	SDL_Rect sizeT = { 0, 0, surftWinStreakTTF->w, surftWinStreakTTF->h };
 	SDL_Rect pointsTTF = { xPoint, yPoint, 120, 60 };
 
 	SDL_Rect position = { 0, 0, 150, 150 };
@@ -110,6 +118,8 @@ void rock_scissors_paper_menu(SDL_Renderer* ren) {
 				pointer++;
 			if (State[SDL_SCANCODE_A])
 				pointer--;
+			if (State[SDL_SCANCODE_ESCAPE])
+				running = 0;
 		}
 		if (pointer == 4)
 			pointer = 1;
@@ -146,6 +156,16 @@ void rock_scissors_paper_menu(SDL_Renderer* ren) {
 					position.w = 300;
 					position.x = 1280 / 2 - position.w/2, position.y = 720 / 2 - position.h/2;
 					SDL_RenderCopy(ren, textWinDefeatDraw, &srcWin, &position);
+
+					xPoint = 530, yPoint = 220;
+					nameRect = { xPoint, yPoint, 240, 60 };
+					sprintf_s(nameStr, "Gold %d", 20 * winningStreak);
+					surfName = TTF_RenderText_Blended(nameFont, nameStr, { 255, 255, 255, 255 });
+					sizeT = { 0, 0, surfName->w, surfName->h };
+					textName = SDL_CreateTextureFromSurface(ren, surfName);
+					SDL_RenderCopy(ren, textName, &sizeT, &nameRect);
+					SDL_FreeSurface(surfName);
+					SDL_DestroyTexture(textName);
 
 					render_result(ren);
 
@@ -221,6 +241,8 @@ void rock_scissors_paper_menu(SDL_Renderer* ren) {
 		SDL_DestroyTexture(textRockScissorsPaper);
 		SDL_DestroyTexture(textWinDefeatDraw);
 		SDL_DestroyTexture(textWinStreakTTF);
+		SDL_DestroyTexture(textName);
+		TTF_CloseFont(nameFont);
 		TTF_CloseFont(winStreakTTF);
 	}
 }

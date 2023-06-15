@@ -26,9 +26,10 @@ int classHero = 0;
 float win_width = 1280, win_height = 720;
 SDL_Window* win = 0;
 SDL_Renderer* ren = 0;
-int Xcoordinate, Ycoordinate;
+extern int Xcoordinate = 0, Ycoordinate = 0;
 extern int checkChest = 0;
 extern int checkChest2 = 0;
+extern int row = 1, col = 1;
 
 void init() {
 
@@ -229,8 +230,9 @@ void main_menu() {
 					}
 				}
 			}
-			isPressed = pressedEnter();
 		}
+		SDL_PollEvent(&ev);
+		isPressed = pressedEnter();
 		if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 			SDL_DestroyTexture(textMainMenu);
 			SDL_DestroyTexture(textArrow);
@@ -688,6 +690,65 @@ void parameters(SDL_Renderer* ren) {
 	}
 }
 
+void splash_screen(SDL_Renderer* ren) {
+	//Texture
+	SDL_Surface* surfSplashScreen = IMG_Load("sprites\\background\\splash_screen.png");
+	SDL_Texture* textSplashScreen = SDL_CreateTextureFromSurface(ren, surfSplashScreen);
+	SDL_FreeSurface(surfSplashScreen);
+
+	TTF_Font* nameFont = TTF_OpenFont("fonts\\Ubuntu-Regular.ttf", 75);
+	char nameStr[100] = "parameters";
+	SDL_Surface* surfName = TTF_RenderText_Blended(nameFont, nameStr, { 255, 255, 255, 255 });
+	SDL_Texture* textName = SDL_CreateTextureFromSurface(ren, surfName);
+	SDL_Rect size = { 0, 0, surfName->w, surfName->h };
+	int xPoint = 100, yPoint = 50;
+	SDL_Rect nameRect = { xPoint, yPoint, 55, 60 };
+	SDL_FreeSurface(surfName);
+
+	SDL_Event ev;
+	SDL_PollEvent(&ev);
+	const Uint8* state = SDL_GetKeyboardState(NULL);
+
+	while (true) {
+
+		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+		SDL_RenderClear(ren);
+		SDL_RenderCopy(ren, textSplashScreen, NULL, NULL);
+
+		xPoint = 440, yPoint = 190;
+		nameRect = { xPoint, yPoint, 280, 60 };
+		sprintf_s(nameStr, "2D JRPG");
+		surfName = TTF_RenderText_Blended(nameFont, nameStr, { 255, 255, 255, 255 });
+		size = { 0, 0, surfName->w, surfName->h };
+		textName = SDL_CreateTextureFromSurface(ren, surfName);
+		SDL_RenderCopy(ren, textName, &size, &nameRect);
+		SDL_FreeSurface(surfName);
+		SDL_DestroyTexture(textName);
+
+		while (SDL_PollEvent(&ev) != NULL) {
+			SDL_PollEvent(&ev);
+			isPressed = pressedEnter();
+
+			if (state[SDL_SCANCODE_RETURN] and isPressed) {
+				SDL_DestroyTexture(textSplashScreen);
+				SDL_DestroyTexture(textName);
+				TTF_CloseFont(nameFont);
+				return;
+			}
+			if (state[SDL_SCANCODE_ESCAPE]) {
+				SDL_DestroyTexture(textSplashScreen);
+				SDL_DestroyTexture(textName);
+				TTF_CloseFont(nameFont);
+				de_init(1);
+			}
+		}
+
+		SDL_RenderPresent(ren);
+		SDL_Delay(20);
+		isPressed = 0;
+	}
+}
+
 int main(int argc, char* argv[]) {
 	init();
 	srand(time(NULL));
@@ -780,7 +841,6 @@ int main(int argc, char* argv[]) {
 	SDL_Surface* surfRoom4 = IMG_Load("sprites\\background\\part4.png");
 	SDL_Texture* textRoom4 = SDL_CreateTextureFromSurface(ren, surfRoom4);
 	SDL_FreeSurface(surfRoom4);
-	int row = 1, col = 1;
 	int room = 1;
 	// character 
 	SDL_Surface* surfCharacter = IMG_Load("sprites\\character\\character.png");
@@ -875,7 +935,7 @@ int main(int argc, char* argv[]) {
 
 	//Rect
 	//Trees
-	SDL_FRect rect1 = { 728, 195, 12, 37 };
+	SDL_FRect rect1 = { 728, 195, 12, 45 };
 	SDL_FRect rect2 = { 272, 99, 15, 47 };
 	SDL_FRect rect3 = { 445, 586, 15, 42 };
 	//Columns
@@ -906,6 +966,7 @@ int main(int argc, char* argv[]) {
 	int lastPosXWerewolf = 0, lastPosYWerewolf = 0;
 	int lastPosXRat = 0, lastPosYRat = 0;
 	int lastPosXPlayer = 0, lastPosYPlayer = 0;
+	splash_screen(ren);
 	main_menu();
 	while (isRunning) {
 		UP = DOWN = LEFT = RIGHT = 0;
@@ -1139,13 +1200,16 @@ int main(int argc, char* argv[]) {
 			if (flagLamps)//Лапмпа
 				SDL_RenderCopy(ren, textLampOn, NULL, &dstLamp);
 			if (flagLamps == 0) {
-				dstLamp.x = dstOpenChest.x; dstLamp.w = dstOpenChest.w; dstLamp.h = dstOpenChest.h;
-				dstFLamp.x = dstLamp.x; dstFLamp.w = dstLamp.w; dstFLamp.h = dstLamp.h;
 				if (checkChest == 0) {
 					SDL_RenderCopy(ren, textLockedChest, NULL, &dstLamp);
+					dstLamp.x = dstOpenChest.x; dstLamp.w = dstOpenChest.w; dstLamp.h = dstOpenChest.h;
+					dstFLamp.x = dstLamp.x; dstFLamp.w = dstLamp.w; dstFLamp.h = dstLamp.h;
 				}
 				if (checkChest == 1) {
 					SDL_RenderCopy(ren, textOpenChest, NULL, &dstLamp);
+					dstFLamp.x = -300;
+					dstLamp.w = dstOpenChest.w; dstLamp.h = dstOpenChest.h;
+					dstFLamp.w = dstLamp.w; dstFLamp.h = dstLamp.h;
 				}
 				if (checkCollision(player, dstFLamp) and state[SDL_SCANCODE_RETURN] and isPressed) {
 					hero.Gold += 300;
@@ -1241,14 +1305,6 @@ int main(int argc, char* argv[]) {
 		if (col != 1)
 			SDL_RenderCopy(ren, textPortal, &srcPortal, &dstPortal4);//нижний
 
-		//NPC
-		if (checkCollision(player, NPC) and state[SDL_SCANCODE_RETURN] and isPressed and row == 1 and col == 2) {
-			questFlag = 1;
-			quest(ren);
-		}
-		if (checkCollision(player, NPC2) and state[SDL_SCANCODE_RETURN] and isPressed and row == 1 and col == 2 and curQuest == 2) {
-			dialogue(ren);
-		}
 		//Порталы
 		if (checkCollision(player, Portal1) and state[SDL_SCANCODE_RETURN] and isPressed) {//Левый портал
 			if (row != 1) {
@@ -1296,6 +1352,7 @@ int main(int argc, char* argv[]) {
 				flagCollision = 1;
 			}
 		}
+
 		if (!animation)
 			SDL_RenderCopy(ren, textCharacter, &srcrectCharacter, &dstrectCharacter);
 		if (animation and RIGHT and !UP and !DOWN ) {
@@ -1322,6 +1379,14 @@ int main(int argc, char* argv[]) {
 		}
 		if (row == 2 and col == 1 and flagCollision == 0) {
 			SDL_RenderCopy(ren, textRoom2Collision, NULL, NULL);
+		}
+		//NPC
+		if (checkCollision(player, NPC) and state[SDL_SCANCODE_RETURN] and isPressed and row == 1 and col == 2) {
+			questFlag = 1;
+			quest(ren);
+		}
+		if (checkCollision(player, NPC2) and state[SDL_SCANCODE_RETURN] and isPressed and row == 1 and col == 2 and curQuest == 2) {
+			dialogue(ren);
 		}
 		isPressed = 0;
 		isPressedEscape = 0;

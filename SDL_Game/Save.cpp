@@ -2,6 +2,9 @@
 #include "Save.h"
 #include "Models.h"
 #include "Battle.h"
+#include "Quest.h"
+#include "Puzzle.h"
+#include "Minigames.h"
 #include <SDL.h>
 #include <SDL_image.h>
 
@@ -92,8 +95,16 @@ void save_in_file(SDL_Renderer* ren) {//Сохранение в файл
 		fopen_s(&saves, save3, "w");
 	}
 
-	fprintf(saves, "%d %d %d %.3f %d", hero.Health, hero.Attack, hero.Mana, hero.Defense, hero.Gold);
-	
+	fprintf(saves, "%d %d %d %.3f %d %d %d %d %d %d %d %d\n", hero.Health, hero.Attack, hero.Mana, hero.Defense, hero.Gold, hero.experience, 
+		hero.level, hero.levelUp, abilityDamageFireball, abilityDamageLightning, abilityDamagePoison, hero.pointsLevel);
+	fprintf(saves, "%d %d %.3f %d\n", hero.weapon, hero.armorHealth, hero.armorDefense, hero.necklace);
+	fprintf(saves, "%d %d\n", Xcoordinate, Ycoordinate);
+	fprintf(saves, "%d %d %d %d %d\n", counterKilledEnemies, curQuest, questFlag, keyCheckBat, keyCheckGoblin);
+	fprintf(saves, "%d %d %d %d %d %d %d %d\n", flagCode, checkChest, checkChest2, questFlag, keyCheckBat, keyCheckGoblin, flagLamps, flagRunes);
+	fprintf(saves, "%d %d\n", row, col);
+	fprintf(saves, "%d\n", winningStreak);
+
+
 	fclose(saves);
 	SDL_DestroyTexture(textSave);
 	SDL_DestroyTexture(textArrow);
@@ -175,18 +186,39 @@ void print_in_file(SDL_Renderer* ren) {//Загрузка сохранения
 
 	if (choicePrintFile == 1) {
 		fopen_s(&saves, save1, "rt");
-		fscanf(saves, "%d %d %d %f %d", &hero.Health, &hero.Attack, &hero.Mana, &hero.Defense, &hero.Gold);
+		fscanf(saves, "%d %d %d %f %d %d %d %d %d %d %d %d\n", &hero.Health, &hero.Attack, &hero.Mana, &hero.Defense, &hero.Gold, &hero.experience,
+			&hero.level, &hero.levelUp, &abilityDamageFireball, &abilityDamageLightning, &abilityDamagePoison, &hero.pointsLevel);
 		hero.maxHealth = hero.Health; hero.maxMana = hero.Mana;
+		fscanf(saves, "%d %d %f %d\n", &hero.weapon, &hero.armorHealth, &hero.armorDefense, &hero.necklace);
+		fscanf(saves, "%d %d\n", &Xcoordinate, &Ycoordinate);
+		fscanf(saves, "%d %d %d %d %d\n", &counterKilledEnemies ,&curQuest, &questFlag, &keyCheckBat, &keyCheckGoblin);
+		fscanf(saves, "%d %d %d %d %d %d %d %d\n", &flagCode, &checkChest, &checkChest2, &questFlag, &keyCheckBat, &keyCheckGoblin, &flagLamps, &flagRunes);
+		fscanf(saves, "%d %d\n", &row, &col);
+		fscanf(saves, "%d\n", &winningStreak);
 	}
 	if (choicePrintFile == 2) {
 		fopen_s(&saves, save2, "rt");
-		fscanf(saves, "%d %d %d %f %d", &hero.Health, &hero.Attack, &hero.Mana, &hero.Defense, &hero.Gold);
+		fscanf(saves, "%d %d %d %f %d %d %d %d %d %d %d %d\n", &hero.Health, &hero.Attack, &hero.Mana, &hero.Defense, &hero.Gold, &hero.experience,
+			&hero.level, &hero.levelUp, &abilityDamageFireball, &abilityDamageLightning, &abilityDamagePoison, &hero.pointsLevel);
 		hero.maxHealth = hero.Health; hero.maxMana = hero.Mana;
+		fscanf(saves, "%d %d %f %d\n", &hero.weapon, &hero.armorHealth, &hero.armorDefense, &hero.necklace);
+		fscanf(saves, "%d %d\n", &Xcoordinate, &Ycoordinate);
+		fscanf(saves, "%d %d %d %d %d\n", &counterKilledEnemies, &curQuest, &questFlag, &keyCheckBat, &keyCheckGoblin);
+		fscanf(saves, "%d %d %d %d %d %d %d %d\n", &flagCode, &checkChest, &checkChest2, &questFlag, &keyCheckBat, &keyCheckGoblin, &flagLamps, &flagRunes);
+		fscanf(saves, "%d %d\n", &row, &col);
+		fscanf(saves, "%d\n", &winningStreak);
 	}
 	if (choicePrintFile == 3) {
 		fopen_s(&saves, save3, "rt");
-		fscanf(saves, "%d %d %d %f %d", &hero.Health, &hero.Attack, &hero.Mana, &hero.Defense, &hero.Gold);
+		fscanf(saves, "%d %d %d %f %d %d %d %d %d %d %d %d\n", &hero.Health, &hero.Attack, &hero.Mana, &hero.Defense, &hero.Gold, &hero.experience,
+			&hero.level, &hero.levelUp, &abilityDamageFireball, &abilityDamageLightning, &abilityDamagePoison, &hero.pointsLevel);
 		hero.maxHealth = hero.Health; hero.maxMana = hero.Mana;
+		fscanf(saves, "%d %d %f %d\n", &hero.weapon, &hero.armorHealth, &hero.armorDefense, &hero.necklace);
+		fscanf(saves, "%d %d\n", &Xcoordinate, &Ycoordinate);
+		fscanf(saves, "%d %d %d %d %d\n", &counterKilledEnemies, &curQuest, &questFlag, &keyCheckBat, &keyCheckGoblin);
+		fscanf(saves, "%d %d %d %d %d %d %d %d\n", &flagCode, &checkChest, &checkChest2, &questFlag, &keyCheckBat, &keyCheckGoblin, &flagLamps, &flagRunes);
+		fscanf(saves, "%d %d\n", &row, &col);
+		fscanf(saves, "%d\n", &winningStreak);
 	}
 
 

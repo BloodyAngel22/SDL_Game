@@ -20,6 +20,8 @@
 #define HealEnemy 3
 #define VampirismEnemy 4
 #define CritEnemy 5
+#define Win 0
+#define Lose 1
 
 int stepFight = 1;
 extern int abilityDamageLightning = 48, abilityDamageFireball = 30, abilityDamagePoison = 6;
@@ -384,7 +386,7 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 					TTF_CloseFont(enemyTTF);
 					SDL_DestroyTexture(textIcons);
 					livedEnemies = 0;
-					reward(ren, 1);
+					reward(ren, Lose);
 					return;
 				}
 				if (enemy1.isPoison == true or enemy2.isPoison == true or enemy3.isPoison == true) Poison();
@@ -767,7 +769,7 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 						TTF_CloseFont(enemyTTF);
 						SDL_DestroyTexture(textIcons);
 						livedEnemies = 0;
-						reward(ren, 1);
+						reward(ren, Lose);
 						return;
 					}
 					stepFight += 1;
@@ -1084,7 +1086,7 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 						TTF_CloseFont(enemyTTF);
 						SDL_DestroyTexture(textIcons);
 						livedEnemies = 0;
-						reward(ren, 1);
+						reward(ren, Lose);
 						return;
 					}
 					stepFight += 1;
@@ -1111,7 +1113,7 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 					SDL_DestroyTexture(textEnemyHealthTTF);
 					SDL_DestroyTexture(textIcons);
 
-					reward(ren, storageEscape);
+					reward(ren, Lose);
 					return;
 				}
 				else {
@@ -1143,7 +1145,7 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 						TTF_CloseFont(enemyTTF);
 						SDL_DestroyTexture(textIcons);
 						livedEnemies = 0;
-						reward(ren, 1);
+						reward(ren, Lose);
 						return;
 					}
 						
@@ -1173,7 +1175,7 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 			counterKilledEnemies += 1;
 		if (questFlag and curQuest == 3 and enemy == Goblin)
 			counterKilledEnemies += 1;
-		reward(ren, 0);
+		reward(ren, Win);
 	}
 }
 
@@ -1499,7 +1501,7 @@ void Battler(SDL_Renderer* ren, int enemy) {
 				TTF_CloseFont(enemyTTF);
 				SDL_DestroyTexture(textIcons);
 				livedEnemies = 0;
-				reward(ren, 1);
+				reward(ren, Lose);
 				return;
 			}
 			stepFight += 1;
@@ -1860,7 +1862,7 @@ void Battler(SDL_Renderer* ren, int enemy) {
 				TTF_CloseFont(enemyTTF);
 				SDL_DestroyTexture(textIcons);
 				livedEnemies = 0;
-				reward(ren, 1);
+				reward(ren, Lose);
 				return;
 			}
 			stepFight += 1;
@@ -2537,7 +2539,7 @@ void render_dead_enemy(SDL_Renderer* ren, SDL_Texture* textdeadEenemy) {
 	}
 }
 
-void reward(SDL_Renderer* ren, int escape) {
+void reward(SDL_Renderer* ren, int Reward) {
 	//Texture
 	SDL_Surface* surfReward = IMG_Load("sprites\\menu\\reward.png");
 	SDL_Texture* textReward = SDL_CreateTextureFromSurface(ren, surfReward);
@@ -2562,7 +2564,7 @@ void reward(SDL_Renderer* ren, int escape) {
 		SDL_RenderClear(ren);
 		SDL_RenderCopy(ren, textReward, NULL, NULL);
 
-		if (escape != 0) {
+		if (Reward == 1) {
 			xPoint = 460, yPoint = 200;
 			statsRect = { xPoint, yPoint, 320, 60 };
 			sprintf_s(rewardStr, "Experience 0");
@@ -2583,7 +2585,7 @@ void reward(SDL_Renderer* ren, int escape) {
 			SDL_FreeSurface(surfRewardTTF);
 			SDL_DestroyTexture(textRewardTTF);
 		}
-		if (amountEnemy == 2 and escape == 0) {
+		if (amountEnemy == 2 and Reward == 0) {
 			xPoint = 460, yPoint = 200;
 			statsRect = { xPoint, yPoint, 320, 60 };
 			sprintf_s(rewardStr, "Experience %d", enemy1.level + enemy2.level);
@@ -2604,7 +2606,7 @@ void reward(SDL_Renderer* ren, int escape) {
 			SDL_FreeSurface(surfRewardTTF);
 			SDL_DestroyTexture(textRewardTTF);
 		}
-		if (amountEnemy == 3 and escape == 0) {
+		if (amountEnemy == 3 and Reward == 0) {
 			xPoint = 460, yPoint = 200;
 			statsRect = { xPoint, yPoint, 320, 60 };
 			sprintf_s(rewardStr, "Experience %d", enemy1.level + enemy2.level + enemy3.level);

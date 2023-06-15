@@ -15,23 +15,28 @@
 
 
 void level_up() {
-
 	if ((hero.experience >= hero.levelUp) and (hero.level <= hero.maxLevel)) {
-		hero.level += 1;
-		hero.pointsLevel += 4;
-		hero.experience = 0;
-		hero.levelUp = hero.levelUp * 1.5;
-		system("cls");
-		printf("Level up\n");
+		int tmpExperience = hero.experience;
+		while (tmpExperience >= hero.levelUp and hero.level <= hero.maxLevel) {
+			hero.level += 1;
+			hero.pointsLevel += 4;
+			tmpExperience -= hero.levelUp;
+			hero.levelUp = hero.levelUp * 1.5;
+			system("cls");
+			printf("Level up\n");
+			if (tmpExperience < hero.levelUp)
+				hero.experience = tmpExperience;
+
+		}
 	}
-	if (hero.level % 3 == 0) {
-		hero.pointsTree += 1;
-		printf("pointsTree %d\n", hero.pointsTree);
-	}
-	if (hero.level % 10 == 0) {
-		hero.pointsTree += 2;
-		printf("pointsTree %d\n", hero.pointsTree);
-	}
+	//if (hero.level % 3 == 0) {
+	//	hero.pointsTree += 1;
+	//	printf("pointsTree %d\n", hero.pointsTree);
+	//}
+	//if (hero.level % 10 == 0) {
+	//	hero.pointsTree += 2;
+	//	printf("pointsTree %d\n", hero.pointsTree);
+	//}
 }
 
 void character_leveling(SDL_Renderer* ren) {
@@ -213,13 +218,13 @@ void character_leveling(SDL_Renderer* ren) {
 	}
 
 	if (choicheParameter == ATTACK and hero.pointsLevel != 0) {
-		hero.Attack = hero.Attack * 1.1;
+		hero.Attack += 5;
 		hero.maxAttack = hero.Attack;
 		system("cls");
 		hero.pointsLevel--;
 	}
 	if (choicheParameter == HEALTH and hero.pointsLevel != 0) {
-		hero.Health = hero.Health * 1.15;
+		hero.Health += 20;
 		hero.maxHealth = hero.Health;
 		system("cls");
 		hero.pointsLevel--;
@@ -234,10 +239,10 @@ void character_leveling(SDL_Renderer* ren) {
 		hero.pointsLevel--;
 	}
 	if (choicheParameter == ABILITYATTACK and hero.pointsLevel != 0) {
-		hero.Mana = hero.Mana * 1.1;
+		hero.Mana += 20;
 		hero.maxMana = hero.Mana;
-		abilityDamageFireball *= 1.3;
-		abilityDamageLightning *= 1.15;
+		abilityDamageFireball += 10;
+		abilityDamageLightning += 7;
 		abilityDamagePoison += 1;
 		poisonDamage = abilityDamagePoison;
 		system("cls");

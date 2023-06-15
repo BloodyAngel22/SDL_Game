@@ -52,3 +52,5 @@ struct genEnemy {
 extern genEnemy enemy1, enemy2, enemy3, enemy4;
 
 extern int classHero;
+extern int Xcoordinate, Ycoordinate;
+extern int row, col;
