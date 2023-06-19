@@ -173,14 +173,10 @@ void main_menu() {
 	SDL_Texture* textArrow = SDL_CreateTextureFromSurface(ren, surfArrow);
 	SDL_FreeSurface(surfArrow);
 	//
-	TTF_Font* statItemsFont = TTF_OpenFont("fonts\\BAUHS93.TTF", 75);
-	char stats[100] = "stats";
-	SDL_Surface* surfStatItems = TTF_RenderText_Blended(statItemsFont, stats, { 255, 255, 255, 255 });
-	SDL_Texture* textStatItemsText = SDL_CreateTextureFromSurface(ren, surfStatItems);
-	SDL_Rect size = { 0, 0, surfStatItems->w, surfStatItems->h };
-	int xPoint = 100, yPoint = 50;
-	SDL_Rect statsRect = { xPoint, yPoint, 55, 60 };
-	SDL_FreeSurface(surfStatItems);
+	SDL_Surface* surfAbout = IMG_Load("sprites\\menu\\about.png");
+	SDL_Texture* textAbout = SDL_CreateTextureFromSurface(ren, surfAbout);
+	SDL_FreeSurface(surfAbout);
+	//
 #pragma endregion
 	int mainMenu = 0;
 	SDL_Event ev;
@@ -188,10 +184,10 @@ void main_menu() {
 
 	int xArrow = 320, yArrow = 160;
 	int pointer = 1;
+	int flag = 0;
 	const Uint8* arrowState = SDL_GetKeyboardState(NULL);
 	SDL_Rect srcrectArrow = { 0, 0, 100, 140 };
 	SDL_Rect dstrectArrow;
-	int flag = 0;
 	while (mainMenu == 0) {
 		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
 		SDL_RenderClear(ren);
@@ -236,11 +232,8 @@ void main_menu() {
 		if (pointer == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 			SDL_DestroyTexture(textMainMenu);
 			SDL_DestroyTexture(textArrow);
-			if (flag == 1) {
-				SDL_FreeSurface(surfStatItems);
-				SDL_DestroyTexture(textStatItemsText);
-				TTF_CloseFont(statItemsFont);
-			}
+			SDL_DestroyTexture(textAbout);
+
 			isPressed = 0;
 			choiceClass();
 			return;
@@ -249,37 +242,38 @@ void main_menu() {
 			isPressed = 0;
 			SDL_DestroyTexture(textMainMenu);
 			SDL_DestroyTexture(textArrow);
-			if (flag == 1) {
-				SDL_FreeSurface(surfStatItems);
-				SDL_DestroyTexture(textStatItemsText);
-				TTF_CloseFont(statItemsFont);
-			}
+			SDL_DestroyTexture(textAbout);
+
 			print_in_file(ren);
 			return;
 		}
 		if (pointer == 3 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
-			if (flag == 0)
-				flag = 1;
+			while (flag == 0) {
+				SDL_PollEvent(&ev);
+				isPressed = pressedEnter();
+
+				SDL_RenderClear(ren);
+				SDL_RenderCopy(ren, textAbout, NULL, NULL);
+
+				if (arrowState[SDL_SCANCODE_ESCAPE]) {
+					flag = 1;
+				}
+
+				SDL_RenderPresent(ren);
+				SDL_Delay(20);
+			}
 		}
 		if (pointer == 4 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
 			SDL_DestroyTexture(textMainMenu);
 			SDL_DestroyTexture(textArrow);
+			SDL_DestroyTexture(textAbout);
+
 			de_init(1);
 		}
 		isPressed = 0;
-		if (flag == 1) {
-			xPoint = 750, yPoint = 390;
-			statsRect = { xPoint, yPoint, 200, 60 };
-			sprintf_s(stats, "Zhigalkin Maxim");
-			surfStatItems = TTF_RenderText_Blended(statItemsFont, stats, { 255, 255, 255, 255 });
-			size = { 0, 0, surfStatItems->w, surfStatItems->h };
-			textStatItemsText = SDL_CreateTextureFromSurface(ren, surfStatItems);
-			SDL_RenderCopy(ren, textStatItemsText, &size, &statsRect);
-			SDL_FreeSurface(surfStatItems);
-			SDL_DestroyTexture(textStatItemsText);
-		}
 		SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 		SDL_RenderPresent(ren);
+		flag = 0;
 	}
 
 
