@@ -6,7 +6,7 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 
-int levelWeapon = 0; int levelArmor = 0; int levelNecklace = 0;
+extern int levelWeapon = 0, levelArmor = 0, levelNecklace = 0;
 
 void upgradeWeapon(SDL_Renderer* ren); void upgradeArmor(SDL_Renderer* ren); void upgradeNecklace(SDL_Renderer* ren);
 upgradeLVL itemUpgrade;
@@ -169,7 +169,8 @@ void upgradeWeapon(SDL_Renderer* ren) {
 						hero.Gold -= itemUpgrade.LVL1;
 					}
 					if (upgrade == 1 and hero.Gold < itemUpgrade.LVL1) {
-						printf("У вас не достаточно денег\n");
+						//printf("У вас не достаточно денег\n");
+						not_enough_money(ren);
 						upgrade = 0;
 					}
 				}
@@ -183,7 +184,9 @@ void upgradeWeapon(SDL_Renderer* ren) {
 						hero.Gold -= itemUpgrade.LVL2;
 					}
 					if (upgrade == 1 and hero.Gold < itemUpgrade.LVL2) {
-						printf("У вас не достаточно денег\n");
+						//printf("У вас не достаточно денег\n");
+						not_enough_money(ren);
+
 						upgrade = 0;
 					}
 				}
@@ -197,7 +200,9 @@ void upgradeWeapon(SDL_Renderer* ren) {
 						hero.Gold -= itemUpgrade.LVL3;
 					}
 					if (upgrade == 1 and hero.Gold < itemUpgrade.LVL3) {
-						printf("У вас не достаточно денег\n");
+						//printf("У вас не достаточно денег\n");
+						not_enough_money(ren);
+
 						upgrade = 0;
 					}
 				}
@@ -211,7 +216,9 @@ void upgradeWeapon(SDL_Renderer* ren) {
 						hero.Gold -= itemUpgrade.LVL4;
 					}
 					if (upgrade == 1 and hero.Gold < itemUpgrade.LVL4) {
-						printf("У вас не достаточно денег\n");
+						//printf("У вас не достаточно денег\n");
+						not_enough_money(ren);
+
 						upgrade = 0;
 					}
 				}
@@ -225,12 +232,14 @@ void upgradeWeapon(SDL_Renderer* ren) {
 						hero.Gold -= itemUpgrade.LVL5;
 					}
 					if (upgrade == 1 and hero.Gold < itemUpgrade.LVL5) {
-						printf("У вас не достаточно денег\n");
+						//printf("У вас не достаточно денег\n");
+						not_enough_money(ren);
+
 						upgrade = 0;
 					}
 				}
 				if (levelWeapon == 5 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
-					printf("У вас максимальный уровень оружия\nВам больше нечего прокачивать\n");
+					//printf("У вас максимальный уровень оружия\nВам больше нечего прокачивать\n");
 					upgrade = 0;
 				}
 			}
@@ -241,8 +250,8 @@ void upgradeWeapon(SDL_Renderer* ren) {
 			SDL_RenderCopy(ren, textArrow, &srcrectArrow, &dstrectArrow);
 
 			xPoint = 100, yPoint = 50;
-			statsRect = { xPoint, yPoint, 55, 60 };
-			sprintf_s(stats, "%d", hero.weapon);
+			statsRect = { xPoint, yPoint, 140, 60 };
+			sprintf_s(stats, "Attack %d", hero.weapon);
 			surfStatItems = TTF_RenderText_Blended(statItemsFont, stats, { 255, 255, 255, 255 });
 			size = { 0, 0, surfStatItems->w, surfStatItems->h };
 			textStatItemsText = SDL_CreateTextureFromSurface(ren, surfStatItems);
@@ -339,7 +348,9 @@ void upgradeArmor(SDL_Renderer* ren) {
 					hero.Gold -= itemUpgrade.LVL1;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL1) {
-					printf("У вас не достаточно денег\n");
+					//printf("У вас не достаточно денег\n");
+					not_enough_money(ren);
+
 					upgrade = 0;
 				}
 			}
@@ -356,7 +367,9 @@ void upgradeArmor(SDL_Renderer* ren) {
 					hero.Gold -= itemUpgrade.LVL2;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL2) {
-					printf("У вас не достаточно денег\n");
+					//printf("У вас не достаточно денег\n");
+					not_enough_money(ren);
+
 					upgrade = 0;
 				}
 				
@@ -374,7 +387,9 @@ void upgradeArmor(SDL_Renderer* ren) {
 					hero.Gold -= itemUpgrade.LVL3;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL3) {
-					printf("У вас не достаточно денег\n");
+					//printf("У вас не достаточно денег\n");
+					not_enough_money(ren);
+
 					upgrade = 0;
 				}
 				
@@ -392,7 +407,9 @@ void upgradeArmor(SDL_Renderer* ren) {
 					hero.Gold -= itemUpgrade.LVL4;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL4) {
-					printf("У вас не достаточно денег\n");
+					//printf("У вас не достаточно денег\n");
+					not_enough_money(ren);
+
 					upgrade = 0;
 				}
 				
@@ -410,13 +427,15 @@ void upgradeArmor(SDL_Renderer* ren) {
 					hero.Gold -= itemUpgrade.LVL5;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL5) {
-					printf("У вас не достаточно денег\n");
+					//printf("У вас не достаточно денег\n");
+					not_enough_money(ren);
+
 					upgrade = 0;
 				}
 				
 			}
 			if (levelArmor == 5 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
-				printf("У вас максимальный уровень брони\nВам больше нечего прокачивать\n");
+				//printf("У вас максимальный уровень брони\nВам больше нечего прокачивать\n");
 				upgrade = 0;
 			}
 		}
@@ -425,8 +444,8 @@ void upgradeArmor(SDL_Renderer* ren) {
 		SDL_RenderCopy(ren, textupgradeArmor, NULL, NULL);
 
 		xPoint = 100, yPoint = 50;
-		statsRect = { xPoint, yPoint, 55, 60 };
-		sprintf_s(stats, "%d", hero.armorHealth);
+		statsRect = { xPoint, yPoint, 220, 60 };
+		sprintf_s(stats, "armor Health %d", hero.armorHealth);
 		surfStatItems = TTF_RenderText_Blended(statItemsFont, stats, { 255, 255, 255, 255 });
 		size = { 0, 0, surfStatItems->w, surfStatItems->h };
 		textStatItemsText = SDL_CreateTextureFromSurface(ren, surfStatItems);
@@ -435,8 +454,8 @@ void upgradeArmor(SDL_Renderer* ren) {
 		SDL_DestroyTexture(textStatItemsText);
 
 		xPoint = 100, yPoint = 100;
-		statsRect = { xPoint, yPoint, 55, 60 };
-		sprintf_s(stats, "%.2f", hero.armorDefense);
+		statsRect = { xPoint, yPoint, 240, 60 };
+		sprintf_s(stats, "armor Defense %.2f", hero.armorDefense);
 		surfStatItems = TTF_RenderText_Blended(statItemsFont, stats, { 255, 255, 255, 255 });
 		size = { 0, 0, surfStatItems->w, surfStatItems->h };
 		textStatItemsText = SDL_CreateTextureFromSurface(ren, surfStatItems);
@@ -532,7 +551,9 @@ void upgradeNecklace(SDL_Renderer* ren) {
 					hero.Gold -= itemUpgrade.LVL1;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL1) {
-					printf("У вас не достаточно денег\n");
+					//printf("У вас не достаточно денег\n");
+					not_enough_money(ren);
+
 					upgrade = 0;
 				}
 				
@@ -548,7 +569,9 @@ void upgradeNecklace(SDL_Renderer* ren) {
 					hero.Gold -= itemUpgrade.LVL2;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL2) {
-					printf("У вас не достаточно денег\n");
+					//printf("У вас не достаточно денег\n");
+					not_enough_money(ren);
+
 					upgrade = 0;
 				}
 				
@@ -564,7 +587,9 @@ void upgradeNecklace(SDL_Renderer* ren) {
 					hero.Gold -= itemUpgrade.LVL3;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL3) {
-					printf("У вас не достаточно денег\n");
+					//printf("У вас не достаточно денег\n");
+					not_enough_money(ren);
+
 					upgrade = 0;
 				}
 				
@@ -580,7 +605,9 @@ void upgradeNecklace(SDL_Renderer* ren) {
 					hero.Gold -= itemUpgrade.LVL4;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL4) {
-					printf("У вас не достаточно денег\n");
+					//printf("У вас не достаточно денег\n");
+					not_enough_money(ren);
+
 					upgrade = 0;
 				}
 				
@@ -596,13 +623,15 @@ void upgradeNecklace(SDL_Renderer* ren) {
 					hero.Gold -= itemUpgrade.LVL5;
 				}
 				if (upgrade == 1 and hero.Gold < itemUpgrade.LVL5) {
-					printf("У вас не достаточно денег\n");
+					//printf("У вас не достаточно денег\n");
+					not_enough_money(ren);
+
 					upgrade = 0;
 				}
 				
 			}
 			if (levelNecklace == 5 and upgrade == 1 and arrowState[SDL_SCANCODE_RETURN] and isPressed) {
-				printf("У вас максимальный уровень ожерелья\nВам больше нечего прокачивать\n");
+				//printf("У вас максимальный уровень ожерелья\nВам больше нечего прокачивать\n");
 				upgrade = 0;
 			}
 		}
@@ -611,8 +640,8 @@ void upgradeNecklace(SDL_Renderer* ren) {
 		SDL_RenderCopy(ren, textupgradeNecklace, NULL, NULL);
 
 		xPoint = 100, yPoint = 50;
-		statsRect = { xPoint, yPoint, 55, 60 };
-		sprintf_s(stats, "%d", hero.necklace);
+		statsRect = { xPoint, yPoint, 120, 60 };
+		sprintf_s(stats, "Mana %d", hero.necklace);
 		surfStatItems = TTF_RenderText_Blended(statItemsFont, stats, { 255, 255, 255, 255 });
 		size = { 0, 0, surfStatItems->w, surfStatItems->h };
 		textStatItemsText = SDL_CreateTextureFromSurface(ren, surfStatItems);
@@ -631,6 +660,38 @@ void upgradeNecklace(SDL_Renderer* ren) {
 	TTF_CloseFont(statItemsFont);
 
 	isPressed = 0;
+}
+
+void not_enough_money(SDL_Renderer* ren) {
+	SDL_Surface* surfNotEnoughMoney = IMG_Load("sprites\\menu\\not_enough_money.png");
+	SDL_Texture* textNotEnoughMoney = SDL_CreateTextureFromSurface(ren, surfNotEnoughMoney);
+	SDL_FreeSurface(surfNotEnoughMoney);
+
+	SDL_Event ev;
+	SDL_PollEvent(&ev);
+	const Uint8* state = SDL_GetKeyboardState(NULL);
+
+	while (true) {
+
+		SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+		SDL_RenderClear(ren);
+		SDL_RenderCopy(ren, textNotEnoughMoney, NULL, NULL);
+
+		while (SDL_PollEvent(&ev) != NULL) {
+			SDL_PollEvent(&ev);
+			isPressed = pressedEnter();
+
+			if (state[SDL_SCANCODE_RETURN] and isPressed) {
+				SDL_DestroyTexture(textNotEnoughMoney);
+				return;
+			}
+			
+		}
+		SDL_RenderPresent(ren);
+		SDL_Delay(20);
+		
+		isPressed = 0;
+	}
 }
 
 //int main() {

@@ -942,7 +942,7 @@ int main(int argc, char* argv[]) {
 	SDL_FRect rect10 = { 539, 196, 42, 44 };
 	SDL_FRect rect11 = { 653, 196, 45, 46 };
 	SDL_FRect rect12 = { 655, 410, 44, 50 };
-	SDL_FRect rect13 = { 915, 511, 27, 60 };
+	SDL_FRect rect13 = { 150, 45, 41, 50 };
 	SDL_FRect rect14 = { 255, 600, 70, 62 };
 	SDL_FRect rect16 = { 802, 137, 32, 43 };
 	SDL_FRect rect17 = { 876, 126, 34, 55 };
@@ -1076,7 +1076,7 @@ int main(int argc, char* argv[]) {
 		if (row == 2 and col == 1) {
 			if (checkCollision(legs, rect4) or checkCollision(legs, rect5) or checkCollision(legs, rect6) or checkCollision(legs, rect7)
 				or checkCollision(legs, rect8) or checkCollision(legs, rect9) or checkCollision(legs, rect10) or checkCollision(legs, rect11)
-				or checkCollision(legs, rect12) or checkCollision(legs, rect13) or checkCollision(legs, rect14)	or checkCollision(legs, rect16) 
+				or checkCollision(legs, rect12) or checkCollision(legs, rect13) or checkCollision(legs, rect14)	or checkCollision(legs, rect16)
 				or checkCollision(legs, rect17) or checkCollision(legs, rect18) or checkCollision(legs, rect19)) {
 				Xcoordinate = lastPosXPlayer, Ycoordinate = lastPosYPlayer;
 			}
@@ -1340,7 +1340,7 @@ int main(int argc, char* argv[]) {
 		if (row == 2 and col == 1) {
 			if (checkCollision(player, rect4) or checkCollision(player, rect5) or checkCollision(player, rect6) or checkCollision(player, rect7)
 				or checkCollision(player, rect8) or checkCollision(player, rect9) or checkCollision(player, rect10) or checkCollision(player, rect11)
-				or checkCollision(player, rect12) or checkCollision(player, rect13) or checkCollision(player, rect14) or checkCollision(player, rect16) 
+				or checkCollision(player, rect12) or checkCollision(player, rect13) or checkCollision(player, rect14) or checkCollision(player, rect16)
 				or checkCollision(player, rect17) or checkCollision(player, rect18) or checkCollision(player, rect19)) {
 				SDL_RenderCopy(ren, textRoom2Collision, NULL, NULL);
 				flagCollision = 1;

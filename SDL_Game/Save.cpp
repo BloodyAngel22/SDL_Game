@@ -5,6 +5,7 @@
 #include "Quest.h"
 #include "Puzzle.h"
 #include "Minigames.h"
+#include "Upgrade Items.h"
 #include <SDL.h>
 #include <SDL_image.h>
 
@@ -103,6 +104,7 @@ void save_in_file(SDL_Renderer* ren) {//Сохранение в файл
 	fprintf(saves, "%d %d %d %d %d %d %d %d\n", flagCode, checkChest, checkChest2, questFlag, keyCheckBat, keyCheckGoblin, flagLamps, flagRunes);
 	fprintf(saves, "%d %d\n", row, col);
 	fprintf(saves, "%d\n", winningStreak);
+	fprintf(saves, "%d %d %d\n", levelWeapon, levelArmor, levelNecklace);
 
 
 	fclose(saves);
@@ -195,6 +197,7 @@ void print_in_file(SDL_Renderer* ren) {//Загрузка сохранения
 		fscanf(saves, "%d %d %d %d %d %d %d %d\n", &flagCode, &checkChest, &checkChest2, &questFlag, &keyCheckBat, &keyCheckGoblin, &flagLamps, &flagRunes);
 		fscanf(saves, "%d %d\n", &row, &col);
 		fscanf(saves, "%d\n", &winningStreak);
+		fscanf(saves, "%d %d %d\n", &levelWeapon, &levelArmor, &levelNecklace);
 	}
 	if (choicePrintFile == 2) {
 		fopen_s(&saves, save2, "rt");
@@ -207,6 +210,8 @@ void print_in_file(SDL_Renderer* ren) {//Загрузка сохранения
 		fscanf(saves, "%d %d %d %d %d %d %d %d\n", &flagCode, &checkChest, &checkChest2, &questFlag, &keyCheckBat, &keyCheckGoblin, &flagLamps, &flagRunes);
 		fscanf(saves, "%d %d\n", &row, &col);
 		fscanf(saves, "%d\n", &winningStreak);
+		fscanf(saves, "%d %d %d\n", &levelWeapon, &levelArmor, &levelNecklace);
+
 	}
 	if (choicePrintFile == 3) {
 		fopen_s(&saves, save3, "rt");
@@ -219,6 +224,8 @@ void print_in_file(SDL_Renderer* ren) {//Загрузка сохранения
 		fscanf(saves, "%d %d %d %d %d %d %d %d\n", &flagCode, &checkChest, &checkChest2, &questFlag, &keyCheckBat, &keyCheckGoblin, &flagLamps, &flagRunes);
 		fscanf(saves, "%d %d\n", &row, &col);
 		fscanf(saves, "%d\n", &winningStreak);
+		fscanf(saves, "%d %d %d\n", &levelWeapon, &levelArmor, &levelNecklace);
+
 	}
 
 
