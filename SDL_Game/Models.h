@@ -7,9 +7,7 @@ struct Character {
 		Gold, level = 1,
 		maxLevel = 100, levelUp = 100, experience = 0, pointsLevel = 0, pointsTree = 0,
 		maxAttack = Attack, maxHealth = Health, maxMana = Mana;
-	float AtSpeed = 1.0;
 	float Defense;
-	int coordinationCharacterX, coordinationCharacterY;
 };
 extern Character hero;
 
@@ -19,9 +17,7 @@ struct ClassWarrior {
 		Gold = 500, level = 1,
 		maxLevel = 100, levelUp = 100, experience = 0, pointsLevel = 0, pointsTree = 0,
 		maxAttack = Attack, maxHealth = Health, maxMana = Mana;
-	float AtSpeed = 1.0;
 	float Defense = 0.05 + armorDefense;
-	int coordinationCharacterX, coordinationCharacterY;
 };
 extern ClassWarrior warrior;
 
@@ -33,14 +29,12 @@ struct ClassMage {
 		maxAttack = Attack, maxHealth = Health, maxMana = Mana;
 	float AtSpeed = 1.0;
 	float Defense = 0.05 + armorDefense;
-	int coordinationCharacterX, coordinationCharacterY;
 };
 extern ClassMage mage;
 
 struct EnemyCharacteristics {
 	int Health, Attack, Gold, level = 1, experienceEnemy,
 		maxHealth;
-	int coordinationEnemyX, coordinationEnemyY;
 };
 extern EnemyCharacteristics batCharacteristics, goblinCharacteristics, slimeCharacteristics, werewolfCharacteristics, ratCharacteristics;
 

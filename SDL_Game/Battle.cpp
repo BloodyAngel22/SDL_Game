@@ -390,7 +390,6 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 					return;
 				}
 				if (enemy1.isPoison == true or enemy2.isPoison == true or enemy3.isPoison == true) Poison();
-				printf("%d\n", batCharacteristics.Health);
 			}
 			else if (choiche == ABILITY) {
 				flag = 1;
@@ -1130,7 +1129,6 @@ void MenuBattle(SDL_Renderer* ren, int enemy) {
 					if (enemy == Werewolf)
 						enemy_patterns(Werewolf);
 					stepFight += 1;
-					printf("the enemy has damaged you %d\n", batCharacteristics.Attack);
 					if (hero.Health <= 0) {
 						SDL_DestroyTexture(textdeadEnemy);
 						SDL_DestroyTexture(textArrow);

@@ -66,7 +66,6 @@ void character_leveling(SDL_Renderer* ren) {
 	SDL_Rect dstrectArrow;
 	int choicheParameter = 0;
 	SDL_Event ev;
-	printf("Points %d\n", hero.pointsLevel);
 	while (choicheParameter == 0) {
 		SDL_PollEvent(&ev);
 		dstrectArrow = { xArrow, yArrow, 75, 75 };

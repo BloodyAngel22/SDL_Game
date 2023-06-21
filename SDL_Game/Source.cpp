@@ -1027,8 +1027,7 @@ int main(int argc, char* argv[]) {
 		lasttime = newtime;
 
 		if ((state[SDL_SCANCODE_UP] or state[SDL_SCANCODE_W]) and (!state[SDL_SCANCODE_DOWN] or !state[SDL_SCANCODE_S])) {
-			if (!checkCollision(legs, rect8))
-				lastPosXPlayer = Xcoordinate, lastPosYPlayer = Ycoordinate + 4;
+			lastPosXPlayer = Xcoordinate, lastPosYPlayer = Ycoordinate + 4;
 			UP = 1;
 			if (UP) {
 				DOWN = 0, LEFT = 0, RIGHT = 0;
@@ -1037,8 +1036,7 @@ int main(int argc, char* argv[]) {
 		}
 		else if ((state[SDL_SCANCODE_DOWN] or state[SDL_SCANCODE_S]) and (!state[SDL_SCANCODE_UP] or !state[SDL_SCANCODE_W])) {
 			DOWN = 1;
-			if (!checkCollision(legs, rect8))
-				lastPosXPlayer = Xcoordinate, lastPosYPlayer = Ycoordinate - 4;
+			lastPosXPlayer = Xcoordinate, lastPosYPlayer = Ycoordinate - 4;
 			if (DOWN) {
 				UP = 0, LEFT = 0, RIGHT = 0;
 				Ycoordinate += 4;
@@ -1046,8 +1044,7 @@ int main(int argc, char* argv[]) {
 		}
 		else if ((state[SDL_SCANCODE_LEFT] or state[SDL_SCANCODE_A]) and (!state[SDL_SCANCODE_RIGHT] or !state[SDL_SCANCODE_D])) {
 			LEFT = 1;
-			if (!checkCollision(legs, rect8))
-				lastPosXPlayer = Xcoordinate + 4, lastPosYPlayer = Ycoordinate;
+			lastPosXPlayer = Xcoordinate + 4, lastPosYPlayer = Ycoordinate;
 			if (LEFT) {
 				UP = 0, RIGHT = 0, DOWN = 0;
 				Xcoordinate -= 4;
@@ -1055,8 +1052,7 @@ int main(int argc, char* argv[]) {
 		}
 		else if ((state[SDL_SCANCODE_RIGHT] or state[SDL_SCANCODE_D]) and (!state[SDL_SCANCODE_LEFT] or !state[SDL_SCANCODE_A])) {
 			RIGHT = 1;
-			if (!checkCollision(legs, rect8))
-				lastPosXPlayer = Xcoordinate - 4, lastPosYPlayer = Ycoordinate;
+			lastPosXPlayer = Xcoordinate - 4, lastPosYPlayer = Ycoordinate;
 			if (RIGHT) {
 				UP = 0, LEFT = 0, DOWN = 0;
 				Xcoordinate += 4;
@@ -1247,7 +1243,7 @@ int main(int argc, char* argv[]) {
 			}
 			if (flagRunes == 1)
 				SDL_RenderCopy(ren, textRunesPuzzle, &srcRunesRect, &dstRunesRect);
-
+			//Головоломка
 			if (checkCollision(player, RunesRect) and state[SDL_SCANCODE_RETURN] and isPressed and flagRunes)
 				runes_puzzle(ren);
 
