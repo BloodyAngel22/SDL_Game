@@ -962,6 +962,7 @@ int main(int argc, char* argv[]) {
 	int lastPosXPlayer = 0, lastPosYPlayer = 0;
 	splash_screen(ren);
 	main_menu();
+	#pragma region GameCycle
 	while (isRunning) {
 		UP = DOWN = LEFT = RIGHT = 0;
 		player = { Xcoordinate, Ycoordinate, Xsize, Ysize };
@@ -1212,7 +1213,7 @@ int main(int argc, char* argv[]) {
 		if (row == 1 and col == 2) {
 			SDL_RenderCopy(ren, textRoom3, NULL, NULL);
 			SDL_RenderCopy(ren, textNPC, &srcNPC, &dstNPC);
-			if (curQuest == 2)
+			if (curQuest >= 2)
 				SDL_RenderCopy(ren, textNPC, &srcNPC2, &dstNPC2);
 
 			//1144 274 40 42
@@ -1233,7 +1234,7 @@ int main(int argc, char* argv[]) {
 			}
 		}
 		if (row == 2 and col == 2) {//отрисовка рун и головоломка
-			if (curQuest == 2) {
+			if (curQuest >= 2) {
 				//Water
 				SDL_RenderCopy(ren, textRune, &srcrune, &dstrune);
 				//Fire
@@ -1262,7 +1263,7 @@ int main(int argc, char* argv[]) {
 				}
 			}
 		}
-		if (row == 2 and col == 2 and curQuest == 2) {//коллизия рун
+		if (row == 2 and col == 2 and curQuest >= 2) {//коллизия рун
 			if (checkCollision(player, rune) and state[SDL_SCANCODE_RETURN]) {//Water
 				rune.x = -100, rune.y = -100;
 				dstrune.x = dstrune.y = -100;
@@ -1375,7 +1376,7 @@ int main(int argc, char* argv[]) {
 			questFlag = 1;
 			quest(ren);
 		}
-		if (checkCollision(player, NPC2) and state[SDL_SCANCODE_RETURN] and isPressed and row == 1 and col == 2 and curQuest == 2) {
+		if (checkCollision(player, NPC2) and state[SDL_SCANCODE_RETURN] and isPressed and row == 1 and col == 2 and curQuest >= 2) {
 			dialogue(ren);
 		}
 		isPressed = 0;
@@ -1395,6 +1396,7 @@ int main(int argc, char* argv[]) {
 		SDL_Delay(17);
 		flagCollision = 0;
 	}
+#pragma endregion
 	SDL_DestroyTexture(textRoom1);
 	SDL_DestroyTexture(textRoom1Collision);
 	SDL_DestroyTexture(textRoom2);
